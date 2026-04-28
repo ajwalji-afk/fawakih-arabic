@@ -2,74 +2,130 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Fawakih Master App</title>
+<title>Fawakih Arabic Master App</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-body { font-family: Georgia; background:#f7f3ec; padding:20px;}
-button { margin:5px; padding:10px;}
+:root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--rust:#8b3a2a;--border:#d4c9b0;}
+body{font-family:Georgia,serif;background:var(--parchment);color:var(--ink);padding:30px;}
+.card{max-width:460px;background:white;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:0 2px 16px rgba(28,26,22,.12);}
+input{width:100%;padding:11px;margin:7px 0;font-size:16px;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;}
+button{margin:6px 6px 6px 0;padding:10px 14px;cursor:pointer;border:1px solid var(--border);border-radius:6px;background:var(--cream);}
+#status{color:var(--rust);margin-top:12px;white-space:pre-wrap;}
+#app{display:none;}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:700px;margin-top:20px;}
+.lesson-btn{padding:14px;background:white;}
 </style>
 </head>
 <body>
 
-<div id="login">
-<h2>Fawakih Arabic</h2>
-<input id="email" placeholder="Email"><br>
-<input id="password" type="password" placeholder="Password"><br>
-<button onclick="login()">Login</button>
-<button onclick="signup()">Create account</button>
-<p id="status"></p>
+<div id="login" class="card">
+  <h2>Fawakih Arabic</h2>
+  <p>Login or create an account.</p>
+  <input id="email" placeholder="Email" autocomplete="email">
+  <input id="password" type="password" placeholder="Password" autocomplete="current-password">
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Create account</button>
+  <button onclick="testConnection()">Test connection</button>
+  <div id="status"></div>
 </div>
 
-<div id="app" style="display:none">
-<h2>Select Lesson</h2>
-<div id="lessons"></div>
-<div id="content"></div>
+<div id="app">
+  <h1>Fawakih Arabic</h1>
+  <p>Select a lesson:</p>
+  <div id="lessons" class="lesson-grid"></div>
+  <hr style="margin:24px 0;">
+  <button onclick="logout()">Log out</button>
+  <div id="content" style="margin-top:24px;"></div>
 </div>
 
 <script>
-const supabase = window.supabase.createClient(
-"https://ighwjwnkwfbhsgtqdkui.supabase.co",
-"sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg"
+const client = window.supabase.createClient(
+  "https://ighwjwnkwfbhsgtqdkui.supabase.co",
+  "sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg"
 );
 
-function setStatus(m){document.getElementById("status").innerText=m;}
+function setStatus(msg){document.getElementById("status").textContent = msg;}
 
-async function login(){
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
-const {error}=await supabase.auth.signInWithPassword({email,password});
-if(error){setStatus(error.message);return;}
-showApp();
+function showApp(){
+  document.getElementById("login").style.display = "none";
+  document.getElementById("app").style.display = "block";
+  loadLessonButtons();
+}
+
+function showLogin(){
+  document.getElementById("login").style.display = "block";
+  document.getElementById("app").style.display = "none";
+}
+
+async function testConnection(){
+  setStatus("Testing Supabase connection...");
+  try{
+    const { error } = await client.auth.getSession();
+    if(error){setStatus("Connection error: " + error.message);return;}
+    setStatus("Connection OK. Now try Create account or Login.");
+  }catch(err){
+    setStatus("JavaScript/network error: " + err.message);
+  }
 }
 
 async function signup(){
-const email=document.getElementById("email").value;
-const password=document.getElementById("password").value;
-const {error}=await supabase.auth.signUp({email,password});
-if(error){setStatus(error.message);return;}
-setStatus("Account created. Now login.");
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if(!email || !password){setStatus("Enter email and password first.");return;}
+  setStatus("Creating account...");
+  try{
+    const { error } = await client.auth.signUp({ email, password });
+    if(error){setStatus("Sign-up error: " + error.message);return;}
+    setStatus("Account created. Now click Login. If it says email not confirmed, turn off email confirmation in Supabase for testing.");
+  }catch(err){
+    setStatus("JavaScript/network error: " + err.message);
+  }
 }
 
-function showApp(){
-document.getElementById("login").style.display="none";
-document.getElementById("app").style.display="block";
-loadLessonButtons();
+async function login(){
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  if(!email || !password){setStatus("Enter email and password first.");return;}
+  setStatus("Logging in...");
+  try{
+    const { error } = await client.auth.signInWithPassword({ email, password });
+    if(error){setStatus("Login error: " + error.message);return;}
+    setStatus("");
+    showApp();
+  }catch(err){
+    setStatus("JavaScript/network error: " + err.message);
+  }
+}
+
+async function logout(){
+  await client.auth.signOut();
+  showLogin();
+}
+
+async function checkSession(){
+  try{
+    const { data } = await client.auth.getSession();
+    if(data && data.session){showApp();}
+  }catch(err){
+    setStatus("Session check error: " + err.message);
+  }
 }
 
 function loadLessonButtons(){
-let html="";
-for(let i=1;i<=12;i++){
-html+=`<button onclick="loadLesson(${i})">Lesson ${i}</button>`;
-}
-document.getElementById("lessons").innerHTML=html;
+  let html = "";
+  for(let i=1;i<=12;i++){
+    html += `<button class="lesson-btn" onclick="loadLesson(${i})">Lesson ${i}</button>`;
+  }
+  document.getElementById("lessons").innerHTML = html;
 }
 
 function loadLesson(num){
-document.getElementById("content").innerHTML=
-"<h3>Lesson "+num+"</h3><p>Full lesson integration coming next step.</p>";
+  document.getElementById("content").innerHTML =
+    `<h2>Lesson ${num}</h2><p>Lesson ${num} loads here. Next step is plugging the real quiz data into this master app.</p>`;
 }
-</script>
 
+checkSession();
+</script>
 </body>
 </html>
