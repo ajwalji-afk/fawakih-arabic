@@ -6,15 +6,95 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--rust:#8b3a2a;--border:#d4c9b0;}
-body{font-family:Georgia,serif;background:var(--parchment);color:var(--ink);padding:30px;}
-.card{max-width:460px;background:white;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:0 2px 16px rgba(28,26,22,.12);}
-input{width:100%;padding:11px;margin:7px 0;font-size:16px;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;}
-button{margin:6px 6px 6px 0;padding:10px 14px;cursor:pointer;border:1px solid var(--border);border-radius:6px;background:var(--cream);}
-#status{color:var(--rust);margin-top:12px;white-space:pre-wrap;}
-#app{display:none;}
-.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;max-width:700px;margin-top:20px;}
-.lesson-btn{padding:14px;background:white;}
+:root {
+  --ink:#1c1a16;
+  --parchment:#f7f3ec;
+  --cream:#efe9dc;
+  --gold:#b8860b;
+  --rust:#8b3a2a;
+  --border:#d4c9b0;
+}
+body {
+  font-family: Georgia, serif;
+  background:var(--parchment);
+  color:var(--ink);
+  margin:0;
+}
+.master-wrap {
+  padding:24px;
+}
+.card {
+  max-width:460px;
+  margin:30px auto;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:24px;
+  box-shadow:0 2px 16px rgba(28,26,22,.12);
+}
+input {
+  width:100%;
+  padding:11px;
+  margin:7px 0;
+  font-size:16px;
+  box-sizing:border-box;
+  border:1px solid var(--border);
+  border-radius:6px;
+}
+button {
+  margin:6px 6px 6px 0;
+  padding:10px 14px;
+  cursor:pointer;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:var(--cream);
+  font-family: Georgia, serif;
+}
+button:hover { background:#fdf8ee; }
+#status {
+  color:var(--rust);
+  margin-top:12px;
+  white-space:pre-wrap;
+}
+#app { display:none; }
+.topbar {
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 18px;
+  background:white;
+  border-bottom:1px solid var(--border);
+  position:sticky;
+  top:0;
+  z-index:10;
+}
+.lesson-grid {
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(130px,1fr));
+  gap:10px;
+  max-width:760px;
+  margin:20px auto;
+}
+.lesson-btn {
+  padding:14px;
+  background:white;
+}
+#lesson-frame {
+  width:100%;
+  height:calc(100vh - 88px);
+  border:0;
+  display:none;
+  background:var(--parchment);
+}
+.placeholder {
+  max-width:760px;
+  margin:20px auto;
+  background:white;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:20px;
+}
 </style>
 </head>
 <body>
@@ -31,12 +111,26 @@ button{margin:6px 6px 6px 0;padding:10px 14px;cursor:pointer;border:1px solid va
 </div>
 
 <div id="app">
-  <h1>Fawakih Arabic</h1>
-  <p>Select a lesson:</p>
-  <div id="lessons" class="lesson-grid"></div>
-  <hr style="margin:24px 0;">
-  <button onclick="logout()">Log out</button>
-  <div id="content" style="margin-top:24px;"></div>
+  <div class="topbar">
+    <div>
+      <strong>Fawakih Arabic</strong>
+      <span id="active-label" style="margin-left:10px;color:#8b3a2a;"></span>
+    </div>
+    <div>
+      <button onclick="showMenu()">Lessons</button>
+      <button onclick="logout()">Log out</button>
+    </div>
+  </div>
+
+  <div id="menu" class="master-wrap">
+    <div class="placeholder">
+      <h2>Select a lesson</h2>
+      <p>Lesson 1 is integrated now. Lessons 2–12 will be added next.</p>
+    </div>
+    <div id="lessons" class="lesson-grid"></div>
+  </div>
+
+  <iframe id="lesson-frame" title="Lesson content"></iframe>
 </div>
 
 <script>
@@ -45,87 +139,1122 @@ const client = window.supabase.createClient(
   "sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg"
 );
 
-function setStatus(msg){document.getElementById("status").textContent = msg;}
+const LESSON_1_HTML = `&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+&lt;head&gt;
+&lt;meta charset=&quot;UTF-8&quot;/&gt;
+&lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;/&gt;
+&lt;title&gt;Lesson 1 — Fawakih Arabic&lt;/title&gt;
+&lt;link href=&quot;https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&amp;family=Source+Serif+4:wght@300;400;600&amp;display=swap&quot; rel=&quot;stylesheet&quot;/&gt;
+&lt;style&gt;
+  :root {
+    --ink: #1c1a16;
+    --parchment: #f7f3ec;
+    --cream: #efe9dc;
+    --gold: #b8860b;
+    --gold-light: #d4a843;
+    --rust: #8b3a2a;
+    --sage: #4a6741;
+    --border: #d4c9b0;
+    --shadow: rgba(28,26,22,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-function showApp(){
+  body {
+    font-family: &#x27;Source Serif 4&#x27;, Georgia, serif;
+    background: var(--parchment);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image: 
+      radial-gradient(ellipse at 20% 20%, rgba(184,134,11,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(74,103,65,0.05) 0%, transparent 60%);
+  }
+
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+  header::after {
+    content: &#x27;&#x27;;
+    display: block;
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 1rem auto 0;
+  }
+  .lesson-label {
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    font-family: &#x27;Source Serif 4&#x27;, serif;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  h1 {
+    font-family: &#x27;Playfair Display&#x27;, Georgia, serif;
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .arabic-subtitle {
+    font-size: 1.5rem;
+    font-family: serif;
+    color: var(--gold);
+    margin-top: 0.3rem;
+    direction: rtl;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0;
+    padding: 1.5rem 1rem 0;
+    flex-wrap: wrap;
+  }
+  .tab-btn {
+    font-family: &#x27;Source Serif 4&#x27;, serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    padding: 10px 20px;
+    border: 1px solid var(--border);
+    background: var(--cream);
+    color: #7a7060;
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: none;
+    position: relative;
+    top: 1px;
+  }
+  .tab-btn:first-child { border-radius: 6px 0 0 0; }
+  .tab-btn:last-child { border-radius: 0 6px 0 0; }
+  .tab-btn.active {
+    background: var(--parchment);
+    color: var(--ink);
+    border-color: var(--border);
+    border-bottom: 1px solid var(--parchment);
+    z-index: 2;
+  }
+  .tab-btn:hover:not(.active) { background: #e8e2d6; color: var(--ink); }
+
+  .tab-content {
+    border-top: 1px solid var(--border);
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+    display: none;
+  }
+  .tab-content.active { display: block; }
+
+  /* SHARED QUIZ ELEMENTS */
+  .quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #9a8e7a;
+    font-family: &#x27;Courier New&#x27;, monospace;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .progress-bar {
+    height: 2px;
+    background: var(--border);
+    border-radius: 1px;
+    margin-bottom: 1.8rem;
+  }
+  .progress-fill {
+    height: 2px;
+    background: var(--gold);
+    border-radius: 1px;
+    transition: width 0.4s ease;
+  }
+
+  .question-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+  .prompt-arabic {
+    font-size: 36px;
+    font-family: &#x27;Traditional Arabic&#x27;, &#x27;Scheherazade New&#x27;, serif;
+    text-align: center;
+    direction: rtl;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 0.4rem;
+  }
+  .prompt-english {
+    font-size: 20px;
+    font-family: &#x27;Playfair Display&#x27;, serif;
+    font-style: italic;
+    text-align: center;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+  .prompt-sub {
+    font-size: 11px;
+    text-align: center;
+    color: #b0a490;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    font-family: &#x27;Courier New&#x27;, monospace;
+  }
+
+  .feedback-box {
+    font-size: 14px;
+    text-align: center;
+    padding: 10px 14px;
+    border-radius: 6px;
+    margin-bottom: 14px;
+  }
+  .feedback-correct { background: #eef5ee; color: #2e5c2e; border: 1px solid #b8d4b8; }
+  .feedback-wrong { background: #fdf0ee; color: #7a2e20; border: 1px solid #e0b8b0; }
+
+  input[type=text] {
+    width: 100%;
+    font-size: 17px;
+    padding: 11px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--parchment);
+    color: var(--ink);
+    font-family: &#x27;Source Serif 4&#x27;, serif;
+    margin-bottom: 12px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type=text]:focus { border-color: var(--gold); }
+
+  .btn-row { display: flex; gap: 10px; }
+  .btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: &#x27;Courier New&#x27;, monospace;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink);
+  }
+  .btn:hover { background: var(--cream); }
+  .btn-primary {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+  .btn-primary:hover { background: #fdf8ee; }
+
+  /* MULTIPLE CHOICE */
+  .mc-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .mc-option {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--parchment);
+    font-size: 14px;
+    font-family: &#x27;Source Serif 4&#x27;, serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1.4;
+  }
+  .mc-option:hover:not(.disabled) { border-color: var(--gold-light); background: #fdf8ee; }
+  .mc-option.correct { background: #eef5ee; border-color: var(--sage); color: var(--sage); font-weight: 600; }
+  .mc-option.wrong { background: #fdf0ee; border-color: var(--rust); color: var(--rust); }
+  .mc-option.disabled { cursor: default; }
+
+  /* CLASSIFY (3-button) */
+  .classify-btns {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 14px;
+    justify-content: center;
+  }
+  .classify-btn {
+    flex: 1;
+    max-width: 160px;
+    padding: 14px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--parchment);
+    font-family: &#x27;Source Serif 4&#x27;, serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+  .classify-btn .arabic { font-size: 22px; direction: rtl; display: block; margin-bottom: 4px; }
+  .classify-btn .label { font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: #9a8e7a; }
+  .classify-btn:hover:not(.disabled) { border-color: var(--gold-light); background: #fdf8ee; }
+  .classify-btn.correct { background: #eef5ee; border-color: var(--sage); }
+  .classify-btn.wrong { background: #fdf0ee; border-color: var(--rust); }
+  .classify-btn.disabled { cursor: default; }
+
+  /* DONE SCREEN */
+  .done-screen {
+    text-align: center;
+    padding: 2rem 0;
+  }
+  .done-screen .big-check {
+    font-size: 48px;
+    margin-bottom: 1rem;
+  }
+  .done-screen p {
+    font-family: &#x27;Playfair Display&#x27;, serif;
+    font-size: 1.3rem;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+  .done-screen small {
+    font-size: 13px;
+    color: #9a8e7a;
+    font-family: &#x27;Courier New&#x27;, monospace;
+  }
+  .restart-btn {
+    margin-top: 1.5rem;
+    padding: 12px 30px;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--gold);
+    font-family: &#x27;Courier New&#x27;, monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .restart-btn:hover { background: #fdf8ee; }
+
+  /* SECTION INTRO */
+  .section-intro {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #5a5040;
+  }
+  .section-intro strong { color: var(--ink); }
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;header&gt;
+  &lt;div class=&quot;lesson-label&quot;&gt;Fawakih Arabic · Level 1&lt;/div&gt;
+  &lt;h1&gt;Lesson 1&lt;/h1&gt;
+  &lt;div class=&quot;arabic-subtitle&quot;&gt;الدَّرْسُ الأَوَّلُ&lt;/div&gt;
+&lt;/header&gt;
+
+&lt;div class=&quot;tabs&quot;&gt;
+  &lt;button class=&quot;tab-btn active&quot; onclick=&quot;switchTab(&#x27;vocab&#x27;)&quot;&gt;Vocabulary&lt;/button&gt;
+  &lt;button class=&quot;tab-btn&quot; onclick=&quot;switchTab(&#x27;classify&#x27;)&quot;&gt;Word Types&lt;/button&gt;
+  &lt;button class=&quot;tab-btn&quot; onclick=&quot;switchTab(&#x27;pronouns&#x27;)&quot;&gt;Pronouns&lt;/button&gt;
+  &lt;button class=&quot;tab-btn&quot; onclick=&quot;switchTab(&#x27;grammar&#x27;)&quot;&gt;Grammar&lt;/button&gt;
+&lt;/div&gt;
+
+&lt;!-- ══════════════ TAB 1: VOCABULARY ══════════════ --&gt;
+&lt;div id=&quot;tab-vocab&quot; class=&quot;tab-content active&quot;&gt;
+  &lt;div class=&quot;section-intro&quot;&gt;
+    Arabic vocabulary from Lesson 1. Choose the correct English meaning.
+  &lt;/div&gt;
+  &lt;div class=&quot;quiz-meta&quot;&gt;
+    &lt;span id=&quot;v-counter&quot;&gt;Q 1 of 25&lt;/span&gt;
+    &lt;span id=&quot;v-score&quot;&gt;Score: 0 / 0&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;progress-bar&quot;&gt;&lt;div class=&quot;progress-fill&quot; id=&quot;v-prog&quot; style=&quot;width:0%&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;question-card&quot; id=&quot;v-card&quot;&gt;
+    &lt;div class=&quot;prompt-arabic&quot; id=&quot;v-prompt&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;prompt-sub&quot;&gt;→ choose the English meaning&lt;/div&gt;
+    &lt;div id=&quot;v-feedback&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;mc-options&quot; id=&quot;v-options&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;btn-row&quot; id=&quot;v-next-row&quot; style=&quot;display:none&quot;&gt;
+      &lt;button class=&quot;btn btn-primary&quot; onclick=&quot;vNext()&quot;&gt;Next →&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ══════════════ TAB 2: WORD CLASSIFICATION ══════════════ --&gt;
+&lt;div id=&quot;tab-classify&quot; class=&quot;tab-content&quot;&gt;
+  &lt;div class=&quot;section-intro&quot;&gt;
+    Every Arabic word is either an &lt;strong&gt;ism&lt;/strong&gt; (اِسْم — noun/pronoun/adjective), a &lt;strong&gt;fi&#x27;l&lt;/strong&gt; (فِعْل — verb), or a &lt;strong&gt;harf&lt;/strong&gt; (حَرْف — particle). Classify each word shown.
+  &lt;/div&gt;
+  &lt;div class=&quot;quiz-meta&quot;&gt;
+    &lt;span id=&quot;c-counter&quot;&gt;Q 1 of 15&lt;/span&gt;
+    &lt;span id=&quot;c-score&quot;&gt;Score: 0 / 0&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;progress-bar&quot;&gt;&lt;div class=&quot;progress-fill&quot; id=&quot;c-prog&quot; style=&quot;width:0%&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;question-card&quot; id=&quot;c-card&quot;&gt;
+    &lt;div class=&quot;prompt-arabic&quot; id=&quot;c-prompt&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;prompt-sub&quot;&gt;ism · fi&#x27;l · or harf?&lt;/div&gt;
+    &lt;div id=&quot;c-feedback&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;mc-options&quot; id=&quot;c-options&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;btn-row&quot; id=&quot;c-next-row&quot; style=&quot;display:none&quot;&gt;
+      &lt;button class=&quot;btn btn-primary&quot; onclick=&quot;cNext()&quot;&gt;Next →&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ══════════════ TAB 3: PRONOUNS ══════════════ --&gt;
+&lt;div id=&quot;tab-pronouns&quot; class=&quot;tab-content&quot;&gt;
+  &lt;div class=&quot;section-intro&quot;&gt;
+    Arabic has 14 detached pronouns. Choose the correct English meaning for each.
+  &lt;/div&gt;
+  &lt;div class=&quot;quiz-meta&quot;&gt;
+    &lt;span id=&quot;p-counter&quot;&gt;Q 1 of 14&lt;/span&gt;
+    &lt;span id=&quot;p-score&quot;&gt;Score: 0 / 0&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;progress-bar&quot;&gt;&lt;div class=&quot;progress-fill&quot; id=&quot;p-prog&quot; style=&quot;width:0%&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;question-card&quot; id=&quot;p-card&quot;&gt;
+    &lt;div class=&quot;prompt-arabic&quot; id=&quot;p-prompt&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;prompt-sub&quot;&gt;→ choose the correct meaning&lt;/div&gt;
+    &lt;div id=&quot;p-feedback&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;mc-options&quot; id=&quot;p-options&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;btn-row&quot; id=&quot;p-next-row&quot; style=&quot;display:none&quot;&gt;
+      &lt;button class=&quot;btn btn-primary&quot; onclick=&quot;pNext()&quot;&gt;Next →&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;!-- ══════════════ TAB 4: GRAMMAR ══════════════ --&gt;
+&lt;div id=&quot;tab-grammar&quot; class=&quot;tab-content&quot;&gt;
+  &lt;div class=&quot;section-intro&quot;&gt;
+    Theory questions on Lesson 1 grammar concepts: word classification, noun cases, and recognition tips. Choose the best answer.
+  &lt;/div&gt;
+  &lt;div class=&quot;quiz-meta&quot;&gt;
+    &lt;span id=&quot;g-counter&quot;&gt;Q 1 of 30&lt;/span&gt;
+    &lt;span id=&quot;g-score&quot;&gt;Score: 0 / 0&lt;/span&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;progress-bar&quot;&gt;&lt;div class=&quot;progress-fill&quot; id=&quot;g-prog&quot; style=&quot;width:0%&quot;&gt;&lt;/div&gt;&lt;/div&gt;
+  &lt;div class=&quot;question-card&quot; id=&quot;g-card&quot;&gt;
+    &lt;div class=&quot;prompt-english&quot; id=&quot;g-prompt&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;prompt-sub&quot;&gt;choose the correct answer&lt;/div&gt;
+    &lt;div id=&quot;g-feedback&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;mc-options&quot; id=&quot;g-options&quot;&gt;&lt;/div&gt;
+    &lt;div class=&quot;btn-row&quot; id=&quot;g-next-row&quot; style=&quot;display:none&quot;&gt;
+      &lt;button class=&quot;btn btn-primary&quot; onclick=&quot;gNext()&quot;&gt;Next →&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+// ─────────────────────────────────────────────
+// UTILITIES
+// ─────────────────────────────────────────────
+function shuffle(a) {
+  for (let i = a.length - 1; i &gt; 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+function norm(s) {
+  return s.trim().toLowerCase().replace(/[()[\]،,./\\]/g,&#x27;&#x27;).replace(/\s+/g,&#x27; &#x27;);
+}
+function checkMatch(user, correct) {
+  const u = norm(user);
+  const alts = correct.split(&#x27;/&#x27;).map(a =&gt; norm(a.trim()));
+  return alts.some(a =&gt; u === a);
+}
+
+function switchTab(name) {
+  document.querySelectorAll(&#x27;.tab-btn&#x27;).forEach((b,i) =&gt; {
+    b.classList.toggle(&#x27;active&#x27;, [&#x27;vocab&#x27;,&#x27;classify&#x27;,&#x27;pronouns&#x27;,&#x27;grammar&#x27;][i] === name);
+  });
+  document.querySelectorAll(&#x27;.tab-content&#x27;).forEach(c =&gt; c.classList.remove(&#x27;active&#x27;));
+  document.getElementById(&#x27;tab-&#x27; + name).classList.add(&#x27;active&#x27;);
+}
+
+
+// ─────────────────────────────────────────────
+// SHARED MC HELPER
+// ─────────────────────────────────────────────
+function buildMCOptions(containerId, options, correctIdx, onAnswer) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = &#x27;&#x27;;
+  options.forEach((opt, i) =&gt; {
+    const btn = document.createElement(&#x27;button&#x27;);
+    btn.className = &#x27;mc-option&#x27;;
+    btn.textContent = opt;
+    btn.onclick = () =&gt; onAnswer(i, correctIdx);
+    container.appendChild(btn);
+  });
+}
+function lockMCOptions(containerId, chosenIdx, correctIdx) {
+  document.querySelectorAll(`#${containerId} .mc-option`).forEach((btn, i) =&gt; {
+    btn.classList.add(&#x27;disabled&#x27;);
+    if (i === correctIdx) btn.classList.add(&#x27;correct&#x27;);
+    else if (i === chosenIdx) btn.classList.add(&#x27;wrong&#x27;);
+  });
+}
+
+// ─────────────────────────────────────────────
+// TAB 1 — VOCABULARY (MC)
+// ─────────────────────────────────────────────
+const vocabData = [
+  {ar:&quot;رَبٌّ&quot;, en:&quot;lord&quot;},
+  {ar:&quot;أَرْبَابٌ&quot;, en:&quot;lords&quot;},
+  {ar:&quot;رَسُولٌ&quot;, en:&quot;messenger&quot;},
+  {ar:&quot;رُسُلٌ&quot;, en:&quot;messengers&quot;},
+  {ar:&quot;إِنْسَانٌ&quot;, en:&quot;person / human being&quot;},
+  {ar:&quot;بَيْتٌ&quot;, en:&quot;house&quot;},
+  {ar:&quot;بُيُوتٌ&quot;, en:&quot;houses&quot;},
+  {ar:&quot;شَيْءٌ&quot;, en:&quot;thing&quot;},
+  {ar:&quot;أَشْيَاءٌ&quot;, en:&quot;things&quot;},
+  {ar:&quot;مُؤْمِنٌ&quot;, en:&quot;believer&quot;},
+  {ar:&quot;مُؤْمِنُونَ&quot;, en:&quot;believers&quot;},
+  {ar:&quot;مِنْ&quot;, en:&quot;from&quot;},
+  {ar:&quot;إِلَى&quot;, en:&quot;to&quot;},
+  {ar:&quot;فِي&quot;, en:&quot;in&quot;},
+  {ar:&quot;بِ&quot;, en:&quot;by / with&quot;},
+  {ar:&quot;كَتَبَ&quot;, en:&quot;he wrote&quot;},
+  {ar:&quot;يَكْتُبُ&quot;, en:&quot;he writes&quot;},
+  {ar:&quot;كِتَابَةٌ&quot;, en:&quot;writing&quot;},
+  {ar:&quot;عَالَمٌ&quot;, en:&quot;world&quot;},
+  {ar:&quot;عَوَالِمُ&quot;, en:&quot;worlds (عَوَالِمُ)&quot;},
+  {ar:&quot;عَالَمُونَ&quot;, en:&quot;worlds (عَالَمُونَ)&quot;},
+  {ar:&quot;فَاتِحَةٌ&quot;, en:&quot;opening / beginning&quot;},
+  {ar:&quot;فَوَاتِحُ&quot;, en:&quot;openings / beginnings&quot;},
+  {ar:&quot;أَنْعَمَ&quot;, en:&quot;he blessed / he granted&quot;},
+  {ar:&quot;نَسْتَعِينُ&quot;, en:&quot;we seek help&quot;},
+  {ar:&quot;إِهْدِ&quot;, en:&quot;guide (command)&quot;},
+];
+
+let vQueue, vIdx, vScore, vTotal;
+function vInit() {
+  vQueue = shuffle([...vocabData]);
+  vIdx = 0; vScore = 0; vTotal = 0;
+  vShow();
+}
+function vShow() {
+  if (vIdx &gt;= vQueue.length) {
+    document.getElementById(&#x27;v-card&#x27;).innerHTML = `&lt;div class=&quot;done-screen&quot;&gt;
+      &lt;div class=&quot;big-check&quot;&gt;✓&lt;/div&gt;
+      &lt;p&gt;Final score: ${vScore} / ${vTotal}&lt;/p&gt;
+      &lt;small&gt;${Math.round(vScore/vTotal*100)}% correct&lt;/small&gt;&lt;br&gt;
+      &lt;button class=&quot;restart-btn&quot; onclick=&quot;vInit()&quot;&gt;Try again ↺&lt;/button&gt;
+    &lt;/div&gt;`;
+    document.getElementById(&#x27;v-prog&#x27;).style.width = &#x27;100%&#x27;;
+    document.getElementById(&#x27;v-counter&#x27;).textContent = &#x27;Done!&#x27;;
+    return;
+  }
+  const q = vQueue[vIdx];
+  document.getElementById(&#x27;v-prompt&#x27;).textContent = q.ar;
+  document.getElementById(&#x27;v-feedback&#x27;).innerHTML = &#x27;&#x27;;
+  document.getElementById(&#x27;v-next-row&#x27;).style.display = &#x27;none&#x27;;
+  // Build 4 options: correct + 3 random distractors
+  const allAnswers = vocabData.map(d =&gt; d.en);
+  const distractors = shuffle(allAnswers.filter(a =&gt; a !== q.en)).slice(0, 3);
+  const opts = shuffle([q.en, ...distractors]);
+  const correctIdx = opts.indexOf(q.en);
+  buildMCOptions(&#x27;v-options&#x27;, opts, correctIdx, (chosen, correct) =&gt; {
+    const ok = chosen === correct;
+    vTotal++; if (ok) vScore++;
+    vMeta();
+    lockMCOptions(&#x27;v-options&#x27;, chosen, correct);
+    document.getElementById(&#x27;v-feedback&#x27;).innerHTML = ok
+      ? `&lt;div class=&quot;feedback-box feedback-correct&quot;&gt;Correct!&lt;/div&gt;`
+      : `&lt;div class=&quot;feedback-box feedback-wrong&quot;&gt;The answer is &lt;strong&gt;${q.en}&lt;/strong&gt;&lt;/div&gt;`;
+    document.getElementById(&#x27;v-next-row&#x27;).style.display = &#x27;flex&#x27;;
+    vIdx++;
+  });
+  vMeta();
+}
+function vMeta() {
+  document.getElementById(&#x27;v-score&#x27;).textContent = `Score: ${vScore} / ${vTotal}`;
+  document.getElementById(&#x27;v-counter&#x27;).textContent = `Q ${Math.min(vIdx+1, vQueue.length)} of ${vQueue.length}`;
+  document.getElementById(&#x27;v-prog&#x27;).style.width = (vIdx/vQueue.length*100).toFixed(0)+&#x27;%&#x27;;
+}
+function vNext() { vShow(); }
+
+// ─────────────────────────────────────────────
+// TAB 2 — WORD CLASSIFICATION (MC)
+// ─────────────────────────────────────────────
+const classifyData = [
+  {ar:&quot;إِلَى&quot;, type:&quot;harf&quot;, hint:&quot;Preposition — no independent meaning alone.&quot;},
+  {ar:&quot;رَبٌّ&quot;, type:&quot;ism&quot;, hint:&quot;Noun with independent meaning and no time reference.&quot;},
+  {ar:&quot;الْبُيُوتُ&quot;, type:&quot;ism&quot;, hint:&quot;Noun with the definite article اَلـ.&quot;},
+  {ar:&quot;كَتَبَ&quot;, type:&quot;fil&quot;, hint:&quot;Past tense verb — tied to a specific time.&quot;},
+  {ar:&quot;فِي&quot;, type:&quot;harf&quot;, hint:&quot;Preposition — depends on an ism or fi&#x27;l.&quot;},
+  {ar:&quot;يَكْتُبُ&quot;, type:&quot;fil&quot;, hint:&quot;Present tense verb — starts with يـ.&quot;},
+  {ar:&quot;رُسُلٌ&quot;, type:&quot;ism&quot;, hint:&quot;Plural noun — independent meaning with no time.&quot;},
+  {ar:&quot;بِ&quot;, type:&quot;harf&quot;, hint:&quot;Single-letter particle meaning &#x27;by/with&#x27;.&quot;},
+  {ar:&quot;مُؤْمِنٌ&quot;, type:&quot;ism&quot;, hint:&quot;Noun meaning &#x27;believer&#x27; — independent meaning.&quot;},
+  {ar:&quot;مِنْ&quot;, type:&quot;harf&quot;, hint:&quot;Preposition meaning &#x27;from&#x27; — no meaning alone.&quot;},
+  {ar:&quot;أَنْعَمَ&quot;, type:&quot;fil&quot;, hint:&quot;Past tense verb meaning &#x27;he blessed/granted&#x27;.&quot;},
+  {ar:&quot;إِنْسَانٌ&quot;, type:&quot;ism&quot;, hint:&quot;Noun meaning &#x27;person/human being&#x27;.&quot;},
+  {ar:&quot;وَ&quot;, type:&quot;harf&quot;, hint:&quot;Conjunction meaning &#x27;and&#x27; — a particle.&quot;},
+  {ar:&quot;نَسْتَعِينُ&quot;, type:&quot;fil&quot;, hint:&quot;Present tense verb meaning &#x27;we seek help&#x27;.&quot;},
+  {ar:&quot;كِتَابَةٌ&quot;, type:&quot;ism&quot;, hint:&quot;Noun meaning &#x27;writing&#x27; — verbal noun (مَصْدَر).&quot;},
+];
+
+const classifyOpts = [&quot;ism (noun/adjective)&quot;, &quot;fi&#x27;l (verb)&quot;, &quot;harf (particle)&quot;];
+const classifyKeys = [&quot;ism&quot;,&quot;fil&quot;,&quot;harf&quot;];
+
+let cQueue, cIdx, cScore, cTotal;
+function cInit() {
+  cQueue = shuffle([...classifyData]);
+  cIdx = 0; cScore = 0; cTotal = 0;
+  cShow();
+}
+function cShow() {
+  if (cIdx &gt;= cQueue.length) {
+    document.getElementById(&#x27;c-card&#x27;).innerHTML = `&lt;div class=&quot;done-screen&quot;&gt;
+      &lt;div class=&quot;big-check&quot;&gt;✓&lt;/div&gt;
+      &lt;p&gt;Final score: ${cScore} / ${cTotal}&lt;/p&gt;
+      &lt;small&gt;${Math.round(cScore/cTotal*100)}% correct&lt;/small&gt;&lt;br&gt;
+      &lt;button class=&quot;restart-btn&quot; onclick=&quot;cInit()&quot;&gt;Try again ↺&lt;/button&gt;
+    &lt;/div&gt;`;
+    document.getElementById(&#x27;c-prog&#x27;).style.width = &#x27;100%&#x27;;
+    document.getElementById(&#x27;c-counter&#x27;).textContent = &#x27;Done!&#x27;;
+    return;
+  }
+  const q = cQueue[cIdx];
+  document.getElementById(&#x27;c-prompt&#x27;).textContent = q.ar;
+  document.getElementById(&#x27;c-feedback&#x27;).innerHTML = &#x27;&#x27;;
+  document.getElementById(&#x27;c-next-row&#x27;).style.display = &#x27;none&#x27;;
+  const correctIdx = classifyKeys.indexOf(q.type);
+  // Always show all 3 options (don&#x27;t shuffle — ism/fi&#x27;l/harf order is consistent and learnable)
+  buildMCOptions(&#x27;c-options&#x27;, classifyOpts, correctIdx, (chosen, correct) =&gt; {
+    const ok = chosen === correct;
+    cTotal++; if (ok) cScore++;
+    cMeta();
+    lockMCOptions(&#x27;c-options&#x27;, chosen, correct);
+    document.getElementById(&#x27;c-feedback&#x27;).innerHTML = ok
+      ? `&lt;div class=&quot;feedback-box feedback-correct&quot;&gt;Correct!&lt;/div&gt;`
+      : `&lt;div class=&quot;feedback-box feedback-wrong&quot;&gt;That&#x27;s a &lt;strong&gt;${classifyOpts[correct]}&lt;/strong&gt; — ${q.hint}&lt;/div&gt;`;
+    document.getElementById(&#x27;c-next-row&#x27;).style.display = &#x27;flex&#x27;;
+    cIdx++;
+  });
+  cMeta();
+}
+function cMeta() {
+  document.getElementById(&#x27;c-score&#x27;).textContent = `Score: ${cScore} / ${cTotal}`;
+  document.getElementById(&#x27;c-counter&#x27;).textContent = `Q ${Math.min(cIdx+1, cQueue.length)} of ${cQueue.length}`;
+  document.getElementById(&#x27;c-prog&#x27;).style.width = (cIdx/cQueue.length*100).toFixed(0)+&#x27;%&#x27;;
+}
+function cNext() { cShow(); }
+
+// ─────────────────────────────────────────────
+// TAB 3 — PRONOUNS (MC)
+// ─────────────────────────────────────────────
+const pronounData = [
+  {ar:&quot;هُوَ&quot;,     en:&quot;he&quot;},
+  {ar:&quot;هُمَا&quot;,    en:&quot;they (2, m)&quot;},
+  {ar:&quot;هُمْ&quot;,     en:&quot;they (3+, m)&quot;},
+  {ar:&quot;هِيَ&quot;,     en:&quot;she&quot;},
+  {ar:&quot;هُمَا&quot;,    en:&quot;they (2, f)&quot;},
+  {ar:&quot;هُنَّ&quot;,    en:&quot;they (3+, f)&quot;},
+  {ar:&quot;أَنْتَ&quot;,   en:&quot;you (m, singular)&quot;},
+  {ar:&quot;أَنْتُمَا&quot;, en:&quot;you (2, m)&quot;},
+  {ar:&quot;أَنْتُمْ&quot;,  en:&quot;you (3+, m)&quot;},
+  {ar:&quot;أَنْتِ&quot;,   en:&quot;you (f, singular)&quot;},
+  {ar:&quot;أَنْتُمَا&quot;, en:&quot;you (2, f)&quot;},
+  {ar:&quot;أَنْتُنَّ&quot;, en:&quot;you (3+, f)&quot;},
+  {ar:&quot;أَنَا&quot;,    en:&quot;I&quot;},
+  {ar:&quot;نَحْنُ&quot;,   en:&quot;we&quot;},
+];
+
+let pQueue, pIdx, pScore, pTotal;
+function pInit() {
+  pQueue = shuffle([...pronounData]);
+  pIdx = 0; pScore = 0; pTotal = 0;
+  pShow();
+}
+function pShow() {
+  if (pIdx &gt;= pQueue.length) {
+    document.getElementById(&#x27;p-card&#x27;).innerHTML = `&lt;div class=&quot;done-screen&quot;&gt;
+      &lt;div class=&quot;big-check&quot;&gt;✓&lt;/div&gt;
+      &lt;p&gt;Final score: ${pScore} / ${pTotal}&lt;/p&gt;
+      &lt;small&gt;${Math.round(pScore/pTotal*100)}% correct&lt;/small&gt;&lt;br&gt;
+      &lt;button class=&quot;restart-btn&quot; onclick=&quot;pInit()&quot;&gt;Try again ↺&lt;/button&gt;
+    &lt;/div&gt;`;
+    document.getElementById(&#x27;p-prog&#x27;).style.width = &#x27;100%&#x27;;
+    document.getElementById(&#x27;p-counter&#x27;).textContent = &#x27;Done!&#x27;;
+    return;
+  }
+  const q = pQueue[pIdx];
+  document.getElementById(&#x27;p-prompt&#x27;).textContent = q.ar;
+  document.getElementById(&#x27;p-feedback&#x27;).innerHTML = &#x27;&#x27;;
+  document.getElementById(&#x27;p-next-row&#x27;).style.display = &#x27;none&#x27;;
+  const allMeanings = pronounData.map(p =&gt; p.en);
+  const distractors = shuffle(allMeanings.filter(m =&gt; m !== q.en)).slice(0, 3);
+  const opts = shuffle([q.en, ...distractors]);
+  const correctIdx = opts.indexOf(q.en);
+  buildMCOptions(&#x27;p-options&#x27;, opts, correctIdx, (chosen, correct) =&gt; {
+    const ok = chosen === correct;
+    pTotal++; if (ok) pScore++;
+    pMeta();
+    lockMCOptions(&#x27;p-options&#x27;, chosen, correct);
+    document.getElementById(&#x27;p-feedback&#x27;).innerHTML = ok
+      ? `&lt;div class=&quot;feedback-box feedback-correct&quot;&gt;Correct!&lt;/div&gt;`
+      : `&lt;div class=&quot;feedback-box feedback-wrong&quot;&gt;The answer is &lt;strong&gt;${q.en}&lt;/strong&gt;&lt;/div&gt;`;
+    document.getElementById(&#x27;p-next-row&#x27;).style.display = &#x27;flex&#x27;;
+    pIdx++;
+  });
+  pMeta();
+}
+function pMeta() {
+  document.getElementById(&#x27;p-score&#x27;).textContent = `Score: ${pScore} / ${pTotal}`;
+  document.getElementById(&#x27;p-counter&#x27;).textContent = `Q ${Math.min(pIdx+1, pQueue.length)} of ${pQueue.length}`;
+  document.getElementById(&#x27;p-prog&#x27;).style.width = (pIdx/pQueue.length*100).toFixed(0)+&#x27;%&#x27;;
+}
+function pNext() { pShow(); }
+
+// ─────────────────────────────────────────────
+// TAB 4 — GRAMMAR (Multiple Choice)
+// ─────────────────────────────────────────────
+const grammarData = [
+
+  // ── WORD TYPES: DEFINITIONS ──
+  {
+    q: &quot;Every word in Arabic belongs to exactly one of three categories. What are they?&quot;,
+    options: [&quot;Noun, verb, adjective&quot;, &quot;Ism, fi&#x27;l, harf&quot;, &quot;Definite, indefinite, neutral&quot;, &quot;Root, prefix, suffix&quot;],
+    answer: 1,
+    explain: &quot;Every Arabic word is either an ism (اِسْم), fi&#x27;l (فِعْل), or harf (حَرْف) — no word falls outside these three.&quot;
+  },
+  {
+    q: &quot;An ism conveys meaning independently. Which of these is the best description of what &#x27;independent meaning&#x27; means?&quot;,
+    options: [
+      &quot;It can stand alone without a vowel&quot;,
+      &quot;It refers to an entity or attribute without needing to reference time&quot;,
+      &quot;It is always the subject of a sentence&quot;,
+      &quot;It always has three root letters&quot;
+    ],
+    answer: 1,
+    explain: &quot;An ism names or describes something — a person, place, thing, or quality — with no time reference needed.&quot;
+  },
+  {
+    q: &quot;Which of the three word types conveys meaning BUT is restricted to a specific time?&quot;,
+    options: [&quot;اِسْم (ism)&quot;, &quot;فِعْل (fi&#x27;l)&quot;, &quot;حَرْف (harf)&quot;, &quot;Both fi&#x27;l and harf&quot;],
+    answer: 1,
+    explain: &quot;A fi&#x27;l (verb) always carries a time dimension — past, present, or future/command.&quot;
+  },
+  {
+    q: &quot;A harf like مِنْ or فِي cannot convey meaning on its own. What does it depend on?&quot;,
+    options: [&quot;A tanwīn ending&quot;, &quot;Another harf&quot;, &quot;An ism or fi&#x27;l&quot;, &quot;A definite article&quot;],
+    answer: 2,
+    explain: &quot;A harf has no independent meaning — it only becomes meaningful when attached to an ism or fi&#x27;l.&quot;
+  },
+  {
+    q: &quot;The word يَكْتُبُ (he writes) is a fi&#x27;l. What tells you it is present tense?&quot;,
+    options: [
+      &quot;It ends with ٌ&quot;,
+      &quot;It begins with one of the letters أ ن ي ت&quot;,
+      &quot;It has three root letters&quot;,
+      &quot;It can be preceded by اَلـ&quot;
+    ],
+    answer: 1,
+    explain: &quot;Present tense verbs are preceded by one of: أ ن ي ت. Here يَكْتُبُ starts with يـ.&quot;
+  },
+  {
+    q: &quot;Which of these is an ism (noun)?&quot;,
+    options: [&quot;كَتَبَ&quot;, &quot;مِنْ&quot;, &quot;رَسُولٌ&quot;, &quot;يَكْتُبُ&quot;],
+    answer: 2,
+    explain: &quot;رَسُولٌ (messenger) is an ism — it conveys an entity with no time reference and can take اَلـ.&quot;
+  },
+  {
+    q: &quot;Which of these is a harf (particle)?&quot;,
+    options: [&quot;رَبٌّ&quot;, &quot;بِ&quot;, &quot;دَرَسَ&quot;, &quot;مُؤْمِنٌ&quot;],
+    answer: 1,
+    explain: &quot;بِ (by/with) is a single-letter harf. It has no independent meaning on its own.&quot;
+  },
+  {
+    q: &quot;Which of these is a fi&#x27;l (verb)?&quot;,
+    options: [&quot;إِنْسَانٌ&quot;, &quot;إِلَى&quot;, &quot;بَيْتٌ&quot;, &quot;كَتَبَ&quot;],
+    answer: 3,
+    explain: &quot;كَتَبَ (he wrote) is a past tense verb — it has meaning tied to the past.&quot;
+  },
+  {
+    q: &quot;Most Arabic nouns and verbs have how many root letters?&quot;,
+    options: [&quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;5&quot;],
+    answer: 1,
+    explain: &quot;Most Arabic words trace back to 3 root letters. Extra letters are prefixes, suffixes, or inserted letters.&quot;
+  },
+  {
+    q: &quot;A word that seems to have more than three letters probably has:&quot;,
+    options: [
+      &quot;A spelling error&quot;,
+      &quot;A prefix and/or suffix and/or inserted letters&quot;,
+      &quot;Four root letters&quot;,
+      &quot;No meaning&quot;
+    ],
+    answer: 1,
+    explain: &quot;When a word appears longer than 3 letters, the extra letters are likely a prefix (like اَلـ), a suffix (like ونَ), or inserted letters — not additional root letters.&quot;
+  },
+
+  // ── NOUN CASES ──
+  {
+    q: &quot;Arabic has a grammatical case system. What does this mean?&quot;,
+    options: [
+      &quot;Nouns change their spelling based on the season&quot;,
+      &quot;Nouns have variable endings depending on their grammatical function&quot;,
+      &quot;Nouns are always plural&quot;,
+      &quot;Nouns always end in tanwīn&quot;
+    ],
+    answer: 1,
+    explain: &quot;In Arabic, a noun&#x27;s ending changes depending on its role in the sentence — subject, object, or after a preposition.&quot;
+  },
+  {
+    q: &quot;How many noun cases exist in Arabic?&quot;,
+    options: [&quot;2&quot;, &quot;3&quot;, &quot;4&quot;, &quot;6&quot;],
+    answer: 1,
+    explain: &quot;There are exactly three noun cases in Arabic: رَفْع (nominative), نَصْب (accusative), and جَرّ (genitive).&quot;
+  },
+  {
+    q: &quot;What is the Arabic name for the nominative case?&quot;,
+    options: [&quot;نَصْب&quot;, &quot;جَرّ&quot;, &quot;رَفْع&quot;, &quot;تَنْوِين&quot;],
+    answer: 2,
+    explain: &quot;رَفْع is the nominative case. A noun in this case is described as مَرْفُوع.&quot;
+  },
+  {
+    q: &quot;What is the default vowel ending for the nominative case (رَفْع)?&quot;,
+    options: [&quot;Fatḥa (َ) / fatḥa tanwīn (ً)&quot;, &quot;Ḍamma (ُ) / ḍamma tanwīn (ٌ)&quot;, &quot;Kasra (ِ) / kasra tanwīn (ٍ)&quot;, &quot;Sukūn (ْ)&quot;],
+    answer: 1,
+    explain: &quot;The nominative case (رَفْع) takes a ḍamma or ḍamma tanwīn — e.g. رَجُلٌ (a man, subject).&quot;
+  },
+  {
+    q: &quot;What is the default vowel ending for the accusative case (نَصْب)?&quot;,
+    options: [&quot;Ḍamma (ُ) / ḍamma tanwīn (ٌ)&quot;, &quot;Fatḥa (َ) / fatḥa tanwīn (ً)&quot;, &quot;Kasra (ِ) / kasra tanwīn (ٍ)&quot;, &quot;Sukūn (ْ)&quot;],
+    answer: 1,
+    explain: &quot;The accusative case (نَصْب) takes a fatḥa or fatḥa tanwīn — e.g. رَجُلاً (a man, as direct object).&quot;
+  },
+  {
+    q: &quot;What is the default vowel ending for the genitive case (جَرّ)?&quot;,
+    options: [&quot;Ḍamma (ُ) / ḍamma tanwīn (ٌ)&quot;, &quot;Fatḥa (َ) / fatḥa tanwīn (ً)&quot;, &quot;Kasra (ِ) / kasra tanwīn (ٍ)&quot;, &quot;Sukūn (ْ)&quot;],
+    answer: 2,
+    explain: &quot;The genitive case (جَرّ) takes a kasra or kasra tanwīn — e.g. رَجُلٍ (a man, after a preposition).&quot;
+  },
+  {
+    q: &quot;A noun that comes after a preposition like فِي or مِنْ will be in which case?&quot;,
+    options: [&quot;رَفْع (nominative)&quot;, &quot;نَصْب (accusative)&quot;, &quot;جَرّ (genitive)&quot;, &quot;No case — particles have no effect&quot;],
+    answer: 2,
+    explain: &quot;Prepositions put the following noun into the genitive case (جَرّ / مَجْرُور).&quot;
+  },
+  {
+    q: &quot;A noun described as مَجْرُور is in which case?&quot;,
+    options: [&quot;Nominative (رَفْع)&quot;, &quot;Accusative (نَصْب)&quot;, &quot;Genitive (جَرّ)&quot;, &quot;It has no case&quot;],
+    answer: 2,
+    explain: &quot;مَجْرُور means &#x27;put into the genitive&#x27; — it is the term for a noun in the جَرّ case.&quot;
+  },
+  {
+    q: &quot;A noun described as مَرْفُوع is typically the:&quot;,
+    options: [&quot;Direct object of the sentence&quot;, &quot;Subject of the sentence&quot;, &quot;Word after a preposition&quot;, &quot;Plural form&quot;],
+    answer: 1,
+    explain: &quot;مَرْفُوع (nominative) is the case used for the subject of a sentence, among other functions.&quot;
+  },
+  {
+    q: &quot;The accusative case (نَصْب) is used for which grammatical role?&quot;,
+    options: [&quot;Subject of the sentence&quot;, &quot;Word after a preposition&quot;, &quot;Direct object of the sentence&quot;, &quot;The verb&quot;],
+    answer: 2,
+    explain: &quot;نَصْب (accusative / مَنْصُوب) is used for the direct object of a sentence, among other functions.&quot;
+  },
+
+  // ── DETACHED PRONOUNS ──
+  {
+    q: &quot;Detached pronouns are always considered:&quot;,
+    options: [&quot;Indefinite&quot;, &quot;Definite&quot;, &quot;Neither — it depends on context&quot;, &quot;Only definite in the first person&quot;],
+    answer: 1,
+    explain: &quot;All detached pronouns (هُوَ, أَنَا, نَحْنُ etc.) are definite — they always refer to a specific person.&quot;
+  },
+  {
+    q: &quot;Detached pronouns are generally used as what part of a sentence?&quot;,
+    options: [&quot;The direct object&quot;, &quot;The verb&quot;, &quot;The subject pronoun&quot;, &quot;A preposition&quot;],
+    answer: 2,
+    explain: &quot;Detached pronouns function as subject pronouns — e.g. هُوَ كَتَبَ (He wrote).&quot;
+  },
+  {
+    q: &quot;If you want to add EMPHASIS to the subject &#x27;he&#x27; in a sentence, you would:&quot;,
+    options: [
+      &quot;Use a longer vowel&quot;,
+      &quot;Add هُوَ explicitly before the verb&quot;,
+      &quot;Add tanwīn to the verb&quot;,
+      &quot;Use the plural form&quot;
+    ],
+    answer: 1,
+    explain: &quot;Verbs already contain the subject. Adding هُوَ explicitly emphasises &#x27;HE specifically did it.&#x27;&quot;
+  },
+  {
+    q: &quot;Throughout the Qur&#x27;ān, Allah sometimes uses نَحْنُ (We). This is known as:&quot;,
+    options: [
+      &quot;A grammatical error corrected later&quot;,
+      &quot;The majestic plural — referring to a single entity of high rank&quot;,
+      &quot;Proof of multiple divine beings&quot;,
+      &quot;The plural of respect for angels&quot;
+    ],
+    answer: 1,
+    explain: &quot;The majestic or royal &#x27;we&#x27; is a classical linguistic device indicating greatness, not plurality.&quot;
+  },
+  {
+    q: &quot;How many total detached pronouns are there in Arabic (as introduced in Lesson 1)?&quot;,
+    options: [&quot;8&quot;, &quot;10&quot;, &quot;12&quot;, &quot;14&quot;],
+    answer: 3,
+    explain: &quot;There are 14 detached pronouns: covering 3rd person (m/f, singular/dual/plural), 2nd person (m/f, singular/dual/plural), and 1st person (singular/plural).&quot;
+  },
+
+  // ── AL-FĀTIḤA TEXT ANALYSIS ──
+  {
+    q: &quot;In the word نَسْتَعِينُ from al-Fātiḥa, how many English words are needed to translate it?&quot;,
+    options: [&quot;1&quot;, &quot;2&quot;, &quot;3&quot;, &quot;4&quot;],
+    answer: 2,
+    explain: &quot;نَسْتَعِينُ breaks into نـ (we) + سْتـ (seek) + عِين (help) — three English words packed into one Arabic word.&quot;
+  },
+  {
+    q: &quot;اِهْدِنَا الصِّرَاطَ الْمُسْتَقِيمَ — with إِلَى absent, &#x27;guide us&#x27; means:&quot;,
+    options: [
+      &quot;Guide us TO the straight path (implying we are not on it)&quot;,
+      &quot;Guide us ON the straight path (implying we are already on it)&quot;,
+      &quot;Show us where the path is&quot;,
+      &quot;No difference — إِلَى is always implied&quot;
+    ],
+    answer: 1,
+    explain: &quot;Without إِلَى, اِهْدِ + direct object means &#x27;guide us on/along&#x27;. With إِلَى, it means &#x27;guide us TO (implying not yet on it)&#x27;.&quot;
+  },
+  {
+    q: &quot;The first half of Sūrat al-Fātiḥa (verses 1–4) contains only which word type?&quot;,
+    options: [&quot;Only verbs (fi&#x27;l)&quot;, &quot;Only particles (harf)&quot;, &quot;Only nouns (ism)&quot;, &quot;A mix of all three&quot;],
+    answer: 2,
+    explain: &quot;Verses 1–4 of al-Fātiḥa consist entirely of isms. This conveys timeless, eternal attributes — not actions tied to a moment.&quot;
+  },
+  {
+    q: &quot;Who is credited as the first person to put Arabic grammar into writing?&quot;,
+    options: [&quot;Imām al-Shāfi&#x27;ī&quot;, &quot;Sībawayh&quot;, &quot;Caliph ʿAlī ibn Abī Ṭālib&quot;, &quot;Ibn Mālik&quot;],
+    answer: 2,
+    explain: &quot;Caliph ʿAlī ibn Abī Ṭālib, motivated by the spread of ungrammatical speech, was the first to codify Arabic grammar — starting with the three categories of words.&quot;
+  },
+  {
+    q: &quot;Grammar and morphology are related but different. Which is the correct distinction?&quot;,
+    options: [
+      &quot;Grammar studies individual word formation; morphology studies sentence function&quot;,
+      &quot;Grammar studies sentence function; morphology studies individual word formation&quot;,
+      &quot;They are the same thing with different names&quot;,
+      &quot;Grammar is only for verbs; morphology is only for nouns&quot;
+    ],
+    answer: 1,
+    explain: &quot;Grammar (نَحْو) studies how words function in sentences. Morphology (صَرْف) studies how individual words are internally formed.&quot;
+  },
+  {
+    q: &quot;Which verse of al-Fātiḥa contains both a fi&#x27;l AND a pronoun acting as subject?&quot;,
+    options: [
+      &quot;الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ (verse 2)&quot;,
+      &quot;إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ (verse 5)&quot;,
+      &quot;مَالِكِ يَوْمِ الدِّينِ (verse 4)&quot;,
+      &quot;بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ (verse 1)&quot;
+    ],
+    answer: 1,
+    explain: &quot;Verse 5 contains نَعْبُدُ (we worship) and نَسْتَعِينُ (we seek help) — both fi&#x27;ls with the pronoun &#x27;we&#x27; embedded, marking the shift from description to direct address.&quot;
+  },
+];
+
+let gQueue, gIdx, gScore, gTotal;
+function gInit() {
+  gQueue = shuffle(grammarData.map((q,i) =&gt; ({...q, origIdx: i})));
+  gIdx = 0; gScore = 0; gTotal = 0;
+  gShow();
+}
+function gShow() {
+  if (gIdx &gt;= gQueue.length) {
+    document.getElementById(&#x27;g-card&#x27;).innerHTML = `&lt;div class=&quot;done-screen&quot;&gt;
+      &lt;div class=&quot;big-check&quot;&gt;✓&lt;/div&gt;
+      &lt;p&gt;Final score: ${gScore} / ${gTotal}&lt;/p&gt;
+      &lt;small&gt;${Math.round(gScore/gTotal*100)}% correct&lt;/small&gt;&lt;br&gt;
+      &lt;button class=&quot;restart-btn&quot; onclick=&quot;gInit()&quot;&gt;Try again ↺&lt;/button&gt;
+    &lt;/div&gt;`;
+    document.getElementById(&#x27;g-prog&#x27;).style.width = &#x27;100%&#x27;;
+    document.getElementById(&#x27;g-counter&#x27;).textContent = &#x27;Done!&#x27;;
+    return;
+  }
+  const q = gQueue[gIdx];
+  document.getElementById(&#x27;g-prompt&#x27;).textContent = q.q;
+  document.getElementById(&#x27;g-feedback&#x27;).innerHTML = &#x27;&#x27;;
+  document.getElementById(&#x27;g-next-row&#x27;).style.display = &#x27;none&#x27;;
+
+  // Shuffle options while tracking correct answer
+  const indices = [0,1,2,3];
+  shuffle(indices);
+  const newCorrect = indices.indexOf(q.answer);
+  const opts = document.getElementById(&#x27;g-options&#x27;);
+  opts.innerHTML = &#x27;&#x27;;
+  indices.forEach((origIdx, newIdx) =&gt; {
+    const btn = document.createElement(&#x27;button&#x27;);
+    btn.className = &#x27;mc-option&#x27;;
+    btn.textContent = q.options[origIdx];
+    btn.onclick = () =&gt; gAnswer(newIdx, newCorrect, q.explain, q.options[q.answer]);
+    opts.appendChild(btn);
+  });
+
+  gMeta();
+}
+function gMeta() {
+  document.getElementById(&#x27;g-score&#x27;).textContent = `Score: ${gScore} / ${gTotal}`;
+  document.getElementById(&#x27;g-counter&#x27;).textContent = `Q ${Math.min(gIdx+1, gQueue.length)} of ${gQueue.length}`;
+  document.getElementById(&#x27;g-prog&#x27;).style.width = (gIdx/gQueue.length*100).toFixed(0)+&#x27;%&#x27;;
+}
+function gAnswer(chosen, correct, explain, correctText) {
+  const ok = chosen === correct;
+  gTotal++; if (ok) gScore++;
+  gMeta();
+  document.querySelectorAll(&#x27;.mc-option&#x27;).forEach((btn, i) =&gt; {
+    btn.classList.add(&#x27;disabled&#x27;);
+    if (i === correct) btn.classList.add(&#x27;correct&#x27;);
+    else if (i === chosen &amp;&amp; !ok) btn.classList.add(&#x27;wrong&#x27;);
+  });
+  document.getElementById(&#x27;g-feedback&#x27;).innerHTML = ok
+    ? `&lt;div class=&quot;feedback-box feedback-correct&quot;&gt;Correct! ${explain}&lt;/div&gt;`
+    : `&lt;div class=&quot;feedback-box feedback-wrong&quot;&gt;The answer is &lt;strong&gt;${correctText}&lt;/strong&gt;. ${explain}&lt;/div&gt;`;
+  document.getElementById(&#x27;g-next-row&#x27;).style.display = &#x27;flex&#x27;;
+  gIdx++;
+}
+function gNext() { gShow(); }
+
+// ─────────────────────────────────────────────
+// INIT ALL
+// ─────────────────────────────────────────────
+vInit(); cInit(); pInit(); gInit();
+&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+`;
+
+function setStatus(msg) {
+  document.getElementById("status").textContent = msg;
+}
+
+function showApp() {
   document.getElementById("login").style.display = "none";
   document.getElementById("app").style.display = "block";
   loadLessonButtons();
 }
 
-function showLogin(){
+function showLogin() {
   document.getElementById("login").style.display = "block";
   document.getElementById("app").style.display = "none";
 }
 
-async function testConnection(){
+async function testConnection() {
   setStatus("Testing Supabase connection...");
-  try{
+  try {
     const { error } = await client.auth.getSession();
-    if(error){setStatus("Connection error: " + error.message);return;}
+    if (error) {
+      setStatus("Connection error: " + error.message);
+      return;
+    }
     setStatus("Connection OK. Now try Create account or Login.");
-  }catch(err){
+  } catch (err) {
     setStatus("JavaScript/network error: " + err.message);
   }
 }
 
-async function signup(){
+async function signup() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  if(!email || !password){setStatus("Enter email and password first.");return;}
+
+  if (!email || !password) {
+    setStatus("Enter email and password first.");
+    return;
+  }
+
   setStatus("Creating account...");
-  try{
+
+  try {
     const { error } = await client.auth.signUp({ email, password });
-    if(error){setStatus("Sign-up error: " + error.message);return;}
+    if (error) {
+      setStatus("Sign-up error: " + error.message);
+      return;
+    }
     setStatus("Account created. Now click Login. If it says email not confirmed, turn off email confirmation in Supabase for testing.");
-  }catch(err){
+  } catch (err) {
     setStatus("JavaScript/network error: " + err.message);
   }
 }
 
-async function login(){
+async function login() {
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  if(!email || !password){setStatus("Enter email and password first.");return;}
+
+  if (!email || !password) {
+    setStatus("Enter email and password first.");
+    return;
+  }
+
   setStatus("Logging in...");
-  try{
+
+  try {
     const { error } = await client.auth.signInWithPassword({ email, password });
-    if(error){setStatus("Login error: " + error.message);return;}
+    if (error) {
+      setStatus("Login error: " + error.message);
+      return;
+    }
     setStatus("");
     showApp();
-  }catch(err){
+  } catch (err) {
     setStatus("JavaScript/network error: " + err.message);
   }
 }
 
-async function logout(){
+async function logout() {
   await client.auth.signOut();
   showLogin();
 }
 
-async function checkSession(){
-  try{
+async function checkSession() {
+  try {
     const { data } = await client.auth.getSession();
-    if(data && data.session){showApp();}
-  }catch(err){
+    if (data && data.session) {
+      showApp();
+    }
+  } catch (err) {
     setStatus("Session check error: " + err.message);
   }
 }
 
-function loadLessonButtons(){
+function loadLessonButtons() {
   let html = "";
-  for(let i=1;i<=12;i++){
+  for (let i = 1; i <= 12; i++) {
     html += `<button class="lesson-btn" onclick="loadLesson(${i})">Lesson ${i}</button>`;
   }
   document.getElementById("lessons").innerHTML = html;
 }
 
-function loadLesson(num){
-  document.getElementById("content").innerHTML =
-    `<h2>Lesson ${num}</h2><p>Lesson ${num} loads here. Next step is plugging the real quiz data into this master app.</p>`;
+function showMenu() {
+  document.getElementById("lesson-frame").style.display = "none";
+  document.getElementById("menu").style.display = "block";
+  document.getElementById("active-label").textContent = "";
+}
+
+function loadLesson(num) {
+  if (num === 1) {
+    document.getElementById("menu").style.display = "none";
+    const frame = document.getElementById("lesson-frame");
+    frame.style.display = "block";
+    frame.srcdoc = LESSON_1_HTML;
+    document.getElementById("active-label").textContent = "Lesson 1";
+  } else {
+    document.getElementById("lesson-frame").style.display = "none";
+    document.getElementById("menu").style.display = "block";
+    document.getElementById("active-label").textContent = "";
+    alert("Lesson " + num + " is not integrated yet. We’ll add it next.");
+  }
 }
 
 checkSession();
 </script>
+
 </body>
 </html>
