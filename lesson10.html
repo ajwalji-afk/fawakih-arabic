@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lesson 10 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 16px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;}
+  .tab-btn:first-child{border-radius:6px 0 0 0;}
+  .tab-btn:last-child{border-radius:0 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-arabic-sm{font-size:24px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.6;margin-bottom:0.4rem;}
+  .prompt-english{font-size:18px;font-family:'Playfair Display',serif;font-style:italic;text-align:center;color:var(--ink);margin-bottom:0.4rem;line-height:1.4;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
+  Checking login...
+</div>
+
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1</div>
+  <h1>Lesson 10</h1>
+  <div class="arabic-subtitle">الدَّرْسُ الْعَاشِرُ</div>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('verbal')">Verbal Sentence</button>
+  <button class="tab-btn" onclick="switchTab('conj')">Conjugation</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+</div>
+
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 10 vocabulary — new verbs with past tense, present tense, and verbal noun forms. Choose the correct English meaning.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the English meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-verbal" class="tab-content">
+  <div class="section-intro">The verbal sentence (الْجُمْلَةُ الْفِعْلِيَّةُ) starts with a verb. Its pillars are the <strong>فِعْلٌ</strong> (verb) and the <strong>فَاعِلٌ</strong> (doer). The <strong>مَفْعُولٌ بِهِ</strong> (direct object) is optional. Identify the correct translation or structural element.</div>
+  <div class="quiz-meta"><span id="vs-counter">Q 1 of 20</span><span id="vs-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="vs-prog" style="width:0%"></div></div>
+  <div class="question-card" id="vs-card">
+    <div class="prompt-arabic-sm" id="vs-prompt"></div>
+    <div class="prompt-sub" id="vs-sub">→ choose the correct answer</div>
+    <div id="vs-feedback"></div>
+    <div class="mc-options" id="vs-options"></div>
+    <div class="btn-row" id="vs-next-row" style="display:none"><button class="btn btn-primary" onclick="vsNext()">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-conj" class="tab-content">
+  <div class="section-intro">Comprehensive verb review — past, present, and command forms. Choose the correct English translation.</div>
+  <div class="quiz-meta"><span id="cj-counter">Q 1 of ?</span><span id="cj-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="cj-prog" style="width:0%"></div></div>
+  <div class="question-card" id="cj-card">
+    <div class="prompt-arabic" id="cj-prompt"></div>
+    <div class="prompt-sub">→ choose the correct translation</div>
+    <div id="cj-feedback"></div>
+    <div class="mc-options" id="cj-options"></div>
+    <div class="btn-row" id="cj-next-row" style="display:none"><button class="btn btn-primary" onclick="cjNext()">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro">Theory questions on Lesson 10 concepts: verbal sentence structure, the فَاعِلٌ and مَفْعُولٌ بِهِ, object pronouns, nūn of shielding, and Sūrat al-Ikhlāṣ + Sūrat al-Falaq text analysis.</div>
+  <div class="quiz-meta"><span id="g-counter">Q 1 of 40</span><span id="g-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-english" id="g-prompt"></div>
+    <div class="prompt-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none"><button class="btn btn-primary" onclick="gNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['vocab','verbal','conj','grammar'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function buildMC(id,opts,ci,cb){
+  const c=document.getElementById(id);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>cb(i,ci);c.appendChild(b);});
+}
+function lockMC(id,chosen,ci){
+  document.querySelectorAll(`#${id} .mc-option`).forEach((b,i)=>{b.classList.add('disabled');if(i===ci)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneScreen(cardId,progId,cntId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(cntId).textContent='Done!';
+}
+
+// VOCABULARY
+const vocabData=[
+  {ar:"قَالَ",en:"he said"},
+  {ar:"يَقُولُ",en:"he says"},
+  {ar:"قَوْلٌ",en:"saying (verbal noun)"},
+  {ar:"بَعَثَ",en:"he sent"},
+  {ar:"يَبْعَثُ",en:"he sends"},
+  {ar:"نَعْثٌ",en:"sending (verbal noun)"},
+  {ar:"جَاءَ",en:"he came (irregular)"},
+  {ar:"يَجِيءُ",en:"he comes"},
+  {ar:"مَجِيءٌ",en:"coming (verbal noun)"},
+  {ar:"فَعَلَ",en:"he did"},
+  {ar:"يَفْعَلُ",en:"he does"},
+  {ar:"فِعْلٌ",en:"action / doing (verbal noun)"},
+  {ar:"رَفَعَ",en:"he raised"},
+  {ar:"يَرْفَعُ",en:"he raises"},
+  {ar:"رَفْعٌ",en:"raising (verbal noun)"},
+  {ar:"سَأَلَ",en:"he asked"},
+  {ar:"يَسْأَلُ",en:"he asks"},
+  {ar:"سُؤَالٌ",en:"asking / question (verbal noun)"},
+  {ar:"ظَلَمَ",en:"he oppressed"},
+  {ar:"يَظْلِمُ",en:"he oppresses"},
+  {ar:"ظُلْمٌ",en:"oppression (verbal noun)"},
+  {ar:"عَبَدَ",en:"he worshipped"},
+  {ar:"يَعْبُدُ",en:"he worships"},
+  {ar:"عِبَادَةٌ",en:"worship (verbal noun)"},
+  {ar:"عَمِلَ",en:"he worked / he acted"},
+  {ar:"يَعْمَلُ",en:"he works / he acts"},
+  {ar:"عَمَلٌ",en:"work / action (verbal noun)"},
+  // Text analysis vocab
+  {ar:"قُلْ",en:"say! (command)"},
+  {ar:"أَحَدٌ",en:"one (unique, no possibility of a second)"},
+  {ar:"الصَّمَدُ",en:"the Eternal (al-Ṣamad)"},
+  {ar:"فَلَقٌ",en:"daybreak / splitting"},
+  {ar:"نَفَثَ",en:"he blew (into knots)"},
+  {ar:"عُقْدَةٌ",en:"knot"},
+  {ar:"حَاسِدٌ",en:"envier"},
+  {ar:"غَاسِقٌ",en:"darkness (of night)"},
+  {ar:"وَقَبَ",en:"it sank / it became still (of night)"},
+  {ar:"خَلَقَ",en:"he created"},
+];
+let vQ,vIdx,vScore,vTotal;
+function vInit(){vQ=srsDueQueue("vocab", vocabData, (d,i)=>srsCardId(d,i));vIdx=0;vScore=0;vTotal=0;if(vQ.length===0){srsNoDue('v-card','v-prog','v-counter','vInit');return;}vShow();}
+function vShow(){
+  if(vIdx>=vQ.length){doneScreen('v-card','v-prog','v-counter',vScore,vTotal,'vInit');return;}
+  const q=vQ[vIdx];
+  document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';
+  document.getElementById('v-next-row').style.display='none';
+  const dist=shuffle(vocabData.map(d=>d.en).filter(a=>a!==q.en)).slice(0,3);
+  const opts=shuffle([q.en,...dist]);const ci=opts.indexOf(q.en);
+  buildMC('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("vocab", vQ[vIdx]._srsId, ok);vTotal++;if(ok)vScore++;vMeta();lockMC('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vIdx++;
+  });vMeta();
+}
+function vMeta(){document.getElementById('v-score').textContent=`Score: ${vScore} / ${vTotal}`;document.getElementById('v-counter').textContent=`Q ${Math.min(vIdx+1,vQ.length)} of ${vQ.length}`;document.getElementById('v-prog').style.width=(vIdx/vQ.length*100).toFixed(0)+'%';}
+function vNext(){vShow();}
+
+// VERBAL SENTENCE
+const vsData=[
+  {prompt:"بَعَثَ اللهُ رَسُولًا",question:"Translate:",answer:"Allah sent a messenger.",wrong:["A messenger sent Allah.","Allah is a messenger.","They sent Allah a messenger."],explain:"فِعْل = بَعَثَ; فَاعِل = اللهُ (raf'); مَفْعُولٌ بِهِ = رَسُولًا (naṣb indefinite). 'Allah sent a messenger.'"},
+  {prompt:"بَعَثَ اللهُ رَسُولًا",question:"What is the فَاعِلٌ (doer/subject)?",answer:"اللهُ",wrong:["بَعَثَ","رَسُولًا","the whole sentence"],explain:"اللهُ is the فَاعِلٌ — it is in the nominative (raf') state, marked by ḍamma."},
+  {prompt:"بَعَثَ اللهُ رَسُولًا",question:"What is the مَفْعُولٌ بِهِ (direct object)?",answer:"رَسُولًا",wrong:["اللهُ","بَعَثَ","No direct object"],explain:"رَسُولًا is the مَفْعُولٌ بِهِ — it is in the accusative (naṣb) state, marked by tanwīn fatḥa (ً)."},
+  {prompt:"يَعْبُدُونَ اللهَ",question:"Translate:",answer:"They worship Allah.",wrong:["Allah worships them.","He worships Allah.","They worshipped Allah."],explain:"يَعْبُدُونَ = they worship (3rd person plural present); اللهَ = direct object (naṣb, fatḥa on لله)."},
+  {prompt:"قُلْ: ظَلَمْتُ نَفْسِي",question:"Translate:",answer:"Say: I oppressed myself.",wrong:["Say: You oppressed me.","I said: You oppressed yourself.","Say: She oppressed herself."],explain:"قُلْ = command; ظَلَمْتُ = I oppressed; نَفْسِي = myself (naṣb with attached pronoun)."},
+  {prompt:"رَفَعَ رَبُّنَا السَّمَاءَ فَوْقَ الأَرْضِ",question:"Translate:",answer:"Our Lord raised the sky above the earth.",wrong:["The sky raised our Lord above the earth.","Our Lord is above the sky and earth.","The earth raised the sky above our Lord."],explain:"رَفَعَ = verbal sentence; رَبُّنَا = subject (raf'); السَّمَاءَ = direct object (naṣb); فَوْقَ الأَرْضِ = prepositional phrase."},
+  {prompt:"سَأَلْتُهُمْ سُؤَالًا عَظِيمًا",question:"Translate:",answer:"I asked them a great question.",wrong:["They asked me a great question.","He asked them a great question.","I asked a great questioner."],explain:"سَأَلْتُ = I asked; ـهُمْ = them (direct object pronoun attached to verb); سُؤَالًا عَظِيمًا = a great question (cognate accusative)."},
+  {prompt:"What is the Arabic term for the 'doer' in a verbal sentence?",question:"Choose:",answer:"فَاعِلٌ",wrong:["مَفْعُولٌ بِهِ","مُبْتَدَأٌ","خَبَرٌ"],explain:"فَاعِلٌ is the doer/subject of a verbal sentence — always in the nominative (raf') state."},
+  {prompt:"What is the Arabic term for the 'direct object'?",question:"Choose:",answer:"مَفْعُولٌ بِهِ",wrong:["فَاعِلٌ","مُبْتَدَأٌ","مُضَافٌ"],explain:"مَفْعُولٌ بِهِ is the direct object — always in the accusative (naṣb) state."},
+  {prompt:"The فَاعِلٌ is always in which case?",question:"Choose:",answer:"Nominative (raf') — مَرْفُوعٌ",wrong:["Accusative (naṣb) — مَنْصُوبٌ","Genitive (jarr) — مَجْرُورٌ","It depends on the verb"],explain:"The فَاعِلٌ is always مَرْفُوعٌ (nominative). This is how you identify it — look for a noun in raf' state after the verb."},
+  {prompt:"The مَفْعُولٌ بِهِ is always in which case?",question:"Choose:",answer:"Accusative (naṣb) — مَنْصُوبٌ",wrong:["Nominative (raf') — مَرْفُوعٌ","Genitive (jarr) — مَجْرُورٌ","It matches the verb"],explain:"The مَفْعُولٌ بِهِ is always مَنْصُوبٌ (accusative). This is how you distinguish it from the فَاعِلٌ."},
+  {prompt:"كَتَبَ الرَّجُلُ الْكِتَابَ",question:"Translate:",answer:"The man wrote the book.",wrong:["The book wrote the man.","A man wrote a book.","The man is writing the book."],explain:"كَتَبَ = he wrote (فِعْل); الرَّجُلُ = the man (فَاعِلٌ, raf'); الْكِتَابَ = the book (مَفْعُولٌ بِهِ, naṣb with fatḥa)."},
+  {prompt:"سَأَلَهُ",question:"Translate:",answer:"He asked him.",wrong:["He asked her.","They asked him.","He asked them."],explain:"سَأَلَ = he asked; ـهُ = him (direct object pronoun attached to verb). 'He asked him.'"},
+  {prompt:"كَتَبَتْهَا",question:"Translate (context: a letter):",answer:"She wrote it.",wrong:["He wrote it.","She wrote her.","They wrote it."],explain:"كَتَبَتْ = she wrote; ـهَا = it/her (referring to رِسَالَة the letter). 'She wrote it.'"},
+  {prompt:"When attaching the pronoun ـي (me) to a verb, what is added?",question:"Choose:",answer:"A نُون (nūn of shielding) between verb and pronoun",wrong:["An alif between verb and pronoun","Nothing — attach directly","A tā' between verb and pronoun"],explain:"سَأَلَ + ي → سَأَلَنِي (he asked me). The نُون الْوِقَايَةِ protects the verb from the kasra of ـي."},
+  {prompt:"سَأَلَنِي",question:"Translate:",answer:"He asked me.",wrong:["He asked himself.","I asked him.","He asked you."],explain:"سَأَلَ + نُونُ الْوِقَايَة + ـي = سَأَلَنِي. 'He asked me.'"},
+  {prompt:"Can a verbal sentence have no مَفْعُولٌ بِهِ?",question:"Choose:",answer:"Yes — not every verb requires a direct object",wrong:["No — every verbal sentence needs a direct object","Only in the past tense","Only with certain verbs"],explain:"Intransitive verbs like جَلَسَ (he sat) have no direct object. The مَفْعُولٌ بِهِ is optional."},
+  {prompt:"ذَكَرُوا اللهَ",question:"Translate: (3:135)",answer:"They remembered Allah.",wrong:["Allah remembered them.","He remembered Allah.","They worshipped Allah."],explain:"ذَكَرُوا = they remembered (3rd person m plural past); اللهَ = direct object (naṣb). 'They remembered Allah.' (Qur'ān 3:135)"},
+  {prompt:"ضَرَبَ اللهُ مَثَلًا",question:"Translate: (14:24)",answer:"Allah struck/gave an example.",wrong:["The example struck Allah.","Allah was given an example.","Allah struck hard."],explain:"ضَرَبَ اللهُ مَثَلًا = 'Allah struck an example' — this is an idiomatic expression meaning 'Allah gave a parable/example.' (Qur'ān 14:24)"},
+  {prompt:"What is the key difference between a nominal sentence and a verbal sentence?",question:"Choose:",answer:"Nominal sentence begins with a noun; verbal sentence begins with a verb",wrong:["Nominal sentence has no verb; verbal sentence has no noun","They are the same — just different names","Nominal sentence is always in the present; verbal in the past"],explain:"الْجُمْلَةُ الاِسْمِيَّةُ begins with a noun (مُبْتَدَأٌ + خَبَرٌ); الْجُمْلَةُ الْفِعْلِيَّةُ begins with a verb (فِعْلٌ + فَاعِلٌ)."},
+];
+let vsQ,vsIdx,vsScore,vsTotal;
+function vsInit(){vsQ=srsDueQueue("vs", vsData, (d,i)=>srsCardId(d,i));vsIdx=0;vsScore=0;vsTotal=0;if(vsQ.length===0){srsNoDue('vs-card','vs-prog','vs-counter','vsInit');return;}vsShow();}
+function vsShow(){
+  if(vsIdx>=vsQ.length){doneScreen('vs-card','vs-prog','vs-counter',vsScore,vsTotal,'vsInit');return;}
+  const q=vsQ[vsIdx];
+  document.getElementById('vs-prompt').textContent=q.prompt;
+  document.getElementById('vs-sub').textContent=q.question;
+  document.getElementById('vs-feedback').innerHTML='';
+  document.getElementById('vs-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildMC('vs-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("vs", vsQ[vsIdx]._srsId, ok);vsTotal++;if(ok)vsScore++;vsMeta();lockMC('vs-options',chosen,correct);
+    document.getElementById('vs-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('vs-next-row').style.display='flex';vsIdx++;
+  });vsMeta();
+}
+function vsMeta(){document.getElementById('vs-score').textContent=`Score: ${vsScore} / ${vsTotal}`;document.getElementById('vs-counter').textContent=`Q ${Math.min(vsIdx+1,vsQ.length)} of ${vsQ.length}`;document.getElementById('vs-prog').style.width=(vsIdx/vsQ.length*100).toFixed(0)+'%';}
+function vsNext(){vsShow();}
+
+// CONJUGATION
+const conjData=[
+  {arabic:"قَالَ",translation:"he said",verb:"قَالَ",type:"past"},
+  {arabic:"يَقُولُ",translation:"he says",verb:"قَالَ",type:"present"},
+  {arabic:"قُولُوا",translation:"say! (3+)",verb:"قَالَ",type:"command"},
+  {arabic:"بَعَثَ",translation:"he sent",verb:"بَعَثَ",type:"past"},
+  {arabic:"يَبْعَثُ",translation:"he sends",verb:"بَعَثَ",type:"present"},
+  {arabic:"ابْعَثْ",translation:"send! (m)",verb:"بَعَثَ",type:"command"},
+  {arabic:"رَفَعَ",translation:"he raised",verb:"رَفَعَ",type:"past"},
+  {arabic:"يَرْفَعُ",translation:"he raises",verb:"رَفَعَ",type:"present"},
+  {arabic:"ارْفَعْ",translation:"raise! (m)",verb:"رَفَعَ",type:"command"},
+  {arabic:"سَأَلَ",translation:"he asked",verb:"سَأَلَ",type:"past"},
+  {arabic:"يَسْأَلُ",translation:"he asks",verb:"سَأَلَ",type:"present"},
+  {arabic:"اسْأَلْ",translation:"ask! (m)",verb:"سَأَلَ",type:"command"},
+  {arabic:"ظَلَمَ",translation:"he oppressed",verb:"ظَلَمَ",type:"past"},
+  {arabic:"يَظْلِمُ",translation:"he oppresses",verb:"ظَلَمَ",type:"present"},
+  {arabic:"عَبَدَ",translation:"he worshipped",verb:"عَبَدَ",type:"past"},
+  {arabic:"يَعْبُدُ",translation:"he worships",verb:"عَبَدَ",type:"present"},
+  {arabic:"اعْبُدْ",translation:"worship! (m)",verb:"عَبَدَ",type:"command"},
+  {arabic:"عَمِلَ",translation:"he worked",verb:"عَمِلَ",type:"past"},
+  {arabic:"يَعْمَلُ",translation:"he works",verb:"عَمِلَ",type:"present"},
+  {arabic:"اعْمَلْ",translation:"work! (m)",verb:"عَمِلَ",type:"command"},
+  {arabic:"فَعَلُوا",translation:"they (3+) did",verb:"فَعَلَ",type:"past"},
+  {arabic:"يَفْعَلُونَ",translation:"they (3+) do",verb:"فَعَلَ",type:"present"},
+  {arabic:"نَعَثَ اللهُ",translation:"Allah sent",verb:"بَعَثَ",type:"sentence"},
+  {arabic:"رَفَعْنَا",translation:"we raised",verb:"رَفَعَ",type:"past"},
+];
+let cjQ,cjIdx,cjScore,cjTotal;
+function cjInit(){cjQ=srsDueQueue("conj", conjData, (d,i)=>srsCardId(d,i));cjIdx=0;cjScore=0;cjTotal=0;if(cjQ.length===0){srsNoDue('cj-card','cj-prog','cj-counter','cjInit');return;}cjShow();}
+function cjShow(){
+  if(cjIdx>=cjQ.length){doneScreen('cj-card','cj-prog','cj-counter',cjScore,cjTotal,'cjInit');return;}
+  const q=cjQ[cjIdx];
+  document.getElementById('cj-prompt').textContent=q.arabic;
+  document.getElementById('cj-feedback').innerHTML='';
+  document.getElementById('cj-next-row').style.display='none';
+  const allTrans=conjData.map(f=>f.translation);
+  const dist=shuffle(allTrans.filter(t=>t!==q.translation)).slice(0,3);
+  const opts=shuffle([q.translation,...dist]);const ci=opts.indexOf(q.translation);
+  buildMC('cj-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("conj", cjQ[cjIdx]._srsId, ok);cjTotal++;if(ok)cjScore++;cjMeta();lockMC('cj-options',chosen,correct);
+    document.getElementById('cj-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! (${q.verb})</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.translation}</strong> (${q.verb})</div>`;
+    document.getElementById('cj-next-row').style.display='flex';cjIdx++;
+  });cjMeta();
+}
+function cjMeta(){document.getElementById('cj-score').textContent=`Score: ${cjScore} / ${cjTotal}`;document.getElementById('cj-counter').textContent=`Q ${Math.min(cjIdx+1,cjQ.length)} of ${cjQ.length}`;document.getElementById('cj-prog').style.width=(cjIdx/cjQ.length*100).toFixed(0)+'%';}
+function cjNext(){cjShow();}
+
+// GRAMMAR
+const grammarData=[
+  {q:"Every Arabic sentence is either a nominal sentence or a verbal sentence. What determines which type?",options:["The length of the sentence","What the sentence begins with — a noun or a verb","Whether it has a direct object","Whether it is past or present tense"],answer:1,explain:"الْجُمْلَةُ الاِسْمِيَّةُ begins with a noun; الْجُمْلَةُ الْفِعْلِيَّةُ begins with a verb. The first word determines the type."},
+  {q:"What are the two pillars of a verbal sentence?",options:["مُبْتَدَأٌ and خَبَرٌ","فِعْلٌ and فَاعِلٌ","مُضَافٌ and مُضَافٌ إِلَيْهِ","مَوْصُوفٌ and صِفَةٌ"],answer:1,explain:"The two pillars of the verbal sentence are the فِعْلٌ (verb) and the فَاعِلٌ (doer/subject). Together they make a complete sentence."},
+  {q:"The فَاعِلٌ can never appear before the verb. Why?",options:["It would make the sentence grammatically impossible","It would make the sentence a nominal sentence instead","Arabic grammar forbids this","It would change the meaning entirely"],answer:1,explain:"If a noun appears before the verb, the sentence is classified as a nominal sentence (الْجُمْلَةُ الاِسْمِيَّةُ), not a verbal sentence."},
+  {q:"If the doer is not explicitly stated in a verbal sentence, where is it?",options:["It is implied from context","It is built into the verb conjugation","It must be stated — there is no implied doer","It is always اللهُ"],answer:1,explain:"In Arabic, the doer is always present — if not explicit, it is 'built into' the verb conjugation. e.g. خَلَقَ الإِنسَانَ = 'He created mankind' — the هُوَ is inside خَلَقَ."},
+  {q:"الرَّجُلُ كَتَبَ الْكِتَابَ — what type of sentence is this?",options:["Verbal sentence — begins with verb","Nominal sentence — begins with noun","Possessive construct","Question"],answer:1,explain:"الرَّجُلُ begins the sentence → nominal sentence. الرَّجُلُ is the مُبْتَدَأٌ; كَتَبَ الْكِتَابَ is the خَبَرٌ (a verbal sentence acting as predicate)."},
+  {q:"كَتَبَ الرَّجُلُ الْكِتَابَ — what type of sentence is this?",options:["Nominal sentence","Verbal sentence — begins with verb كَتَبَ","Question","Command"],answer:1,explain:"كَتَبَ begins the sentence → verbal sentence. الرَّجُلُ is the فَاعِلٌ; الْكِتَابَ is the مَفْعُولٌ بِهِ."},
+  {q:"In the sentence كَتَبَ الرَّجُلُ الْكِتَابَ, how do you know الرَّجُلُ is the subject and not the object?",options:["Because it comes first","Because it ends in ـُ (raf' case)","Because it is masculine","Because it is longer"],answer:1,explain:"الرَّجُلُ ends in ḍamma (ُ) = nominative (raf') → this is the فَاعِلٌ. الْكِتَابَ ends in fatḥa (َ) = accusative (naṣb) → this is the مَفْعُولٌ بِهِ."},
+  {q:"نَعَثَ اللهُ الرَّسُولَ — the مَفْعُولٌ بِهِ is:",options:["اللهُ","نَعَثَ","الرَّسُولَ","the whole sentence"],answer:2,explain:"الرَّسُولَ ends in fatḥa (naṣb) → it is the مَفْعُولٌ بِهِ (direct object). اللهُ ends in ḍamma (raf') → it is the فَاعِلٌ."},
+  {q:"نُونُ الْوِقَايَةِ (the nūn of shielding) is added when:",options:["Attaching any pronoun to a verb","Attaching specifically the pronoun ـي (me) to a verb","Attaching ـهُ to a verb","Forming a command verb"],answer:1,explain:"The نُون is inserted only before ـي (me): سَأَلَ + ـي = سَأَلَنِي. This protects the verb from the kasra of ـي."},
+  {q:"سَأَلَنِي means:",options:["I asked him","He asked me","She asked me","I asked myself"],answer:1,explain:"سَأَلَ = he asked; ن = nūn of shielding; ـي = me. 'He asked me.'"},
+  {q:"كَتَبَتْهَا — the ـهَا refers to:",options:["A masculine person","A feminine person or thing","A plural group","Themselves"],answer:1,explain:"ـهَا = her/it (feminine singular). Attached to the verb as direct object: 'she wrote it (f).'"},
+  // Text analysis: Sūrat al-Ikhlāṣ
+  {q:"What is Sūrat al-Ikhlāṣ about?",options:["Seeking refuge from evil","The oneness and uniqueness of Allah","The day of judgment","The story of the Prophet"],answer:1,explain:"Sūrat al-Ikhlāṣ (Chapter 112) is about pure monotheism — it affirms Allah's absolute oneness, eternality, and uniqueness."},
+  {q:"قُلْ هُوَ اللهُ أَحَدٌ — what type of sentence is this?",options:["Verbal sentence","Nominal sentence — هُوَ is مُبْتَدَأٌ, اللهُ أَحَدٌ is خَبَرٌ","Command only","A question"],answer:1,explain:"هُوَ = مُبْتَدَأٌ (definite pronoun); اللهُ أَحَدٌ = predicate (with iḍāfah meaning 'Allah, [the] One'). This is a nominal sentence after the command قُلْ."},
+  {q:"اللهُ الصَّمَدُ — what does الصَّمَدُ mean?",options:["The Merciful","The Eternal / the Self-Sufficient whom all depend on","The Creator","The King"],answer:1,explain:"الصَّمَدُ = the Eternal, the Self-Sufficient — the One upon whom all creation depends, while He depends on no one."},
+  {q:"لَمْ يَلِدْ وَلَمْ يُولَدْ — what does this mean?",options:["He does not eat nor drink","He does not beget nor was He begotten","He does not sleep nor tire","He does not forgive nor punish"],answer:1,explain:"يَلِدْ = he begets (has children); يُولَدْ = he was begotten (born). 'He does not beget, nor was He begotten' — affirming Allah is not like any created being."},
+  {q:"وَلَمْ يَكُنْ لَهُ كُفُوًا أَحَدٌ — what does this mean?",options:["And no one equals or is comparable to Him","And none worships like Him","And He has no one to help Him","And no one is older than Him"],answer:0,explain:"كُفُوٌ = equal, comparable. 'And none are comparable to Him' — absolute uniqueness of Allah."},
+  // Text analysis: Sūrat al-Falaq
+  {q:"What is Sūrat al-Falaq about?",options:["Pure monotheism","Seeking refuge with the Lord of Daybreak from various evils","The night prayer","The creation of the heavens"],answer:1,explain:"Sūrat al-Falaq (Chapter 113) is a supplication seeking refuge with Allah from evil — from created things, darkness, blowers into knots, and the envier."},
+  {q:"أَعُوذُ بِرَبِّ الْفَلَقِ — what does الْفَلَق mean?",options:["The darkness","The daybreak / splitting (of dawn)","The night","The morning star"],answer:1,explain:"الْفَلَق = daybreak, the splitting of dawn. The commentary explains it as 'the splitter of the seed, the date pit, and the morning.'"},
+  {q:"مِنْ شَرِّ النَّفَّاثَاتِ فِي الْعُقَدِ — what is being sought refuge from?",options:["The envier when he envies","The darkness of night","The blowers (female) into knots","All created things"],answer:2,explain:"النَّفَّاثَاتُ = the blowers (feminine plural, intensified form). فِي الْعُقَدِ = into the knots. This refers to those who practice magic by tying and blowing into knots."},
+  {q:"مِنْ شَرِّ حَاسِدٍ إِذَا حَسَدَ — what is being sought refuge from?",options:["From the evil of the darkness","From the evil of what He created","From the evil of the blowers","From the evil of the envier when he envies"],answer:3,explain:"حَاسِدٌ = envier; حَسَدَ = he envied. 'From the evil of the envier when he envies' — the conditional إِذَا specifies when the envy becomes harmful."},
+  {q:"Sūrat al-Ikhlāṣ and Sūrat al-Falaq together with Sūrat al-Nās are known as:",options:["الْمُعَوِّذَتَانِ (the two refuge sūras = Falaq and Nās)", "الْمُسَبِّحَات","الْحَوَامِيم","الطِّوَال"],answer:0,explain:"الْمُعَوِّذَتَانِ = Sūrat al-Falaq + Sūrat al-Nās (both begin with أَعُوذُ). All three together are called الْمُعَوِّذَات."},
+];
+let gQ,gIdx,gScore,gTotal;
+function gInit(){gQ=srsDueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i)=>srsCardId(d,i));gIdx=0;gScore=0;gTotal=0;if(gQ.length===0){srsNoDue('g-card','g-prog','g-counter','gInit');return;}gShow();}
+function gShow(){
+  if(gIdx>=gQ.length){doneScreen('g-card','g-prog','g-counter',gScore,gTotal,'gInit');return;}
+  const q=gQ[gIdx];
+  document.getElementById('g-prompt').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';
+  document.getElementById('g-next-row').style.display='none';
+  const indices=[0,1,2,3];shuffle(indices);const nc=indices.indexOf(q.answer);
+  const opts=document.getElementById('g-options');opts.innerHTML='';
+  indices.forEach((oi,ni)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=q.options[oi];b.onclick=()=>gAnswer(ni,nc,q.explain,q.options[q.answer]);opts.appendChild(b);});
+  gMeta();
+}
+function gMeta(){document.getElementById('g-score').textContent=`Score: ${gScore} / ${gTotal}`;document.getElementById('g-counter').textContent=`Q ${Math.min(gIdx+1,gQ.length)} of ${gQ.length}`;document.getElementById('g-prog').style.width=(gIdx/gQ.length*100).toFixed(0)+'%';}
+function gAnswer(chosen,correct,explain,correctText){
+  const ok=chosen===correct;srsRecord("grammar", gQ[gIdx]._srsId, ok);gTotal++;if(ok)gScore++;gMeta();
+  document.querySelectorAll('#g-options .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen&&!ok)b.classList.add('wrong');});
+  document.getElementById('g-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${correctText}</strong>. ${explain}</div>`;
+  document.getElementById('g-next-row').style.display='flex';gIdx++;
+}
+function gNext(){gShow();}
+async function bootLesson() {
+  const ok = await requireLogin();
+  if (!ok) return;
+  vInit(); vsInit(); cjInit(); gInit();
+}
+bootLesson();
+</script>
+</body>
+</html>

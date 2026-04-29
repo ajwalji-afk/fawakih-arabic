@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lesson 7 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 16px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;}
+  .tab-btn:first-child{border-radius:6px 0 0 0;}
+  .tab-btn:last-child{border-radius:0 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-english{font-size:19px;font-family:'Playfair Display',serif;font-style:italic;text-align:center;color:var(--ink);margin-bottom:0.4rem;line-height:1.4;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
+  Checking login...
+</div>
+
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1</div>
+  <h1>Lesson 7</h1>
+  <div class="arabic-subtitle">الدَّرْسُ السَّابِعُ</div>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('pointing')">Pointing Nouns</button>
+  <button class="tab-btn" onclick="switchTab('conj')">Conjugation</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+</div>
+
+<!-- TAB 1: VOCABULARY -->
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 7 vocabulary — question words, answering words, and text analysis words from the post-prayer supplications. Choose the correct English meaning.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the English meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 2: POINTING NOUNS -->
+<div id="tab-pointing" class="tab-content">
+  <div class="section-intro">Pointing nouns (أَسْمَاءُ الإِشَارَة) — this, that, these, those. You'll see an Arabic pointing word or a sentence with one — choose the correct translation or identify whether it's a sentence or phrase.</div>
+  <div class="quiz-meta"><span id="pt-counter">Q 1 of 20</span><span id="pt-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="pt-prog" style="width:0%"></div></div>
+  <div class="question-card" id="pt-card">
+    <div class="prompt-arabic" id="pt-prompt"></div>
+    <div class="prompt-sub" id="pt-sub">→ choose the correct answer</div>
+    <div id="pt-feedback"></div>
+    <div class="mc-options" id="pt-options"></div>
+    <div class="btn-row" id="pt-next-row" style="display:none"><button class="btn btn-primary" onclick="ptNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 3: CONJUGATION -->
+<div id="tab-conj" class="tab-content">
+  <div class="section-intro"><strong>Complete present tense</strong> — all persons (3rd, 2nd, 1st). Choose the correct English translation for each Arabic verb form shown.</div>
+  <div class="quiz-meta"><span id="cj-counter">Q 1 of ?</span><span id="cj-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="cj-prog" style="width:0%"></div></div>
+  <div class="question-card" id="cj-card">
+    <div class="prompt-arabic" id="cj-prompt"></div>
+    <div class="prompt-sub">→ choose the correct translation</div>
+    <div id="cj-feedback"></div>
+    <div class="mc-options" id="cj-options"></div>
+    <div class="btn-row" id="cj-next-row" style="display:none"><button class="btn btn-primary" onclick="cjNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 4: GRAMMAR -->
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro">Theory questions on Lesson 7 concepts: question words, pointing nouns (phrase vs sentence, near vs far), 1st person present tense, and the post-prayer supplication text analysis.</div>
+  <div class="quiz-meta"><span id="g-counter">Q 1 of 40</span><span id="g-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-english" id="g-prompt"></div>
+    <div class="prompt-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none"><button class="btn btn-primary" onclick="gNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['vocab','pointing','conj','grammar'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function buildMC(id,opts,ci,cb){
+  const c=document.getElementById(id);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>cb(i,ci);c.appendChild(b);});
+}
+function lockMC(id,chosen,ci){
+  document.querySelectorAll(`#${id} .mc-option`).forEach((b,i)=>{b.classList.add('disabled');if(i===ci)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneScreen(cardId,progId,cntId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(cntId).textContent='Done!';
+}
+
+// ── VOCABULARY ──
+const vocabData=[
+  {ar:"مَنْ",en:"who?"},
+  {ar:"مَا / مَاذَا",en:"what?"},
+  {ar:"أَيُّ",en:"which?"},
+  {ar:"كَمْ",en:"how many? / how much?"},
+  {ar:"كَيْفَ",en:"how?"},
+  {ar:"لِمَاذَا",en:"why?"},
+  {ar:"أَيْنَ",en:"where?"},
+  {ar:"مَتَى",en:"when?"},
+  {ar:"بَلَى",en:"yes (in response to a negative question)"},
+  {ar:"نَعَمْ",en:"yes"},
+  {ar:"لَا",en:"no"},
+  {ar:"ذُو / ذِي / ذَا",en:"possessor (of)"},
+  {ar:"جَلَالٌ",en:"sublimity / glory / majesty"},
+  {ar:"إِكْرَامٌ",en:"honor / respect / nobility"},
+  {ar:"يُسْتَحَبُّ",en:"it is recommended"},
+  {ar:"مَنَعَ",en:"he prevented"},
+  {ar:"أَعْطَى",en:"he gave"},
+  {ar:"أَعِنِّي",en:"assist me / help me"},
+  {ar:"ذِكْرٌ",en:"remembrance / dhikr"},
+  {ar:"شُكْرٌ",en:"thanks / gratitude"},
+  {ar:"عِبَادَةٌ",en:"worship"},
+  {ar:"السَّلَامُ",en:"Peace (as a name/attribute of Allah)"},
+];
+let vQ,vIdx,vScore,vTotal;
+function vInit(){vQ=srsDueQueue("vocab", vocabData, (d,i)=>srsCardId(d,i));vIdx=0;vScore=0;vTotal=0;if(vQ.length===0){srsNoDue('v-card','v-prog','v-counter','vInit');return;}vShow();}
+function vShow(){
+  if(vIdx>=vQ.length){doneScreen('v-card','v-prog','v-counter',vScore,vTotal,'vInit');return;}
+  const q=vQ[vIdx];
+  document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';
+  document.getElementById('v-next-row').style.display='none';
+  const dist=shuffle(vocabData.map(d=>d.en).filter(a=>a!==q.en)).slice(0,3);
+  const opts=shuffle([q.en,...dist]);const ci=opts.indexOf(q.en);
+  buildMC('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("vocab", vQ[vIdx]._srsId, ok);vTotal++;if(ok)vScore++;vMeta();lockMC('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vIdx++;
+  });vMeta();
+}
+function vMeta(){document.getElementById('v-score').textContent=`Score: ${vScore} / ${vTotal}`;document.getElementById('v-counter').textContent=`Q ${Math.min(vIdx+1,vQ.length)} of ${vQ.length}`;document.getElementById('v-prog').style.width=(vIdx/vQ.length*100).toFixed(0)+'%';}
+function vNext(){vShow();}
+
+// ── POINTING NOUNS ──
+const pointingData=[
+  {prompt:"هَذَا",question:"Translate:",answer:"this (m, singular, near)",wrong:["that (m, singular, far)","this (f, singular, near)","these (plural, near)"],explain:"هَذَا = this (masculine singular, near)."},
+  {prompt:"هَذِهِ",question:"Translate:",answer:"this (f, singular, near)",wrong:["that (f, singular, far)","this (m, singular, near)","those (plural, far)"],explain:"هَذِهِ = this (feminine singular, near)."},
+  {prompt:"ذَلِكَ",question:"Translate:",answer:"that (m, singular, far)",wrong:["this (m, singular, near)","that (f, singular, far)","those (plural, far)"],explain:"ذَلِكَ = that (masculine singular, far)."},
+  {prompt:"تِلْكَ",question:"Translate:",answer:"that (f, singular, far)",wrong:["this (f, singular, near)","that (m, singular, far)","these (plural, near)"],explain:"تِلْكَ = that (feminine singular, far)."},
+  {prompt:"هَؤُلَاءِ",question:"Translate:",answer:"these (plural, near)",wrong:["those (plural, far)","this (m, near)","these two (dual)"],explain:"هَؤُلَاءِ = these (plural, near) — used for both masculine and feminine plurals."},
+  {prompt:"أُولَئِكَ",question:"Translate:",answer:"those (plural, far)",wrong:["these (plural, near)","that (m, far)","those two (dual, far)"],explain:"أُولَئِكَ = those (plural, far) — written أُولَٰحِكَ in the Qur'ān."},
+  {prompt:"هَذِهِ جَنَّةٌ كَبِيرَةٌ",question:"Is this a sentence or a phrase?",answer:"Sentence — 'This is a large garden.'",wrong:["Phrase — 'this large garden'","Question — 'Is this a large garden?'","Neither"],explain:"The pointing word is the مُبْتَدَأٌ; جَنَّةٌ كَبِيرَةٌ is the indefinite خَبَرٌ → nominal sentence."},
+  {prompt:"هَذَا الْكِتَابُ",question:"Is this a sentence or a phrase?",answer:"Phrase — 'this book'",wrong:["Sentence — 'This is a book.'","Question — 'Is this the book?'","Neither"],explain:"The pointing word is used as an identifier before a definite noun → phrase, not a sentence."},
+  {prompt:"تِلْكَ أُمَّةٌ قَدْ خَلَتْ",question:"Translate:",answer:"That is a nation which has passed.",wrong:["This is a nation which has passed.","Those are nations which have passed.","That nation has passed."],explain:"تِلْكَ = that (f), أُمَّةٌ = nation (f) — nominal sentence: 'That is a nation which has passed.' (2:141)"},
+  {prompt:"هَؤُلَاءِ أَوْلَادٌ صَالِحُونَ",question:"Translate:",answer:"These are pious children.",wrong:["Those are pious children.","These pious children...","The pious children are here."],explain:"هَؤُلَاءِ = these (near plural), أَوْلَادٌ صَالِحُونَ = indefinite predicate → 'These are pious children.'"},
+  {prompt:"مَنْ تِلْكَ الْمَرْأَةُ؟",question:"Translate:",answer:"Who is that woman?",wrong:["Who is this woman?","That woman...","Is that a woman?"],explain:"مَنْ = who?, تِلْكَ الْمَرْأَةُ = that woman (identifier phrase) → 'Who is that woman?'"},
+  {prompt:"ذَلِكَ الْكِتَابُ",question:"In Qur'ān 2:2, ذَلِكَ الْكِتَابُ uses 'that' (far) to refer to the Qur'ān. Why?",answer:"To elevate the status of the Qur'ān — 'THAT Book'",wrong:["Because the Qur'ān is far away","It is a grammatical error","Because ذَلِكَ means 'this' in some dialects"],explain:"Classical scholars say ذَلِكَ elevates the Book's status — 'THAT Book' implies it is beyond ordinary reach or comparison."},
+  {prompt:"هَذَا الْيَوْمُ",question:"Is this a sentence or a phrase?",answer:"Phrase — 'this day'",wrong:["Sentence — 'This is the day.'","Question","Neither"],explain:"Pointing word + definite noun = phrase (identifier), not a sentence."},
+  {prompt:"هَؤُلَاءِ مُلُوكٌ",question:"Is this a sentence or a phrase?",answer:"Sentence — 'These are kings.'",wrong:["Phrase — 'these kings'","Question","Neither"],explain:"هَؤُلَاءِ + indefinite noun = nominal sentence: 'These are kings.'"},
+  {prompt:"What is the plural near pointing word?",question:"Choose the correct Arabic:",answer:"هَؤُلَاءِ",wrong:["هَذَا","هَذِهِ","أُولَئِكَ"],explain:"هَؤُلَاءِ = these (plural, near). The و in أُولَئِكَ is silent."},
+  {prompt:"What is the singular far pointing word for masculine?",question:"Choose the correct Arabic:",answer:"ذَلِكَ",wrong:["تِلْكَ","هَذَا","هَذِهِ"],explain:"ذَلِكَ = that (masculine singular, far). The alif above it is usually not written but must be pronounced."},
+  {prompt:"تِلْكَ رِيَاحٌ عَظِيمَةٌ",question:"Translate:",answer:"Those are formidable winds.",wrong:["These formidable winds...","That formidable wind...","Those formidable winds..."],explain:"تِلْكَ + indefinite predicate = nominal sentence. رِيَاحٌ is a non-human plural → feminine singular adjective عَظِيمَةٌ."},
+  {prompt:"هَذَانِ",question:"What does هَذَانِ mean?",answer:"these two (masculine dual, near)",wrong:["these (plural, near)","that (masculine singular)","those two (dual, far)"],explain:"هَذَانِ is the masculine dual pointing word for near — 'these two.' Found in Qur'ān 20:63 and 22:19."},
+  {prompt:"أُقْرَأُ مِنْ هَذَا الْكِتَابِ",question:"Translate:",answer:"I recite from this book.",wrong:["I recite from that book.","Recite from this book!","This book is for reciting."],explain:"هَذَا الْكِتَابِ = identifier phrase (this book) used in genitive after مِنْ."},
+  {prompt:"مَا هَذَا؟",question:"Translate:",answer:"What is this?",wrong:["What is that?","This is something.","Is this something?"],explain:"مَا = what?, هَذَا = this → 'What is this?' A question using the question word مَا."},
+];
+let ptQ,ptIdx,ptScore,ptTotal;
+function ptInit(){ptQ=srsDueQueue("pointing", pointingData, (d,i)=>srsCardId(d,i));ptIdx=0;ptScore=0;ptTotal=0;if(ptQ.length===0){srsNoDue('pt-card','pt-prog','pt-counter','ptInit');return;}ptShow();}
+function ptShow(){
+  if(ptIdx>=ptQ.length){doneScreen('pt-card','pt-prog','pt-counter',ptScore,ptTotal,'ptInit');return;}
+  const q=ptQ[ptIdx];
+  document.getElementById('pt-prompt').textContent=q.prompt;
+  document.getElementById('pt-sub').textContent=q.question;
+  document.getElementById('pt-feedback').innerHTML='';
+  document.getElementById('pt-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildMC('pt-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("pointing", ptQ[ptIdx]._srsId, ok);ptTotal++;if(ok)ptScore++;ptMeta();lockMC('pt-options',chosen,correct);
+    document.getElementById('pt-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('pt-next-row').style.display='flex';ptIdx++;
+  });ptMeta();
+}
+function ptMeta(){document.getElementById('pt-score').textContent=`Score: ${ptScore} / ${ptTotal}`;document.getElementById('pt-counter').textContent=`Q ${Math.min(ptIdx+1,ptQ.length)} of ${ptQ.length}`;document.getElementById('pt-prog').style.width=(ptIdx/ptQ.length*100).toFixed(0)+'%';}
+function ptNext(){ptShow();}
+
+// ── CONJUGATION — full present tense review ──
+const conjugations=[
+  {verb:"يَدْرُسُ",meaning:"to study",forms:[
+    {arabic:"يَدْرُسُ",translation:"he studies"},
+    {arabic:"يَدْرُسَانِ",translation:"they (2, m) study"},
+    {arabic:"يَدْرُسُونَ",translation:"they (3+, m) study"},
+    {arabic:"تَدْرُسُ",translation:"she studies"},
+    {arabic:"تَدْرُسَانِ",translation:"they (2, f) study"},
+    {arabic:"يَدْرُسْنَ",translation:"they (3+, f) study"},
+    {arabic:"تَدْرُسُ",translation:"you (m) study"},
+    {arabic:"تَدْرُسَانِ",translation:"you (2) study"},
+    {arabic:"تَدْرُسُونَ",translation:"you (3+, m) study"},
+    {arabic:"تَدْرُسِينَ",translation:"you (f) study"},
+    {arabic:"تَدْرُسْنَ",translation:"you (3+, f) study"},
+    {arabic:"أَدْرُسُ",translation:"I study"},
+    {arabic:"نَدْرُسُ",translation:"we study"},
+  ]},
+  {verb:"يَفْتَحُ",meaning:"to open",forms:[
+    {arabic:"يَفْتَحُ",translation:"he opens"},
+    {arabic:"يَفْتَحَانِ",translation:"they (2, m) open"},
+    {arabic:"يَفْتَحُونَ",translation:"they (3+, m) open"},
+    {arabic:"تَفْتَحُ",translation:"she opens"},
+    {arabic:"يَفْتَحْنَ",translation:"they (3+, f) open"},
+    {arabic:"تَفْتَحُ",translation:"you (m) open"},
+    {arabic:"تَفْتَحُونَ",translation:"you (3+, m) open"},
+    {arabic:"تَفْتَحِينَ",translation:"you (f) open"},
+    {arabic:"أَفْتَحُ",translation:"I open"},
+    {arabic:"نَفْتَحُ",translation:"we open"},
+  ]},
+  {verb:"يَضْرِبُ",meaning:"to hit",forms:[
+    {arabic:"يَضْرِبُ",translation:"he hits"},
+    {arabic:"يَضْرِبُونَ",translation:"they (3+, m) hit"},
+    {arabic:"تَضْرِبُ",translation:"she hits"},
+    {arabic:"يَضْرِبْنَ",translation:"they (3+, f) hit"},
+    {arabic:"تَضْرِبُ",translation:"you (m) hit"},
+    {arabic:"تَضْرِبُونَ",translation:"you (3+, m) hit"},
+    {arabic:"تَضْرِبِينَ",translation:"you (f) hit"},
+    {arabic:"أَضْرِبُ",translation:"I hit"},
+    {arabic:"نَضْرِبُ",translation:"we hit"},
+  ]},
+];
+const allForms=conjugations.flatMap(v=>v.forms.map(f=>({...f,verb:v.verb,meaning:v.meaning})));
+let cjQ,cjIdx,cjScore,cjTotal;
+function cjInit(){cjQ=srsDueQueue("conj", allForms, (d,i)=>srsCardId(d,i));cjIdx=0;cjScore=0;cjTotal=0;if(cjQ.length===0){srsNoDue('cj-card','cj-prog','cj-counter','cjInit');return;}cjShow();}
+function cjShow(){
+  if(cjIdx>=cjQ.length){doneScreen('cj-card','cj-prog','cj-counter',cjScore,cjTotal,'cjInit');return;}
+  const q=cjQ[cjIdx];
+  document.getElementById('cj-prompt').textContent=q.arabic;
+  document.getElementById('cj-feedback').innerHTML='';
+  document.getElementById('cj-next-row').style.display='none';
+  const dist=shuffle(allForms.map(f=>f.translation).filter(t=>t!==q.translation)).slice(0,3);
+  const opts=shuffle([q.translation,...dist]);const ci=opts.indexOf(q.translation);
+  buildMC('cj-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("conj", cjQ[cjIdx]._srsId, ok);cjTotal++;if(ok)cjScore++;cjMeta();lockMC('cj-options',chosen,correct);
+    document.getElementById('cj-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! (${q.verb} — ${q.meaning})</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.translation}</strong> (${q.verb} — ${q.meaning})</div>`;
+    document.getElementById('cj-next-row').style.display='flex';cjIdx++;
+  });cjMeta();
+}
+function cjMeta(){document.getElementById('cj-score').textContent=`Score: ${cjScore} / ${cjTotal}`;document.getElementById('cj-counter').textContent=`Q ${Math.min(cjIdx+1,cjQ.length)} of ${cjQ.length}`;document.getElementById('cj-prog').style.width=(cjIdx/cjQ.length*100).toFixed(0)+'%';}
+function cjNext(){cjShow();}
+
+// ── GRAMMAR ──
+const grammarData=[
+  // Question words
+  {q:"What is the difference between مَنْ and مِنْ?",options:["مَنْ = from; مِنْ = who?","مَنْ = who?; مِنْ = from","They mean the same thing","مَنْ = what?; مِنْ = who?"],answer:1,explain:"مَنْ (with fatḥa) = who? مِنْ (with kasra) = from. The vowel is the only difference — be careful!"},
+  {q:"What does مَاذَا mean?",options:["who?","when?","what?","where?"],answer:2,explain:"مَاذَا = what? It is an extended form of مَا, used especially before verbs: مَاذَا تَكْتُبُ؟ = What are you writing?"},
+  {q:"What does أَيْنَ mean?",options:["when?","why?","how?","where?"],answer:3,explain:"أَيْنَ = where? e.g. أَيْنَ بَيْتُكَ؟ = Where is your house?"},
+  {q:"What does مَتَى mean?",options:["how?","when?","why?","which?"],answer:1,explain:"مَتَى = when? e.g. مَتَى ذَهَبْتَ إِلَى الْمَدِينَةِ؟ = When did you go to al-Madinah?"},
+  {q:"What does لِمَاذَا mean?",options:["what?","where?","why?","how?"],answer:2,explain:"لِمَاذَا = why? e.g. لِمَاذَا لَا تَشْرَبُ الْمَاءَ؟ = Why don't you drink water?"},
+  {q:"What does كَيْفَ mean?",options:["how many?","which?","where?","how?"],answer:3,explain:"كَيْفَ = how? e.g. كَيْفَ حَالُكَ؟ = How are you?"},
+  {q:"What does بَلَى mean, and when is it used?",options:["Yes — in response to any question","No — a strong denial","Yes — specifically in response to a NEGATIVE question","Maybe"],answer:2,explain:"بَلَى = yes, but only in response to a negative question. أَلَسْتُ بِرَبِّكُمْ؟ 'Am I not your Lord?' → بَلَى 'Yes (You are)!' (7:172)"},
+  // Pointing nouns basics
+  {q:"Pointing nouns in Arabic correspond to which English words?",options:["he, she, it, they","this, that, these, those","here, there, somewhere, nowhere","a, an, the"],answer:1,explain:"أَسْمَاءُ الإِشَارَة (pointing nouns) correspond to 'this,' 'that,' 'these,' and 'those' in English."},
+  {q:"هَذَا is used for which type of noun?",options:["Feminine singular, near","Masculine singular, near","Masculine singular, far","Plural, near"],answer:1,explain:"هَذَا = this (masculine singular, near). For feminine singular near: هَذِهِ."},
+  {q:"تِلْكَ is used for which type of noun?",options:["Masculine singular, far","Feminine plural, far","Feminine singular, far","Masculine plural, far"],answer:2,explain:"تِلْكَ = that (feminine singular, far). e.g. تِلْكَ الأُمَّةُ = that nation (أُمَّةٌ is feminine)."},
+  {q:"There is only ONE plural pointing word for both near and far. What are they?",options:["هَذَا and ذَلِكَ","هَؤُلَاءِ (near) and أُولَئِكَ (far)","هَذِهِ and تِلْكَ","هَؤُلَاءِ (far) and أُولَئِكَ (near)"],answer:1,explain:"هَؤُلَاءِ = these (plural, near); أُولَئِكَ = those (plural, far). Both are used for masculine and feminine plurals."},
+  {q:"When a pointing word is used as the مُبْتَدَأٌ of a nominal sentence, what must the predicate be?",options:["Definite","Indefinite","Another pointing word","A verb"],answer:1,explain:"As in any nominal sentence, the خَبَرٌ is usually indefinite. e.g. هَذَا كِتَابٌ = 'This is a book' — كِتَابٌ is indefinite."},
+  {q:"When a pointing word is used as an identifier before a noun, what is the result?",options:["A complete sentence","A phrase (not a sentence)","A question","A command"],answer:1,explain:"Pointing word + definite noun = a phrase, not a sentence. e.g. هَذَا الْكِتَابُ = 'this book' (phrase)."},
+  {q:"هَذِهِ بِنْتٌ — is this a sentence or a phrase?",options:["Phrase — 'this girl'","Sentence — 'This is a girl'","Question","Cannot determine"],answer:1,explain:"Pointing word + indefinite noun = nominal sentence: 'This is a girl.' هَذِهِ is the مُبْتَدَأٌ; بِنْتٌ is the indefinite خَبَرٌ."},
+  {q:"هَذِهِ الْبِنْتُ — is this a sentence or a phrase?",options:["Phrase — 'this girl'","Sentence — 'This is the girl'","Question","Command"],answer:0,explain:"Pointing word + DEFINITE noun = phrase (identifier): 'this girl.' Not a sentence because the noun has اَلـ."},
+  // 1st person present tense
+  {q:"What prefix marks the 1st person singular (أَنَا) in the present tense?",options:["يـ","نـ","تـ","أـ"],answer:3,explain:"أَنَا uses the prefix أـ in the present tense: أَدْرُسُ = I study."},
+  {q:"What prefix marks the 1st person plural (نَحْنُ) in the present tense?",options:["يـ","نـ","تـ","أـ"],answer:1,explain:"نَحْنُ uses the prefix نـ in the present tense: نَدْرُسُ = we study."},
+  {q:"The 1st person present tense is gender-neutral. أَدْرُسُ can mean:",options:["Only 'I (m) study'","Only 'I (f) study'","I study (for both masculine and feminine speakers)","We study"],answer:2,explain:"Like the 1st person past tense, the present tense form is the same for masculine and feminine speakers — أَنَا أَدْرُسُ = I study (m or f)."},
+  {q:"Which lesson covers 1st person present tense?",options:["Lesson 5","Lesson 6","Lesson 7","Lesson 8"],answer:2,explain:"Lesson 5 = 3rd person present, Lesson 6 = 2nd person present, Lesson 7 = 1st person present + comprehensive review."},
+  // Text analysis: post-prayer supplications
+  {q:"The seventh text covers supplications said after which act of worship?",options:["After wuḍū'","After the Adhān","After completing the prayer (ṣalāh)","After Jumu'ah"],answer:2,explain:"يُسْتَحَبُّ لِلْمُصَلِّي أَنْ يَقُولَ بَعْدَ إِتْمَامِ الصَّلَاةِ = 'It is recommended for the one who prays to say after completion of the prayer.'"},
+  {q:"اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ — what does this mean?",options:["O Allah, grant us peace","O Allah, You are Peace and from You is Peace","O Allah, peace be upon the Prophet","O Allah, protect us from evil"],answer:1,explain:"أَنْتَ السَّلَامُ = 'You are Peace' (السَّلَامُ is one of Allah's names). وَمِنْكَ السَّلَامُ = 'and from You is Peace.'"},
+  {q:"يَا ذَا الْجَلَالِ وَالْإِكْرَامِ — what does ذَا mean here?",options:["that (far, masculine)","possessor of","O you","Lord of"],answer:1,explain:"ذَا (or ذُو in nominative) means 'possessor of' — يَا ذَا الْجَلَالِ = 'O Possessor of Majesty.' The three forms are ذُو (nominative), ذِي (genitive), ذَا (accusative)."},
+  {q:"جَلَالٌ means:",options:["honor / respect","sublimity / glory / majesty","mercy","guidance"],answer:1,explain:"جَلَالٌ = sublimity, glory, majesty. إِكْرَامٌ = honor, respect, nobility. Together: 'Possessor of Majesty and Nobility.'"},
+  {q:"اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ وَشُكْرِكَ وَحُسْنِ عِبَادَتِكَ — what is being asked for?",options:["Forgiveness of sins","Assistance in remembering Allah, thanking Him, and perfecting worship","Paradise and salvation","Health and wealth"],answer:1,explain:"أَعِنِّي = assist me; ذِكْر = remembrance; شُكْر = thanks; حُسْن عِبَادَة = perfecting worship. 'O Allah, assist me in remembering You, thanking You, and perfecting worship of You.'"},
+  {q:"لَا مَانِعَ لِمَا أَعْطَيْتَ وَلَا مُعْطِيَ لِمَا مَنَعْتَ — what is the meaning?",options:["O Allah, give me what I need","There is no preventer of what You give, and no giver of what You prevent","There is no god except Allah alone","O Allah, we are from You and to You we return"],answer:1,explain:"مَانِع = preventer; أَعْطَى = he gave; مُعْطِي = giver; مَنَعَ = he prevented. 'There is no preventer of what You give, and no giver of what You prevent.'"},
+  {q:"Which supplication after prayer mentions 'the possessor of majesty and nobility'?",options:["اللَّهُمَّ أَعِنِّي عَلَى ذِكْرِكَ","لَا مَانِعَ لِمَا أَعْطَيْتَ","اللَّهُمَّ أَنْتَ السَّلَامُ وَمِنْكَ السَّلَامُ يَا ذَا الْجَلَالِ وَالْإِكْرَامِ","أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللهُ"],answer:2,explain:"The first supplication (اللَّهُمَّ أَنْتَ السَّلَامُ) ends with يَا ذَا الْجَلَالِ وَالْإِكْرَامِ — 'O Possessor of Majesty and Nobility.'"},
+  // Subtleties
+  {q:"أَيُّ (which?) is special because it must always be followed by:",options:["A verb","A noun that is a مُضَافٌ إِلَيْهِ","A pointing word","A pronoun"],answer:1,explain:"أَيُّ is always a مُضَافٌ and must be followed by a noun as its مُضَافٌ إِلَيْهِ. e.g. أَيُّ كِتَابٍ قَرَأْتَ؟ = Which book did you read?"},
+  {q:"كَمْ (how many?) is followed by a noun that is:",options:["Definite and plural","Indefinite and singular (accusative)","A pronoun","Definite and singular"],answer:1,explain:"كَمْ is followed by a مَنْصُوبٌ (accusative) singular indefinite noun. e.g. كَمْ كِتَابًا قَرَأْتَ؟ = How many books did you read?"},
+  {q:"The Qur'ānic form of أُولَئِكَ (those, plural far) is:",options:["هَؤُلَاءِ","أُولَٰحِكَ","أُولَاءِ","هَذَانِ"],answer:1,explain:"In the Qur'ān, أُولَئِكَ is written as أُولَٰحِكَ. The و in أُولَئِكَ is silent."},
+  {q:"The alif above pointing nouns like هَذَا is usually not written. How must it be treated?",options:["It can be ignored","It must be pronounced","It changes the meaning if pronounced","It is only pronounced in formal Arabic"],answer:1,explain:"The alif above pointing nouns (the small alif or dagger alif) is usually not written in unvoweled text but must be pronounced."},
+  {q:"How many pointing words are there for the dual in common usage?",options:["None — duals are not covered due to sparse Qur'ānic usage","Two — one masculine, one feminine","Four — near and far for masculine and feminine","One — هَذَانِ for all duals"],answer:0,explain:"Dual pointing words are not covered due to sparse usage in the Qur'ān. However, هَذَانِ (these two, masculine) appears in Qur'ān 20:63 and 22:19."},
+];
+let gQ,gIdx,gScore,gTotal;
+function gInit(){gQ=srsDueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i)=>srsCardId(d,i));gIdx=0;gScore=0;gTotal=0;if(gQ.length===0){srsNoDue('g-card','g-prog','g-counter','gInit');return;}gShow();}
+function gShow(){
+  if(gIdx>=gQ.length){doneScreen('g-card','g-prog','g-counter',gScore,gTotal,'gInit');return;}
+  const q=gQ[gIdx];
+  document.getElementById('g-prompt').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';
+  document.getElementById('g-next-row').style.display='none';
+  const indices=[0,1,2,3];shuffle(indices);
+  const nc=indices.indexOf(q.answer);
+  const opts=document.getElementById('g-options');opts.innerHTML='';
+  indices.forEach((oi,ni)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=q.options[oi];b.onclick=()=>gAnswer(ni,nc,q.explain,q.options[q.answer]);opts.appendChild(b);});
+  gMeta();
+}
+function gMeta(){document.getElementById('g-score').textContent=`Score: ${gScore} / ${gTotal}`;document.getElementById('g-counter').textContent=`Q ${Math.min(gIdx+1,gQ.length)} of ${gQ.length}`;document.getElementById('g-prog').style.width=(gIdx/gQ.length*100).toFixed(0)+'%';}
+function gAnswer(chosen,correct,explain,correctText){
+  const ok=chosen===correct;srsRecord("grammar", gQ[gIdx]._srsId, ok);gTotal++;if(ok)gScore++;gMeta();
+  document.querySelectorAll('#g-options .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen&&!ok)b.classList.add('wrong');});
+  document.getElementById('g-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${correctText}</strong>. ${explain}</div>`;
+  document.getElementById('g-next-row').style.display='flex';gIdx++;
+}
+function gNext(){gShow();}
+
+async function bootLesson() {
+  const ok = await requireLogin();
+  if (!ok) return;
+  vInit(); ptInit(); cjInit(); gInit();
+}
+bootLesson();
+</script>
+</body>
+</html>

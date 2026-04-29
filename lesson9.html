@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lesson 9 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 16px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;}
+  .tab-btn:first-child{border-radius:6px 0 0 0;}
+  .tab-btn:last-child{border-radius:0 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-arabic-sm{font-size:24px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.6;margin-bottom:0.4rem;}
+  .prompt-english{font-size:18px;font-family:'Playfair Display',serif;font-style:italic;text-align:center;color:var(--ink);margin-bottom:0.4rem;line-height:1.4;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
+  Checking login...
+</div>
+
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1</div>
+  <h1>Lesson 9</h1>
+  <div class="arabic-subtitle">الدَّرْسُ التَّاسِعُ</div>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('prepositions')">Prepositions</button>
+  <button class="tab-btn" onclick="switchTab('command')">Command Verb</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+</div>
+
+<!-- TAB 1: VOCABULARY -->
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 9 vocabulary — prepositions, spatial/time words, and text analysis words. Choose the correct English meaning.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the English meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 2: PREPOSITIONS -->
+<div id="tab-prepositions" class="tab-content">
+  <div class="section-intro">Prepositions (حُرُوفُ الجَرّ) indicate where or when. The noun following a preposition is always in the genitive case. Translate each phrase or sentence.</div>
+  <div class="quiz-meta"><span id="pr-counter">Q 1 of 20</span><span id="pr-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="pr-prog" style="width:0%"></div></div>
+  <div class="question-card" id="pr-card">
+    <div class="prompt-arabic-sm" id="pr-prompt"></div>
+    <div class="prompt-sub" id="pr-sub">→ translate</div>
+    <div id="pr-feedback"></div>
+    <div class="mc-options" id="pr-options"></div>
+    <div class="btn-row" id="pr-next-row" style="display:none"><button class="btn btn-primary" onclick="prNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 3: COMMAND VERB -->
+<div id="tab-command" class="tab-content">
+  <div class="section-intro">The command verb (فِعْلُ الأَمْرِ) is used for direct commands addressed to the 2nd person. You'll see a command form — choose the correct English translation.</div>
+  <div class="quiz-meta"><span id="cv-counter">Q 1 of 24</span><span id="cv-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="cv-prog" style="width:0%"></div></div>
+  <div class="question-card" id="cv-card">
+    <div class="prompt-arabic" id="cv-prompt"></div>
+    <div class="prompt-sub">→ choose the correct translation</div>
+    <div id="cv-feedback"></div>
+    <div class="mc-options" id="cv-options"></div>
+    <div class="btn-row" id="cv-next-row" style="display:none"><button class="btn btn-primary" onclick="cvNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 4: GRAMMAR -->
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro">Theory questions on Lesson 9 concepts: preposition types, prepositional phrase as خَبَرٌ, command verb formation, and the opening prayer supplication text analysis.</div>
+  <div class="quiz-meta"><span id="g-counter">Q 1 of 40</span><span id="g-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-english" id="g-prompt"></div>
+    <div class="prompt-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none"><button class="btn btn-primary" onclick="gNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['vocab','prepositions','command','grammar'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function buildMC(id,opts,ci,cb){
+  const c=document.getElementById(id);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>cb(i,ci);c.appendChild(b);});
+}
+function lockMC(id,chosen,ci){
+  document.querySelectorAll(`#${id} .mc-option`).forEach((b,i)=>{b.classList.add('disabled');if(i===ci)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneScreen(cardId,progId,cntId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(cntId).textContent='Done!';
+}
+
+// ── VOCABULARY ──
+const vocabData=[
+  {ar:"خَلْفَ",en:"behind"},
+  {ar:"أَمَامَ",en:"in front of"},
+  {ar:"فَوْقَ",en:"over / above"},
+  {ar:"تَحْتَ",en:"under / below"},
+  {ar:"بَيْنَ",en:"between"},
+  {ar:"قَبْلَ",en:"before"},
+  {ar:"بَعْدَ",en:"after"},
+  {ar:"الآنَ",en:"now"},
+  {ar:"عِنْدَ",en:"at / with / by"},
+  {ar:"يَمِينٌ",en:"right-hand / right side"},
+  {ar:"يَسَارٌ / شِمَالٌ",en:"left-hand / left side"},
+  {ar:"مِنْ",en:"from / among"},
+  {ar:"إِلَى",en:"to"},
+  {ar:"فِي",en:"in"},
+  {ar:"عَلَى",en:"upon / on"},
+  {ar:"عَنْ",en:"from / about / concerning"},
+  {ar:"كـ",en:"like (preposition of comparison)"},
+  {ar:"مُصَلٍّ",en:"one who prays"},
+  {ar:"نُسُكٌ",en:"devotion / act of worship"},
+  {ar:"حَنِيفٌ",en:"true believer / one who turns away from falsehood"},
+  {ar:"مَحْيَا",en:"life"},
+  {ar:"مَمَاتٌ",en:"death"},
+  {ar:"فَطَرَ",en:"he created"},
+  {ar:"وَجَّهْتُ",en:"I have turned (my face)"},
+  {ar:"تَكْبِيرَةٌ",en:"takbīr / saying اللهُ أَكْبَرُ"},
+];
+let vQ,vIdx,vScore,vTotal;
+function vInit(){vQ=srsDueQueue("vocab", vocabData, (d,i)=>srsCardId(d,i));vIdx=0;vScore=0;vTotal=0;if(vQ.length===0){srsNoDue('v-card','v-prog','v-counter','vInit');return;}vShow();}
+function vShow(){
+  if(vIdx>=vQ.length){doneScreen('v-card','v-prog','v-counter',vScore,vTotal,'vInit');return;}
+  const q=vQ[vIdx];
+  document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';
+  document.getElementById('v-next-row').style.display='none';
+  const dist=shuffle(vocabData.map(d=>d.en).filter(a=>a!==q.en)).slice(0,3);
+  const opts=shuffle([q.en,...dist]);const ci=opts.indexOf(q.en);
+  buildMC('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("vocab", vQ[vIdx]._srsId, ok);vTotal++;if(ok)vScore++;vMeta();lockMC('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vIdx++;
+  });vMeta();
+}
+function vMeta(){document.getElementById('v-score').textContent=`Score: ${vScore} / ${vTotal}`;document.getElementById('v-counter').textContent=`Q ${Math.min(vIdx+1,vQ.length)} of ${vQ.length}`;document.getElementById('v-prog').style.width=(vIdx/vQ.length*100).toFixed(0)+'%';}
+function vNext(){vShow();}
+
+// ── PREPOSITIONS TAB ──
+const prepData=[
+  {prompt:"خَلْفَ الْمَسْجِدِ",question:"Translate:",answer:"behind the mosque",wrong:["in front of the mosque","inside the mosque","above the mosque"],explain:"خَلْفَ = behind. The noun following is in genitive (الْمَسْجِدِ with kasra)."},
+  {prompt:"قَبْلَ الْفَجْرِ",question:"Translate:",answer:"before dawn",wrong:["after dawn","at dawn","during dawn"],explain:"قَبْلَ = before; الْفَجْرِ = dawn (genitive). 'Before dawn.'"},
+  {prompt:"مِنَ الْمَدِينَةِ إِلَى مَكَّةَ",question:"Translate:",answer:"from al-Madinah to Makkah",wrong:["from Makkah to al-Madinah","between Madinah and Makkah","in al-Madinah and Makkah"],explain:"مِنَ = from; إِلَى = to. 'From al-Madinah to Makkah.'"},
+  {prompt:"فَوْقَ الأَرْضِ",question:"Translate:",answer:"above the earth",wrong:["under the earth","on the earth","beside the earth"],explain:"فَوْقَ = above/over. الأَرْضِ = earth (genitive). 'Above the earth.'"},
+  {prompt:"تَحْتَ الْبَيْتِ",question:"Translate:",answer:"under the house",wrong:["above the house","inside the house","behind the house"],explain:"تَحْتَ = under/below. 'Under the house.'"},
+  {prompt:"الرَّجُلُ أَمَامَ الْمَسْجِدِ",question:"Translate:",answer:"The man is in front of the mosque.",wrong:["The man is behind the mosque.","The man is inside the mosque.","In front of the man is a mosque."],explain:"أَمَامَ = in front of. Prepositional phrase as خَبَرٌ: 'The man is in front of the mosque.'"},
+  {prompt:"بَيْنَ الْجَنَّةِ وَالنَّارِ",question:"Translate:",answer:"between the garden and the fire",wrong:["in the garden and the fire","above the garden and fire","from garden to fire"],explain:"بَيْنَ = between. 'Between the garden and the fire.'"},
+  {prompt:"يَمِينَ الْجَبَلِ",question:"Translate:",answer:"to the right of the mountain",wrong:["to the left of the mountain","above the mountain","behind the mountain"],explain:"يَمِينَ = right side. 'To the right of the mountain.'"},
+  {prompt:"الْحَمْدُ لِلَّهِ",question:"Translate:",answer:"[All] Praise is for Allah.",wrong:["I praise Allah.","Allah praises us.","Praise be to the people."],explain:"Prepositional phrase as خَبَرٌ: الْحَمْدُ (subject) + لِلَّهِ (predicate = prepositional phrase). 'Praise is for Allah.'"},
+  {prompt:"السَّلَامُ عَلَيْكُمْ",question:"Translate:",answer:"Peace be upon you.",wrong:["You are peace.","I give you peace.","Peace from you."],explain:"السَّلَامُ (subject) + عَلَيْكُمْ (prepositional phrase as predicate). 'Peace be upon you.'"},
+  {prompt:"الْكِتَابُ خَلْفَ الْبَابِ",question:"Translate:",answer:"The book is behind the door.",wrong:["The door is behind the book.","The book behind the door...","The book is in front of the door."],explain:"خَلْفَ الْبَابِ is the prepositional phrase serving as خَبَرٌ. 'The book is behind the door.'"},
+  {prompt:"السَّمَاءُ فَوْقَ الأَرْضِ",question:"Translate:",answer:"The sky is above the earth.",wrong:["The earth is above the sky.","The sky and the earth are above.","Above the sky is the earth."],explain:"فَوْقَ الأَرْضِ is the prepositional phrase serving as خَبَرٌ. 'The sky is above the earth.'"},
+  {prompt:"أَجْرُهُمْ عِنْدَ رَبِّهِمْ",question:"Translate: (2:62)",answer:"Their reward is with their Lord.",wrong:["They are rewarded by themselves.","Their Lord is with them.","With their Lord they reward."],explain:"عِنْدَ رَبِّهِمْ = prepositional phrase as خَبَرٌ. أَجْرُهُمْ = their reward (subject). (Qur'ān 2:62)"},
+  {prompt:"هُنَّ مِنَ الْقُدْسِ",question:"Translate:",answer:"They (3+, f) are from Jerusalem.",wrong:["They (3+, f) are in Jerusalem.","She is from Jerusalem.","They went to Jerusalem."],explain:"مِنَ الْقُدْسِ = prepositional phrase as خَبَرٌ. هُنَّ = subject. 'They (f) are from Jerusalem.'"},
+  {prompt:"الْقُرْآنُ فِي قُلُوبِ الْمُؤْمِنِينَ",question:"Translate:",answer:"The Qur'ān is in the hearts of the believers.",wrong:["The believers' Qur'ān is in the hearts.","The hearts of the Qur'ān are believers.","In the Qur'ān are believing hearts."],explain:"فِي قُلُوبِ الْمُؤْمِنِينَ = prepositional phrase as خَبَرٌ, with iḍāfah inside it."},
+  {prompt:"أَنَا مِنَ الْمَدِينَةِ",question:"Translate:",answer:"I am from the city.",wrong:["I am in the city.","I go to the city.","The city is from me."],explain:"أَنَا = subject; مِنَ الْمَدِينَةِ = prepositional phrase as خَبَرٌ. 'I am from the city.'"},
+  {prompt:"اِقْرَأْ بِاسْمِ رَبِّكَ",question:"Translate: (96:1)",answer:"Read in the name of your Lord.",wrong:["Your Lord reads your name.","Read about your Lord.","Your Lord's name is reading."],explain:"بـِ = in/with (preposition), اِسْمِ رَبِّكَ = the name of your Lord (iḍāfah in genitive). (Qur'ān 96:1)"},
+  {prompt:"لِلصَّلَاةِ",question:"Translate:",answer:"for the prayer",wrong:["from the prayer","in the prayer","about the prayer"],explain:"لِـ + الصَّلَاةِ. When لِـ connects to اَلـ, the alif drops: لِـ + الصَّلَاةُ = لِلصَّلَاةِ. 'For the prayer.'"},
+  {prompt:"عَلَيْهِ",question:"Translate:",answer:"upon him",wrong:["from him","with him","for him"],explain:"عَلَى + ـهِ (ḍamma changes to kasra on pronoun). عَلَيْهِ = 'upon him.'"},
+  {prompt:"لَكَ",question:"Translate:",answer:"for you (m)",wrong:["from you","with you","you (subject)"],explain:"لِـ + ـكَ → لَكَ (لِـ changes to لَـ before pronouns except أَنَا). 'For you (m).'"},
+];
+let prQ,prIdx,prScore,prTotal;
+function prInit(){prQ=srsDueQueue("prep", prepData, (d,i)=>srsCardId(d,i));prIdx=0;prScore=0;prTotal=0;if(prQ.length===0){srsNoDue('pr-card','pr-prog','pr-counter','prInit');return;}prShow();}
+function prShow(){
+  if(prIdx>=prQ.length){doneScreen('pr-card','pr-prog','pr-counter',prScore,prTotal,'prInit');return;}
+  const q=prQ[prIdx];
+  document.getElementById('pr-prompt').textContent=q.prompt;
+  document.getElementById('pr-sub').textContent=q.question;
+  document.getElementById('pr-feedback').innerHTML='';
+  document.getElementById('pr-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildMC('pr-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("prep", prQ[prIdx]._srsId, ok);prTotal++;if(ok)prScore++;prMeta();lockMC('pr-options',chosen,correct);
+    document.getElementById('pr-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('pr-next-row').style.display='flex';prIdx++;
+  });prMeta();
+}
+function prMeta(){document.getElementById('pr-score').textContent=`Score: ${prScore} / ${prTotal}`;document.getElementById('pr-counter').textContent=`Q ${Math.min(prIdx+1,prQ.length)} of ${prQ.length}`;document.getElementById('pr-prog').style.width=(prIdx/prQ.length*100).toFixed(0)+'%';}
+function prNext(){prShow();}
+
+// ── COMMAND VERB ──
+const commandData=[
+  // اُدْرُسْ — study!
+  {arabic:"اُدْرُسْ",translation:"study! (m)",verb:"دَرَسَ",meaning:"to study"},
+  {arabic:"اُدْرُسَا",translation:"study! (2)",verb:"دَرَسَ",meaning:"to study"},
+  {arabic:"اُدْرُسُوا",translation:"study! (3+)",verb:"دَرَسَ",meaning:"to study"},
+  {arabic:"اُدْرُسِي",translation:"study! (f)",verb:"دَرَسَ",meaning:"to study"},
+  {arabic:"اُدْرُسْنَ",translation:"study! (3, f)",verb:"دَرَسَ",meaning:"to study"},
+  // اُكْتُبْ — write!
+  {arabic:"اُكْتُبْ",translation:"write! (m)",verb:"كَتَبَ",meaning:"to write"},
+  {arabic:"اُكْتُبَا",translation:"write! (2)",verb:"كَتَبَ",meaning:"to write"},
+  {arabic:"اُكْتُبُوا",translation:"write! (3+)",verb:"كَتَبَ",meaning:"to write"},
+  {arabic:"اُكْتُبِي",translation:"write! (f)",verb:"كَتَبَ",meaning:"to write"},
+  {arabic:"اُكْتُبْنَ",translation:"write! (3, f)",verb:"كَتَبَ",meaning:"to write"},
+  // اِفْتَحْ — open!
+  {arabic:"اِفْتَحْ",translation:"open! (m)",verb:"فَتَحَ",meaning:"to open"},
+  {arabic:"اِفْتَحَا",translation:"open! (2)",verb:"فَتَحَ",meaning:"to open"},
+  {arabic:"اِفْتَحُوا",translation:"open! (3+)",verb:"فَتَحَ",meaning:"to open"},
+  {arabic:"اِفْتَحِي",translation:"open! (f)",verb:"فَتَحَ",meaning:"to open"},
+  {arabic:"اِفْتَحْنَ",translation:"open! (3, f)",verb:"فَتَحَ",meaning:"to open"},
+  // اِشْرَبْ — drink!
+  {arabic:"اِشْرَبْ",translation:"drink! (m)",verb:"شَرِبَ",meaning:"to drink"},
+  {arabic:"اِشْرَبَا",translation:"drink! (2)",verb:"شَرِبَ",meaning:"to drink"},
+  {arabic:"اِشْرَبُوا",translation:"drink! (3+)",verb:"شَرِبَ",meaning:"to drink"},
+  {arabic:"اِشْرَبِي",translation:"drink! (f)",verb:"شَرِبَ",meaning:"to drink"},
+  {arabic:"اِشْرَبْنَ",translation:"drink! (3, f)",verb:"شَرِبَ",meaning:"to drink"},
+  // اِضْرِبْ — hit!
+  {arabic:"اِضْرِبْ",translation:"hit! (m)",verb:"ضَرَبَ",meaning:"to hit"},
+  {arabic:"اِضْرِبَا",translation:"hit! (2)",verb:"ضَرَبَ",meaning:"to hit"},
+  {arabic:"اِضْرِبُوا",translation:"hit! (3+)",verb:"ضَرَبَ",meaning:"to hit"},
+  {arabic:"اِضْرِبْنَ",translation:"hit! (3, f)",verb:"ضَرَبَ",meaning:"to hit"},
+];
+let cvQ,cvIdx,cvScore,cvTotal;
+function cvInit(){cvQ=srsDueQueue("command", commandData, (d,i)=>srsCardId(d,i));cvIdx=0;cvScore=0;cvTotal=0;if(cvQ.length===0){srsNoDue('cv-card','cv-prog','cv-counter','cvInit');return;}cvShow();}
+function cvShow(){
+  if(cvIdx>=cvQ.length){doneScreen('cv-card','cv-prog','cv-counter',cvScore,cvTotal,'cvInit');return;}
+  const q=cvQ[cvIdx];
+  document.getElementById('cv-prompt').textContent=q.arabic;
+  document.getElementById('cv-feedback').innerHTML='';
+  document.getElementById('cv-next-row').style.display='none';
+  const allTrans=commandData.map(f=>f.translation);
+  const dist=shuffle(allTrans.filter(t=>t!==q.translation)).slice(0,3);
+  const opts=shuffle([q.translation,...dist]);const ci=opts.indexOf(q.translation);
+  buildMC('cv-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("command", cvQ[cvIdx]._srsId, ok);cvTotal++;if(ok)cvScore++;cvMeta();lockMC('cv-options',chosen,correct);
+    document.getElementById('cv-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! (${q.verb} — ${q.meaning})</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.translation}</strong> (${q.verb} — ${q.meaning})</div>`;
+    document.getElementById('cv-next-row').style.display='flex';cvIdx++;
+  });cvMeta();
+}
+function cvMeta(){document.getElementById('cv-score').textContent=`Score: ${cvScore} / ${cvTotal}`;document.getElementById('cv-counter').textContent=`Q ${Math.min(cvIdx+1,cvQ.length)} of ${cvQ.length}`;document.getElementById('cv-prog').style.width=(cvIdx/cvQ.length*100).toFixed(0)+'%';}
+function cvNext(){cvShow();}
+
+// ── GRAMMAR ──
+const grammarData=[
+  // Prepositions
+  {q:"Prepositions in Arabic put the following noun into which case?",options:["Nominative (raf')","Accusative (naṣb)","Genitive (jarr)","No case change"],answer:2,explain:"Any noun following a preposition (حَرْفُ الجَرّ) goes into the genitive case (مَجْرُورٌ), marked by kasra or ـٍ."},
+  {q:"In Arabic, prepositions can be either particles (حُرُوف) or nouns (أَسْمَاء). What is the key difference?",options:["Particles are used for time; nouns for place","Particles have a range of meanings; nouns are more stable in meaning","Particles only follow verbs; nouns stand alone","There is no grammatical difference"],answer:1,explain:"Particle prepositions (مِنْ، إِلَى، عَلَى etc.) have a range of context-dependent meanings. Noun prepositions (خَلْفَ، أَمَامَ، بَيْنَ etc.) are more stable and technically form iḍāfah with the following noun."},
+  {q:"خَلْفَ، أَمَامَ، فَوْقَ، تَحْتَ، بَيْنَ are all prepositions that are technically:",options:["Particles (حُرُوف)","Nouns (أَسْمَاء) forming iḍāfah with the following noun","Adjectives","Verbs"],answer:1,explain:"These spatial/time prepositions are technically nouns (ظُرُوف / مَفَاعِيل فِيهَا) — they form an iḍāfah with the noun that follows them."},
+  {q:"What does فِي mean?",options:["on / upon","to","from","in"],answer:3,explain:"فِي = in. e.g. فِي الْبَيْتِ = in the house; فِي الْقُرْآنِ = in the Qur'ān."},
+  {q:"What does عَلَى mean?",options:["in","from","upon / on","between"],answer:2,explain:"عَلَى = upon/on. e.g. السَّلَامُ عَلَيْكُمْ = 'Peace be upon you.' عَلَى الرَّسُولِ = 'upon the messenger.'"},
+  {q:"What does مِنْ mean?",options:["to","in","upon","from / among"],answer:3,explain:"مِنْ = from, among. e.g. مِنَ الْجَنَّةِ = from the garden; مِنَ الْمُسْلِمِينَ = among the Muslims."},
+  {q:"What does عِنْدَ mean?",options:["between","at / with / by","before","after"],answer:1,explain:"عِنْدَ = at, with, by. e.g. عِنْدَ اللهِ = with Allah (in Qur'ān 2:79 — from with Allah)."},
+  {q:"When لِـ connects to a word that has اَلـ, what happens?",options:["The لِـ changes to لَـ","The alif of اَلـ is dropped: لِـ + اَلصَّلَاةُ = لِلصَّلَاةِ","An extra alif is added","Nothing — both are written"],answer:1,explain:"The alif of اَلـ is dropped: لِـ + اَلصَّلَاةُ = لِلصَّلَاةِ (for the prayer). Same principle: لِـ + اَللهُ = لِلَّهِ."},
+  {q:"The preposition كـ means:",options:["in","from","like (comparison)","to"],answer:2,explain:"كـ = like, similar to. e.g. هُوَ كَأَسَدٍ = 'He is like a lion.'"},
+  // Prepositions + pronouns
+  {q:"When attaching a pronoun to عَلَى, the ى changes to what?",options:["ي (stays as ى)","ا","و","It doesn't change"],answer:0,explain:"The ى at the end of عَلَى changes to ي: عَلَى + ـهُ = عَلَيْهِ. Also: إِلَى + ـنَا = إِلَيْنَا."},
+  {q:"When attaching the pronouns ـهُ، ـهُمَا، ـهُمْ، ـهُنَّ after a preposition, what vowel change occurs?",options:["The ḍamma changes to fatḥa","The ḍamma on the pronoun changes to kasra","No change occurs","The pronoun is dropped"],answer:1,explain:"After prepositions, the ḍamma on ـهُ/ـهُمَا/ـهُمْ/ـهُنَّ changes to kasra: فِيهِ، بِهِ، فِيهِمَا."},
+  {q:"The preposition لِـ changes to لَـ when a pronoun is attached. What is the exception?",options:["For أَنْتَ (you, m)","For أَنَا (I) — لِـ stays as لِي","For نَحْنُ (we)","For هُوَ (he)"],answer:1,explain:"لِـ + ـي = لِي (stays as لِـ for أَنَا). But: لِـ + ـكَ = لَكَ; لِـ + ـنَا = لَنَا."},
+  // Prepositional phrase as خَبَر
+  {q:"A prepositional phrase can serve as the خَبَرٌ of a nominal sentence. الرَّجُلُ فِي الْبَيْتِ means:",options:["The man's house","The man in the house...","The man is in the house.","In the house of the man"],answer:2,explain:"الرَّجُلُ = subject (مُبْتَدَأٌ); فِي الْبَيْتِ = prepositional phrase as predicate (خَبَرٌ). 'The man is in the house.'"},
+  {q:"الْحَمْدُ لِلَّهِ is a nominal sentence. What serves as the خَبَرٌ?",options:["الْحَمْدُ","لِلَّهِ (prepositional phrase)","Both together","There is no خَبَرٌ"],answer:1,explain:"الْحَمْدُ = مُبْتَدَأٌ (subject); لِلَّهِ = prepositional phrase serving as خَبَرٌ. 'Praise is for Allah.'"},
+  {q:"أَجْرُهُمْ عِنْدَ رَبِّهِمْ (2:62) — what type of phrase is عِنْدَ رَبِّهِمْ?",options:["An adjectival phrase","A possessive construct only","A prepositional phrase serving as خَبَرٌ","A verbal sentence"],answer:2,explain:"عِنْدَ رَبِّهِمْ is a prepositional phrase (عِنْدَ is a noun-preposition forming iḍāfah with رَبِّهِمْ) serving as the خَبَرٌ. 'Their reward is with their Lord.'"},
+  // Command verb
+  {q:"The Arabic command verb is also known as:",options:["الْمُضَارِعُ","الْمَاضِي","فِعْلُ الأَمْرِ","فِعْلُ النَّهْيِ"],answer:2,explain:"فِعْلُ الأَمْرِ = the command verb (imperative). It gives direct commands addressed to the 2nd person."},
+  {q:"The direct command in Arabic only applies to which grammatical person?",options:["1st person (I/we)","2nd person (you)","3rd person (he/she/they)","All persons equally"],answer:1,explain:"The direct command is only for the 2nd person (الْمُخَاطَبُ) — the person being spoken to. For 3rd person, the indirect command (لِيَشْرَبْ) is used."},
+  {q:"Most direct command verbs begin with an alif that:",options:["Has a hamza (ء) above it","Has no hamza (ء) — it is a plain alif","Has a ḍamma on top","Has a fatḥa on top"],answer:1,explain:"Most direct commands begin with an alif without hamza (alif waṣl). This is true for sound form I verbs."},
+  {q:"اُدْرُسْ — why does the alif have a ḍamma?",options:["Because the middle root letter has fatḥa","Because the middle root letter has kasra","Because the middle root letter has ḍamma","It always has ḍamma in commands"],answer:2,explain:"The alif's vowel is determined by the middle root letter. دَرَسَ → يَدْرُسُ has ḍamma on the middle letter (رُ) → the alif gets ḍamma: اُدْرُسْ."},
+  {q:"اِضْرِبْ — why does the alif have a kasra?",options:["Because the middle root letter has ḍamma","Because the middle root letter has kasra or fatḥa","Because the middle root letter has alif","It always has kasra"],answer:1,explain:"ضَرَبَ → يَضْرِبُ has kasra on the middle letter (رِ) → the alif gets kasra: اِضْرِبْ. Same rule for fatḥa on the middle letter."},
+  {q:"How is the command form for أَنْتُمْ (you, 3+, m) formed?",options:["Add ـَا to the singular command","Add ـُوا to the singular command","Add ـِي to the singular command","Add ـْنَ to the singular command"],answer:1,explain:"For أَنْتُمْ: add ـُوا to the base command: اُدْرُسْ → اُدْرُسُوا (study!, 3+, m)."},
+  {q:"How is the command form for أَنْتِ (you, f, singular) formed?",options:["Add ـَا","Add ـُوا","Add ـِي","Add ـْنَ"],answer:2,explain:"For أَنْتِ (f, singular): add ـِي to the base command: اُدْرُسْ → اُدْرُسِي (study!, f)."},
+  // Text analysis: supplication after takbīr
+  {q:"The ninth text is a supplication said after which moment in prayer?",options:["After the last tashahhud","After the first takbīr (اللهُ أَكْبَرُ)","After reciting Sūrat al-Fātiḥa","After prostration"],answer:1,explain:"يَقُولُ الْمُصَلِّي بَعْدَ التَّكْبِيرَةِ الأُولَى — 'The one praying says after the first takbīr.'"},
+  {q:"سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ — what does this mean?",options:["O Allah, You are Peace","Glory be to You, O Allah, and Praise to You","O Allah, forgive me","O Allah, guide me to You"],answer:1,explain:"سُبْحَانَكَ = Glory be to You (exaltation); وَبِحَمْدِكَ = and with Your praise / Praise to You."},
+  {q:"وَتَبَارَكَ اسْمُكَ وَتَعَالَى جَدُّكَ — what does this mean?",options:["And You are the Most Merciful and Most Compassionate","And blessed is Your Name and elevated is Your Might","And You are the Lord of the worlds","And You are the King of the Day of Judgment"],answer:1,explain:"تَبَارَكَ = Blessed is; اِسْمُكَ = Your name; تَعَالَى = elevated/exalted; جَدُّكَ = Your might/glory."},
+  {q:"وَلَا إِلَهَ غَيْرُكَ — what does this mean?",options:["And there is no god like You","And there is absolutely no god except You","And You are the only true religion","And You have no partner"],answer:1,explain:"لَا إِلَهَ = there is no god; غَيْرُكَ = other than You / except You. 'And there is absolutely no god except You.'"},
+  {q:"The alternative opening supplication begins: وَجَّهْتُ وَجْهِيَ لِلَّذِي فَطَرَ السَّمَاوَاتِ وَالأَرْضَ. What does فَطَرَ mean?",options:["He created","He guided","He sent","He opened"],answer:0,explain:"فَطَرَ = he created. 'I turn my face to the One who created the heavens and the earth.'"},
+  {q:"إِنَّ صَلَاتِي وَنُسُكِي وَمَحْيَايَ وَمَمَاتِي لِلَّهِ رَبِّ الْعَالَمِينَ — what does نُسُكِي mean?",options:["my prayer","my death","my devotion / act of worship","my life"],answer:2,explain:"نُسُكٌ = devotion, act of worship. مَحْيَايَ = my life; مَمَاتِي = my death. 'Indeed my prayer, my devotion, my life and my death are for Allah...'"},
+  {q:"حَنِيفًا مُسْلِمًا — in the alternative opening supplication, حَنِيفٌ means:",options:["one who bows in prayer","a true believer who turns away from falsehood","a Muslim by name only","one who fasts"],answer:1,explain:"حَنِيفٌ = a true believer, one who turns away from falsehood toward truth — a person of pure monotheism."},
+  {q:"وَمَا أَنَا مِنَ الْمُشْرِكِينَ — what does الْمُشْرِكِينَ mean?",options:["the disbelievers","those who associate partners with Allah (polytheists)","the hypocrites","the wrongdoers"],answer:1,explain:"الْمُشْرِكُونَ = those who commit shirk, i.e. associate partners with Allah. 'And I am not among those who associate partners [with Allah].'"},
+];
+let gQ,gIdx,gScore,gTotal;
+function gInit(){gQ=srsDueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i)=>srsCardId(d,i));gIdx=0;gScore=0;gTotal=0;if(gQ.length===0){srsNoDue('g-card','g-prog','g-counter','gInit');return;}gShow();}
+function gShow(){
+  if(gIdx>=gQ.length){doneScreen('g-card','g-prog','g-counter',gScore,gTotal,'gInit');return;}
+  const q=gQ[gIdx];
+  document.getElementById('g-prompt').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';
+  document.getElementById('g-next-row').style.display='none';
+  const indices=[0,1,2,3];shuffle(indices);
+  const nc=indices.indexOf(q.answer);
+  const opts=document.getElementById('g-options');opts.innerHTML='';
+  indices.forEach((oi,ni)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=q.options[oi];b.onclick=()=>gAnswer(ni,nc,q.explain,q.options[q.answer]);opts.appendChild(b);});
+  gMeta();
+}
+function gMeta(){document.getElementById('g-score').textContent=`Score: ${gScore} / ${gTotal}`;document.getElementById('g-counter').textContent=`Q ${Math.min(gIdx+1,gQ.length)} of ${gQ.length}`;document.getElementById('g-prog').style.width=(gIdx/gQ.length*100).toFixed(0)+'%';}
+function gAnswer(chosen,correct,explain,correctText){
+  const ok=chosen===correct;srsRecord("grammar", gQ[gIdx]._srsId, ok);gTotal++;if(ok)gScore++;gMeta();
+  document.querySelectorAll('#g-options .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen&&!ok)b.classList.add('wrong');});
+  document.getElementById('g-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${correctText}</strong>. ${explain}</div>`;
+  document.getElementById('g-next-row').style.display='flex';gIdx++;
+}
+function gNext(){gShow();}
+
+async function bootLesson() {
+  const ok = await requireLogin();
+  if (!ok) return;
+  vInit(); prInit(); cvInit(); gInit();
+}
+bootLesson();
+</script>
+</body>
+</html>

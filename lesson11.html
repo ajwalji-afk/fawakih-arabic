@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lesson 11 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 16px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;}
+  .tab-btn:first-child{border-radius:6px 0 0 0;}
+  .tab-btn:last-child{border-radius:0 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-english{font-size:18px;font-family:'Playfair Display',serif;font-style:italic;text-align:center;color:var(--ink);margin-bottom:0.4rem;line-height:1.4;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
+  Checking login...
+</div>
+
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1</div>
+  <h1>Lesson 11</h1>
+  <div class="arabic-subtitle">الدَّرْسُ الْحَادِيَ عَشَرَ</div>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('patterns')">Roots & Patterns</button>
+  <button class="tab-btn" onclick="switchTab('conj')">Conjugation</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+</div>
+
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 11 vocabulary — new verbs with past, present, and verbal noun forms. Choose the correct English meaning.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the English meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-patterns" class="tab-content">
+  <div class="section-intro">Arabic words = root letters + pattern. The three root letters carry the general meaning; the pattern adds grammatical meaning. Choose the correct root letters or identify the pattern.</div>
+  <div class="quiz-meta"><span id="pt-counter">Q 1 of 20</span><span id="pt-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="pt-prog" style="width:0%"></div></div>
+  <div class="question-card" id="pt-card">
+    <div class="prompt-arabic" id="pt-prompt"></div>
+    <div class="prompt-sub" id="pt-sub">→ choose the correct answer</div>
+    <div id="pt-feedback"></div>
+    <div class="mc-options" id="pt-options"></div>
+    <div class="btn-row" id="pt-next-row" style="display:none"><button class="btn btn-primary" onclick="ptNext()">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-conj" class="tab-content">
+  <div class="section-intro">New verbs from Lesson 11 — past, present, and command forms. Choose the correct English translation.</div>
+  <div class="quiz-meta"><span id="cj-counter">Q 1 of ?</span><span id="cj-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="cj-prog" style="width:0%"></div></div>
+  <div class="question-card" id="cj-card">
+    <div class="prompt-arabic" id="cj-prompt"></div>
+    <div class="prompt-sub">→ choose the correct translation</div>
+    <div id="cj-feedback"></div>
+    <div class="mc-options" id="cj-options"></div>
+    <div class="btn-row" id="cj-next-row" style="display:none"><button class="btn btn-primary" onclick="cjNext()">Next →</button></div>
+  </div>
+</div>
+
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro">Theory questions on Lesson 11 concepts: noun cases (الإِعْرَاب), case flexibility, morphological patterns, root letters, and the Isrā' and Mi'rāj text analysis.</div>
+  <div class="quiz-meta"><span id="g-counter">Q 1 of 40</span><span id="g-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-english" id="g-prompt"></div>
+    <div class="prompt-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none"><button class="btn btn-primary" onclick="gNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['vocab','patterns','conj','grammar'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function buildMC(id,opts,ci,cb){
+  const c=document.getElementById(id);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>cb(i,ci);c.appendChild(b);});
+}
+function lockMC(id,chosen,ci){
+  document.querySelectorAll(`#${id} .mc-option`).forEach((b,i)=>{b.classList.add('disabled');if(i===ci)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneScreen(cardId,progId,cntId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(cntId).textContent='Done!';
+}
+
+// VOCABULARY
+const vocabData=[
+  {ar:"كَانَ",en:"he was / he used to be (irregular)"},
+  {ar:"يَكُونُ",en:"he is / he will be"},
+  {ar:"كَوْنٌ",en:"being / existence (verbal noun)"},
+  {ar:"نَظَرَ",en:"he looked"},
+  {ar:"يَنْظُرُ",en:"he looks"},
+  {ar:"نَظَرٌ",en:"looking (verbal noun)"},
+  {ar:"رَأَى",en:"he saw (irregular)"},
+  {ar:"يَرَى",en:"he sees"},
+  {ar:"رُؤْيَةٌ",en:"seeing / vision (verbal noun)"},
+  {ar:"عَرَفَ",en:"he knew / he recognized"},
+  {ar:"يَعْرِفُ",en:"he knows / he recognizes"},
+  {ar:"مَعْرِفَةٌ",en:"knowledge / recognition (verbal noun)"},
+  {ar:"ضَرَّ",en:"he harmed (irregular)"},
+  {ar:"يَضُرُّ",en:"he harms"},
+  {ar:"ضُرٌّ",en:"harm (verbal noun)"},
+  {ar:"نَفَعَ",en:"he benefitted"},
+  {ar:"يَنْفَعُ",en:"he benefits"},
+  {ar:"نَفْعٌ",en:"benefit (verbal noun)"},
+  {ar:"أَكَلَ",en:"he ate"},
+  {ar:"يَأْكُلُ",en:"he eats"},
+  {ar:"أَكْلٌ",en:"eating (verbal noun)"},
+  {ar:"شَرِبَ",en:"he drank"},
+  {ar:"يَشْرَبُ",en:"he drinks"},
+  {ar:"شُرْبٌ",en:"drinking (verbal noun)"},
+  {ar:"غَضِبَ",en:"he became angry"},
+  {ar:"يَغْضَبُ",en:"he becomes angry"},
+  {ar:"غَضَبٌ",en:"anger (verbal noun)"},
+  // Isra and Miraj vocab
+  {ar:"سَعِيدٌ",en:"happy / blessed"},
+  {ar:"شَقِيٌّ",en:"wretched / miserable"},
+  {ar:"رَاكِبٌ",en:"one who is riding"},
+  {ar:"حَلْقَةٌ",en:"ring / chain"},
+  {ar:"أَسْرَى",en:"he made travel by night"},
+  {ar:"عَرَجَ",en:"he made ascend"},
+  {ar:"رَبَطَ",en:"he tied"},
+];
+let vQ,vIdx,vScore,vTotal;
+function vInit(){vQ=srsDueQueue("vocab", vocabData, (d,i)=>srsCardId(d,i));vIdx=0;vScore=0;vTotal=0;if(vQ.length===0){srsNoDue('v-card','v-prog','v-counter','vInit');return;}vShow();}
+function vShow(){
+  if(vIdx>=vQ.length){doneScreen('v-card','v-prog','v-counter',vScore,vTotal,'vInit');return;}
+  const q=vQ[vIdx];
+  document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';
+  document.getElementById('v-next-row').style.display='none';
+  const dist=shuffle(vocabData.map(d=>d.en).filter(a=>a!==q.en)).slice(0,3);
+  const opts=shuffle([q.en,...dist]);const ci=opts.indexOf(q.en);
+  buildMC('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("vocab", vQ[vIdx]._srsId, ok);vTotal++;if(ok)vScore++;vMeta();lockMC('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vIdx++;
+  });vMeta();
+}
+function vMeta(){document.getElementById('v-score').textContent=`Score: ${vScore} / ${vTotal}`;document.getElementById('v-counter').textContent=`Q ${Math.min(vIdx+1,vQ.length)} of ${vQ.length}`;document.getElementById('v-prog').style.width=(vIdx/vQ.length*100).toFixed(0)+'%';}
+function vNext(){vShow();}
+
+// ROOTS AND PATTERNS
+const patternData=[
+  {prompt:"كَاتِبٌ",question:"What are the root letters?",answer:"ك ت ب",wrong:["ك ا ب","ت ب ا","ك ت ا"],explain:"كَاتِبٌ = writer. The root is ك ت ب (writing). The alif and ٌ are additional letters. Pattern: فَاعِلٌ."},
+  {prompt:"مَكْتُوبٌ",question:"What are the root letters?",answer:"ك ت ب",wrong:["م ك ت","ك و ب","م ت ب"],explain:"مَكْتُوبٌ = something written. Root: ك ت ب. The م، و، ٌ are additional. Pattern: مَفْعُولٌ."},
+  {prompt:"مَدْرَسَةٌ",question:"What are the root letters?",answer:"د ر س",wrong:["م د ر","د ر ا","م ر س"],explain:"مَدْرَسَةٌ = school. Root: د ر س (studying). The م، ة، ٌ are additional. Pattern: مَفْعَلَةٌ."},
+  {prompt:"مِفْتَاحٌ",question:"What are the root letters?",answer:"ف ت ح",wrong:["م ف ت","ف ت ا","م ت ح"],explain:"مِفْتَاحٌ = key. Root: ف ت ح (opening). The م، ا، ٌ are additional. Pattern: مِفْعَالٌ."},
+  {prompt:"قُرْآنٌ",question:"What are the root letters?",answer:"ق ر ء",wrong:["ق ر ا","ق ر ن","ق ا ن"],explain:"قُرْآنٌ = Qur'ān. Root: ق ر ء (reading/reciting). Pattern: فُعْلَانٌ."},
+  {prompt:"مَعْلُومٌ",question:"What are the root letters?",answer:"ع ل م",wrong:["م ع ل","ع ل و","م ل م"],explain:"مَعْلُومٌ = known. Root: ع ل م (knowledge). Pattern: مَفْعُولٌ."},
+  {prompt:"كَاتِبٌ",question:"What is the morphological pattern (وَزْن)?",answer:"فَاعِلٌ",wrong:["مَفْعُولٌ","فَعِيلٌ","فِعَالٌ"],explain:"كَاتِبٌ is on the فَاعِلٌ pattern (doer pattern): ك→ف، ا→ا، ت→ع، ب→ل. This pattern means 'one who does the action.'"},
+  {prompt:"مَكْتُوبٌ",question:"What is the morphological pattern (وَزْن)?",answer:"مَفْعُولٌ",wrong:["فَاعِلٌ","فَعِيلٌ","مَفْعَلٌ"],explain:"مَكْتُوبٌ is on the مَفْعُولٌ pattern (receiver pattern): م→م، ك→ف، ت→ع، و→و، ب→ل. This pattern means 'thing that received the action.'"},
+  {prompt:"حَافِظٌ",question:"What does this word mean (root: ح ف ظ = to protect/memorize)?",answer:"one who memorizes / protector",wrong:["something memorized","the act of memorizing","memorization"],explain:"حَافِظٌ is on the فَاعِلٌ pattern with root ح ف ظ → 'one who memorizes/protects.' e.g. حَافِظُ الْقُرْآنِ = one who has memorized the Qur'ān."},
+  {prompt:"مَحْفُوظٌ",question:"What does this word mean (root: ح ف ظ = to protect/memorize)?",answer:"something memorized / protected",wrong:["one who memorizes","the act of memorizing","protector"],explain:"مَحْفُوظٌ is on the مَفْعُولٌ pattern with root ح ف ظ → 'that which has been memorized/protected.'"},
+  {prompt:"What does the فَاعِلٌ pattern generally mean?",question:"Choose:",answer:"The doer of the action (often '-er' in English)",wrong:["The thing acted upon","The place where the action is done","The act itself"],explain:"فَاعِلٌ = active participle = doer pattern. كَاتِبٌ = writer; حَافِظٌ = memorizer; سَاجِدٌ = one who prostrates."},
+  {prompt:"What does the مَفْعُولٌ pattern generally mean?",question:"Choose:",answer:"The receiver of the action (passive participle)",wrong:["The doer of the action","The place of the action","The verbal noun"],explain:"مَفْعُولٌ = passive participle = receiver pattern. مَكْتُوبٌ = written; مَحْفُوظٌ = memorized; مَشْرُوبٌ = something drunk."},
+  {prompt:"How do you form the فَاعِلٌ pattern from root letters ف ع ل?",question:"Choose:",answer:"Add an alif after the first root letter; give the second root letter kasra: فَاعِلٌ",wrong:["Add مـ before and و after: مَفْعُولٌ","Double the middle root letter: فَعَّالٌ","Add تـ before: تَفَاعَلَ"],explain:"فَاعِلٌ: alif after ف, kasra on ع. e.g. ك ت ب → كَاتِبٌ; ح ف ظ → حَافِظٌ; س ج د → سَاجِدٌ."},
+  {prompt:"سَاجِدٌ (root: س ج د = to prostrate)",question:"What does this word mean?",answer:"one who prostrates",wrong:["something prostrated upon","the act of prostrating","a place of prostration"],explain:"سَاجِدٌ is on the فَاعِلٌ pattern: 'one who prostrates.' Plural: سُجَّدٌ or سَاجِدُونَ."},
+  {prompt:"مَشْرُوبٌ (root: ش ر ب = to drink)",question:"What does this word mean?",answer:"something drunk (e.g. a drink)",wrong:["one who drinks","the act of drinking","a drinking vessel"],explain:"مَشْرُوبٌ is on the مَفْعُولٌ pattern: 'that which was drunk / a drink.' e.g. ما هذا الْمَشْرُوبُ؟ = What is this drink?"},
+  {prompt:"Most Arabic dictionaries are arranged by:",question:"Choose:",answer:"Root letters",wrong:["Alphabetical order of full words","Frequency of use","Lesson order"],explain:"Arabic dictionaries are organized by three-letter roots — learning root-based meanings can unlock dozens of related words at once."},
+  {prompt:"In the word مَدَارِسُ (schools), what are the root letters?",question:"Choose:",answer:"د ر س",wrong:["م د ر","د ا ر","م ر س"],explain:"مَدَارِسُ = schools (broken plural of مَدْرَسَةٌ). Root: د ر س (studying). The م، ة، ا are additional letters."},
+  {prompt:"يَعْقِلُونَ (they think/reason) — what are the root letters?",question:"Choose:",answer:"ع ق ل",wrong:["ي ع ق","ع ق و","ق ل و"],explain:"يَعْقِلُونَ — root: ع ق ل (intellect/reason). The يـ، ن، و are additional (present tense and plural markers)."},
+  {prompt:"مُنَافِقُونَ (hypocrites) — what are the root letters?",question:"Choose:",answer:"ن ف ق",wrong:["م ن ف","ن ا ق","م ف ق"],explain:"مُنَافِقُونَ — root: ن ف ق (spending/hypocrisy). The م، ا، ون are additional. Pattern: مُفَاعِلٌ."},
+  {prompt:"The pattern يَفْعَلُونَ (e.g. يَعْقِلُونَ) tells you:",question:"Choose:",answer:"3rd person masculine plural present tense verb",wrong:["Doer noun pattern (فَاعِلٌ)","Passive participle (مَفْعُولٌ)","Verbal noun pattern"],explain:"يـ prefix = 3rd person; ون suffix = masculine plural; يَفْعَلُونَ = they (3+, m) do the action. Recognizing patterns helps decode unknown words."},
+];
+let ptQ,ptIdx,ptScore,ptTotal;
+function ptInit(){ptQ=srsDueQueue("pattern", patternData, (d,i)=>srsCardId(d,i));ptIdx=0;ptScore=0;ptTotal=0;if(ptQ.length===0){srsNoDue('pt-card','pt-prog','pt-counter','ptInit');return;}ptShow();}
+function ptShow(){
+  if(ptIdx>=ptQ.length){doneScreen('pt-card','pt-prog','pt-counter',ptScore,ptTotal,'ptInit');return;}
+  const q=ptQ[ptIdx];
+  document.getElementById('pt-prompt').textContent=q.prompt;
+  document.getElementById('pt-sub').textContent=q.question;
+  document.getElementById('pt-feedback').innerHTML='';
+  document.getElementById('pt-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildMC('pt-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("pattern", ptQ[ptIdx]._srsId, ok);ptTotal++;if(ok)ptScore++;ptMeta();lockMC('pt-options',chosen,correct);
+    document.getElementById('pt-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('pt-next-row').style.display='flex';ptIdx++;
+  });ptMeta();
+}
+function ptMeta(){document.getElementById('pt-score').textContent=`Score: ${ptScore} / ${ptTotal}`;document.getElementById('pt-counter').textContent=`Q ${Math.min(ptIdx+1,ptQ.length)} of ${ptQ.length}`;document.getElementById('pt-prog').style.width=(ptIdx/ptQ.length*100).toFixed(0)+'%';}
+function ptNext(){ptShow();}
+
+// CONJUGATION
+const conjData=[
+  {arabic:"كَانَ",translation:"he was",verb:"كَانَ"},
+  {arabic:"يَكُونُ",translation:"he is / will be",verb:"كَانَ"},
+  {arabic:"رَأَى",translation:"he saw",verb:"رَأَى"},
+  {arabic:"يَرَى",translation:"he sees",verb:"رَأَى"},
+  {arabic:"عَرَفَ",translation:"he knew / recognized",verb:"عَرَفَ"},
+  {arabic:"يَعْرِفُ",translation:"he knows / recognizes",verb:"عَرَفَ"},
+  {arabic:"نَفَعَ",translation:"he benefitted",verb:"نَفَعَ"},
+  {arabic:"يَنْفَعُ",translation:"he benefits",verb:"نَفَعَ"},
+  {arabic:"أَكَلَ",translation:"he ate",verb:"أَكَلَ"},
+  {arabic:"يَأْكُلُ",translation:"he eats",verb:"أَكَلَ"},
+  {arabic:"شَرِبَ",translation:"he drank",verb:"شَرِبَ"},
+  {arabic:"يَشْرَبُ",translation:"he drinks",verb:"شَرِبَ"},
+  {arabic:"غَضِبَ",translation:"he became angry",verb:"غَضِبَ"},
+  {arabic:"يَغْضَبُ",translation:"he becomes angry",verb:"غَضِبَ"},
+  {arabic:"نَظَرَ",translation:"he looked",verb:"نَظَرَ"},
+  {arabic:"يَنْظُرُ",translation:"he looks",verb:"نَظَرَ"},
+  {arabic:"اُنْظُرْ",translation:"look! (m)",verb:"نَظَرَ"},
+  {arabic:"كَانُوا",translation:"they (3+) were",verb:"كَانَ"},
+  {arabic:"يَرَوْنَ",translation:"they (3+) see",verb:"رَأَى"},
+  {arabic:"عَرَفْنَا",translation:"we knew / recognized",verb:"عَرَفَ"},
+];
+let cjQ,cjIdx,cjScore,cjTotal;
+function cjInit(){cjQ=srsDueQueue("conj", conjData, (d,i)=>srsCardId(d,i));cjIdx=0;cjScore=0;cjTotal=0;if(cjQ.length===0){srsNoDue('cj-card','cj-prog','cj-counter','cjInit');return;}cjShow();}
+function cjShow(){
+  if(cjIdx>=cjQ.length){doneScreen('cj-card','cj-prog','cj-counter',cjScore,cjTotal,'cjInit');return;}
+  const q=cjQ[cjIdx];
+  document.getElementById('cj-prompt').textContent=q.arabic;
+  document.getElementById('cj-feedback').innerHTML='';
+  document.getElementById('cj-next-row').style.display='none';
+  const allTrans=conjData.map(f=>f.translation);
+  const dist=shuffle(allTrans.filter(t=>t!==q.translation)).slice(0,3);
+  const opts=shuffle([q.translation,...dist]);const ci=opts.indexOf(q.translation);
+  buildMC('cj-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("conj", cjQ[cjIdx]._srsId, ok);cjTotal++;if(ok)cjScore++;cjMeta();lockMC('cj-options',chosen,correct);
+    document.getElementById('cj-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! (${q.verb})</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.translation}</strong> (${q.verb})</div>`;
+    document.getElementById('cj-next-row').style.display='flex';cjIdx++;
+  });cjMeta();
+}
+function cjMeta(){document.getElementById('cj-score').textContent=`Score: ${cjScore} / ${cjTotal}`;document.getElementById('cj-counter').textContent=`Q ${Math.min(cjIdx+1,cjQ.length)} of ${cjQ.length}`;document.getElementById('cj-prog').style.width=(cjIdx/cjQ.length*100).toFixed(0)+'%';}
+function cjNext(){cjShow();}
+
+// GRAMMAR
+const grammarData=[
+  {q:"What is الإِعْرَابُ in Arabic grammar?",options:["The vocabulary list","The system of noun/verb case endings","The verb conjugation system","The pointing nouns"],answer:1,explain:"الإِعْرَابُ = the case system — the vowel endings (or their absence) on words that indicate their grammatical role in the sentence."},
+  {q:"How many grammatical cases does Arabic have for nouns?",options:["Two (nominative and accusative)","Three (nominative, accusative, genitive)","Four (nominative, accusative, genitive, dative)","One (all the same)"],answer:1,explain:"Arabic has three cases: رَفْعٌ (nominative), نَصْبٌ (accusative), جَرٌّ (genitive). Each marks a different grammatical function."},
+  {q:"Case endings in Arabic give flexibility to word order. This means:",options:["Arabic sentences always follow the same word order as English","The same meaning can be expressed with different word orders","Arabic has no rules for word order","Word order is random"],answer:1,explain:"Because case endings preserve grammatical meaning, Arabic word order can vary while the translation stays the same. English relies on word order; Arabic relies on case endings."},
+  {q:"Consider: كَتَبَ الطَّالِبُ الْقُرْآنَ vs الْقُرْآنَ كَتَبَ الطَّالِبُ. What is the translation of both?",options:["The Qur'ān wrote the student.","The student read the Qur'ān.","The student wrote the Qur'ān.","The Qur'ān was written."],answer:2,explain:"Regardless of word order, الطَّالِبُ (raf' = subject) wrote and الْقُرْآنَ (naṣb = object) was written. Case endings preserve the meaning."},
+  {q:"Case endings can change meaning. كَلَّمَ اللهُ مُوسَى means 'Allah spoke to Moses.' If just ONE vowel changes (اللهَ vs اللهُ), what would كَلَّمَ اللهَ مُوسَى mean?",options:["Allah and Moses spoke together.","Moses spoke to Allah.","Allah spoke to all people.","Allah spoke about Moses."],answer:1,explain:"اللهُ (raf'/ḍamma) = subject/doer. اللهَ (naṣb/fatḥa) = object. Swapping the case ending inverts the meaning entirely — Moses becomes the subject."},
+  {q:"Which sentence component is in the raf' state?",options:["مَفْعُولٌ بِهِ (direct object)","مُضَافٌ إِلَيْهِ (second term of iḍāfah)","فَاعِلٌ (subject/doer) and مُبْتَدَأٌ (nominal subject)","Words after prepositions"],answer:2,explain:"The raf' state marks subjects: مُبْتَدَأٌ (nominal sentence subject), فَاعِلٌ (verbal sentence doer), and خَبَرٌ (predicate of nominal sentence)."},
+  {q:"Which sentence component is in the naṣb state?",options:["مُبْتَدَأٌ","فَاعِلٌ","مَفْعُولٌ بِهِ (direct object)","مُضَافٌ إِلَيْهِ"],answer:2,explain:"The naṣb state marks: مَفْعُولٌ بِهِ (direct object), and some other sentence components covered in Level 2."},
+  {q:"Which sentence component is in the jarr state?",options:["فَاعِلٌ","خَبَرٌ","مُبْتَدَأٌ","مُضَافٌ إِلَيْهِ (second term of iḍāfah) and nouns after prepositions"],answer:3,explain:"The jarr state marks: مُضَافٌ إِلَيْهِ (second noun in iḍāfah) and any noun following a preposition (حَرْفُ الجَرّ)."},
+  {q:"Most Arabic words have how many root letters?",options:["Two","Three","Four","Five"],answer:1,explain:"Most Arabic words have three root letters (الْحُرُوفُ الأَصْلِيَّةُ). A smaller number have four root letters. Learning roots is key to vocabulary expansion."},
+  {q:"What is the وَزْن (morphological pattern) used for?",options:["Identifying the verb tense","Understanding the grammatical role and meaning of a word beyond its root","Counting syllables","Determining if a word is masculine or feminine"],answer:1,explain:"The وَزْن (pattern/template) adds meaning beyond the root. The same root ع ب د with different patterns gives: عَبَدَ (he worshipped), عَبْدٌ (servant), عَابِدٌ (worshipper), مَعْبُودٌ (thing worshipped), عَبَّادٌ (one who worships intensely)."},
+  {q:"The template letters used to analyze patterns are:",options:["ا ل م","ف ع ل","ك ت ب","م ن ص"],answer:1,explain:"ف ع ل is the template: ف represents the first root letter, ع the second, ل the third. Any pattern is expressed using these three template letters."},
+  // Isra and Miraj
+  {q:"What is the Isrā' (الإِسْرَاءُ)?",options:["The ascension through the heavens","The night journey from Makkah to Jerusalem (Masjid al-Aqṣā)","The revelation of the Qur'ān","The migration to Madinah"],answer:1,explain:"الإِسْرَاءُ = the night journey — Allah made the Prophet ﷺ travel by night from Makkah to the sanctified house (Jerusalem/Masjid al-Aqṣā)."},
+  {q:"What is the Mi'rāj (الْمِعْرَاجُ)?",options:["The night journey to Jerusalem","The ascension from Jerusalem through the seven heavens","The first revelation","The conquest of Makkah"],answer:1,explain:"الْمِعْرَاجُ = the ascension — after reaching Jerusalem, Allah made the Prophet ﷺ ascend through the seven heavens."},
+  {q:"The Prophet ﷺ traveled to Jerusalem riding on:",options:["A horse","A camel","الْبُرَاقُ (al-Burāq)","He walked"],answer:2,explain:"الْبُرَاقٌ = a creature (described as being between a donkey and a mule in size) with which Allah transported the Prophet ﷺ to Jerusalem, with Jibrīl as his companion."},
+  {q:"Before ascending to the heavens, the Prophet ﷺ did what in Jerusalem?",options:["He recited the Qur'ān","He led the Prophets in prayer as their imām","He rested","He ate and drank"],answer:1,explain:"فَصَلَّى بِالأَنْبِيَاءِ إِمَامًا — he prayed with the Prophets as their leader/imām."},
+  {q:"In the first heaven, the Prophet ﷺ saw:",options:["Ibrāhīm (عليه السلام)","Yūsuf (عليه السلام)","Ādam (عليه السلام)","Mūsā (عليه السلام)"],answer:2,explain:"In the first heaven: Ādam (عليه السلام) — he saw the souls of the blessed on his right and the wretched on his left."},
+  {q:"In the second heaven, the Prophet ﷺ saw:",options:["Mūsā and Idrīs","'Īsā ibn Maryam and Yaḥyā (عليهما السلام)","Hārūn and Ibrāhīm","Yūsuf and Dāwūd"],answer:1,explain:"In the second heaven: عِيسَى ابْنُ مَرْيَمَ وَيَحْيَى (عليهما السلام) — Jesus son of Mary and John (Yaḥyā)."},
+  {q:"In the seventh heaven, the Prophet ﷺ saw:",options:["Mūsā (عليه السلام)","Hārūn (عليه السلام)","Yūsuf (عليه السلام)","Ibrāhīm (عليه السلام)"],answer:3,explain:"In the seventh (highest) heaven: Ibrāhīm (عليه السلام). The Prophet ﷺ passed through: Adam (1st), 'Īsā & Yaḥyā (2nd), Yūsuf (3rd), Idrīs (4th), Hārūn (5th), Mūsā (6th), Ibrāhīm (7th)."},
+  {q:"What did the Prophet ﷺ tie the Burāq to when he arrived in Jerusalem?",options:["A tree","The ring of the door of the mosque","A post","A mountain"],answer:1,explain:"رَبَطَ الْبُرَاقَ بِحَلْقَةِ بَابِ الْمَسْجِدِ — he tied the Burāq to the ring of the door of the mosque (Masjid al-Aqṣā)."},
+  {q:"كَانَ اللهُ قَبْلَ كُلِّ شَيْءٍ — what does this mean?",options:["Allah created everything","Allah was before everything","Allah is greater than everything","Allah knows everything"],answer:1,explain:"كَانَ = was; قَبْلَ = before; كُلِّ شَيْءٍ = every thing. 'Allah was, is, and always will be before everything.' This describes Allah's eternal pre-existence."},
+  {q:"What is the significance of كَانَ (he was) as a verb?",options:["It is a regular verb like any other","It is a special verb — كَانَ and its sisters affect the nominal sentence by putting the خَبَرٌ in naṣb","It only appears in the Qur'ān","It can only be used for Allah"],answer:1,explain:"كَانَ is the first of the 'كَانَ and its sisters' (كَانَ وَأَخَوَاتُهَا) — special verbs that enter upon nominal sentences and change the خَبَرٌ from raf' to naṣb. This is studied in Level 2."},
+];
+let gQ,gIdx,gScore,gTotal;
+function gInit(){gQ=srsDueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i)=>srsCardId(d,i));gIdx=0;gScore=0;gTotal=0;if(gQ.length===0){srsNoDue('g-card','g-prog','g-counter','gInit');return;}gShow();}
+function gShow(){
+  if(gIdx>=gQ.length){doneScreen('g-card','g-prog','g-counter',gScore,gTotal,'gInit');return;}
+  const q=gQ[gIdx];
+  document.getElementById('g-prompt').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';
+  document.getElementById('g-next-row').style.display='none';
+  const indices=[0,1,2,3];shuffle(indices);const nc=indices.indexOf(q.answer);
+  const opts=document.getElementById('g-options');opts.innerHTML='';
+  indices.forEach((oi,ni)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=q.options[oi];b.onclick=()=>gAnswer(ni,nc,q.explain,q.options[q.answer]);opts.appendChild(b);});
+  gMeta();
+}
+function gMeta(){document.getElementById('g-score').textContent=`Score: ${gScore} / ${gTotal}`;document.getElementById('g-counter').textContent=`Q ${Math.min(gIdx+1,gQ.length)} of ${gQ.length}`;document.getElementById('g-prog').style.width=(gIdx/gQ.length*100).toFixed(0)+'%';}
+function gAnswer(chosen,correct,explain,correctText){
+  const ok=chosen===correct;srsRecord("grammar", gQ[gIdx]._srsId, ok);gTotal++;if(ok)gScore++;gMeta();
+  document.querySelectorAll('#g-options .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen&&!ok)b.classList.add('wrong');});
+  document.getElementById('g-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${correctText}</strong>. ${explain}</div>`;
+  document.getElementById('g-next-row').style.display='flex';gIdx++;
+}
+function gNext(){gShow();}
+async function bootLesson() {
+  const ok = await requireLogin();
+  if (!ok) return;
+  vInit(); ptInit(); cjInit(); gInit();
+}
+bootLesson();
+</script>
+</body>
+</html>

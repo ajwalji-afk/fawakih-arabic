@@ -1,0 +1,926 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lesson 3 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #1c1a16;
+    --parchment: #f7f3ec;
+    --cream: #efe9dc;
+    --gold: #b8860b;
+    --gold-light: #d4a843;
+    --rust: #8b3a2a;
+    --sage: #4a6741;
+    --border: #d4c9b0;
+    --shadow: rgba(28,26,22,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Source Serif 4', Georgia, serif;
+    background: var(--parchment);
+    color: var(--ink);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(184,134,11,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(74,103,65,0.05) 0%, transparent 60%);
+  }
+  header {
+    text-align: center;
+    padding: 2.5rem 1rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+  header::after {
+    content: '';
+    display: block;
+    width: 60px;
+    height: 2px;
+    background: var(--gold);
+    margin: 1rem auto 0;
+  }
+  .lesson-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 0.5rem; }
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 600; }
+  .arabic-subtitle { font-size: 1.5rem; font-family: serif; color: var(--gold); margin-top: 0.3rem; direction: rtl; }
+  .tabs { display: flex; justify-content: center; padding: 1.5rem 1rem 0; flex-wrap: wrap; }
+  .tab-btn { font-family: 'Source Serif 4', serif; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; padding: 10px 20px; border: 1px solid var(--border); background: var(--cream); color: #7a7060; cursor: pointer; transition: all 0.2s; border-bottom: none; position: relative; top: 1px; }
+  .tab-btn:first-child { border-radius: 6px 0 0 0; }
+  .tab-btn:last-child { border-radius: 0 6px 0 0; }
+  .tab-btn.active { background: var(--parchment); color: var(--ink); border-bottom: 1px solid var(--parchment); z-index: 2; }
+  .tab-btn:hover:not(.active) { background: #e8e2d6; color: var(--ink); }
+  .tab-content { border-top: 1px solid var(--border); max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem 3rem; display: none; }
+  .tab-content.active { display: block; }
+  .quiz-meta { display: flex; justify-content: space-between; font-size: 12px; color: #9a8e7a; font-family: 'Courier New', monospace; margin-bottom: 10px; letter-spacing: 0.04em; }
+  .progress-bar { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 1.8rem; }
+  .progress-fill { height: 2px; background: var(--gold); border-radius: 1px; transition: width 0.4s ease; }
+  .question-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 2rem; box-shadow: 0 2px 16px var(--shadow); }
+  .prompt-arabic { font-size: 36px; font-family: 'Traditional Arabic', 'Scheherazade New', serif; text-align: center; direction: rtl; color: var(--ink); line-height: 1.5; margin-bottom: 0.4rem; }
+  .prompt-english { font-size: 19px; font-family: 'Playfair Display', serif; font-style: italic; text-align: center; color: var(--ink); margin-bottom: 0.4rem; line-height: 1.4; }
+  .prompt-sub { font-size: 11px; text-align: center; color: #b0a490; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem; font-family: 'Courier New', monospace; }
+  .feedback-box { font-size: 14px; text-align: center; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; line-height: 1.5; }
+  .feedback-correct { background: #eef5ee; color: #2e5c2e; border: 1px solid #b8d4b8; }
+  .feedback-wrong { background: #fdf0ee; color: #7a2e20; border: 1px solid #e0b8b0; }
+  .mc-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .mc-option { padding: 12px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--parchment); font-size: 14px; font-family: 'Source Serif 4', serif; cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.4; }
+  .mc-option:hover:not(.disabled) { border-color: var(--gold-light); background: #fdf8ee; }
+  .mc-option.correct { background: #eef5ee; border-color: var(--sage); color: var(--sage); font-weight: 600; }
+  .mc-option.wrong { background: #fdf0ee; border-color: var(--rust); color: var(--rust); }
+  .mc-option.disabled { cursor: default; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn { flex: 1; padding: 11px; border-radius: 6px; font-size: 13px; font-family: 'Courier New', monospace; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; border: 1px solid var(--border); background: transparent; color: var(--ink); }
+  .btn:hover { background: var(--cream); }
+  .btn-primary { border-color: var(--gold); color: var(--gold); }
+  .btn-primary:hover { background: #fdf8ee; }
+  .section-intro { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; font-size: 14px; line-height: 1.6; color: #5a5040; }
+  .section-intro strong { color: var(--ink); }
+  .done-screen { text-align: center; padding: 2rem 0; }
+  .done-screen .big-check { font-size: 48px; margin-bottom: 1rem; }
+  .done-screen p { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.4rem; }
+  .done-screen small { font-size: 13px; color: #9a8e7a; font-family: 'Courier New', monospace; }
+  .restart-btn { margin-top: 1.5rem; padding: 12px 30px; border: 1px solid var(--gold); border-radius: 6px; background: transparent; color: var(--gold); font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.08em; cursor: pointer; }
+  .restart-btn:hover { background: #fdf8ee; }
+  /* Conjugation table */
+  .conj-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 14px; }
+  .conj-table th { background: var(--cream); padding: 8px 10px; border: 1px solid var(--border); font-weight: 600; font-size: 12px; letter-spacing: 0.04em; text-align: center; }
+  .conj-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
+  .conj-table .arabic-cell { font-size: 22px; font-family: 'Traditional Arabic', serif; direction: rtl; }
+  .conj-table .pronoun-cell { font-size: 20px; font-family: 'Traditional Arabic', serif; direction: rtl; color: var(--gold); }
+  .conj-table input { width: 100%; padding: 6px 8px; font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--parchment); font-family: 'Source Serif 4', serif; outline: none; text-align: center; }
+  .conj-table input:focus { border-color: var(--gold); }
+  .conj-table input.cell-correct { background: #eef5ee; border-color: var(--sage); }
+  .conj-table input.cell-wrong { background: #fdf0ee; border-color: var(--rust); }
+  .conj-table input.cell-revealed { background: #fdf8ee; border-color: var(--gold-light); }
+  .verb-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; text-align: center; margin-bottom: 1.2rem; }
+  .verb-label span { font-family: 'Traditional Arabic', serif; font-size: 1.4rem; direction: rtl; color: var(--gold); }
+  .conj-check-row { display: flex; gap: 10px; margin-top: 14px; }
+  .conj-block { margin-bottom: 2.5rem; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
+  Checking login...
+</div>
+
+
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1</div>
+  <h1>Lesson 3</h1>
+  <div class="arabic-subtitle">الدَّرْسُ الثَّالِثُ</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('gender')">Gender</button>
+  <button class="tab-btn" onclick="switchTab('conj')">Conjugation</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+</div>
+<div style="text-align:center; margin: 1rem auto 0;">
+  <button class="restart-btn" onclick="srsResetLesson()">Reset Lesson 3 SRS</button>
+</div>
+<!-- ══════════ TAB 1: VOCABULARY ══════════ -->
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">
+    Lesson 3 vocabulary — elements of nature, the soul, and the heart. Choose the correct English meaning.
+  </div>
+  <div class="quiz-meta">
+    <span id="v-counter">Q 1 of 30</span>
+    <span id="v-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the English meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="vNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 2: GENDER ══════════ -->
+<div id="tab-gender" class="tab-content">
+  <div class="section-intro">
+    Every Arabic noun is either <strong>masculine (مُذَكَّر)</strong> or <strong>feminine (مُؤَنَّث)</strong>. Choose the correct gender for each word shown.
+  </div>
+  <div class="quiz-meta">
+    <span id="ge-counter">Q 1 of 20</span>
+    <span id="ge-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="ge-prog" style="width:0%"></div></div>
+  <div class="question-card" id="ge-card">
+    <div class="prompt-arabic" id="ge-prompt"></div>
+    <div class="prompt-sub">masculine or feminine?</div>
+    <div id="ge-feedback"></div>
+    <div class="mc-options" id="ge-options"></div>
+    <div class="btn-row" id="ge-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="geNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 3: CONJUGATION ══════════ -->
+<div id="tab-conj" class="tab-content">
+  <div class="section-intro">
+    <strong>2nd person past tense</strong> conjugation. You'll see an Arabic verb form — choose the correct English translation.
+  </div>
+  <div class="quiz-meta">
+    <span id="cj-counter">Q 1 of 24</span>
+    <span id="cj-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="cj-prog" style="width:0%"></div></div>
+  <div class="question-card" id="cj-card">
+    <div class="prompt-arabic" id="cj-prompt"></div>
+    <div class="prompt-sub">→ choose the correct translation</div>
+    <div id="cj-feedback"></div>
+    <div class="mc-options" id="cj-options"></div>
+    <div class="btn-row" id="cj-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="cjNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 4: GRAMMAR ══════════ -->
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro">
+    Theory questions on Lesson 3 concepts: gender of nouns, feminine endings, feminine by convention, 2nd person conjugation, and Sūrat al-Nās text analysis.
+  </div>
+  <div class="quiz-meta">
+    <span id="g-counter">Q 1 of 40</span>
+    <span id="g-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-english" id="g-prompt"></div>
+    <div class="prompt-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="gNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── UTILS ───
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['vocab','gender','conj','grammar'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function buildMCOptions(containerId, options, correctIdx, onAnswer){
+  const container=document.getElementById(containerId);
+  container.innerHTML='';
+  options.forEach((opt,i)=>{
+    const btn=document.createElement('button');
+    btn.className='mc-option';
+    btn.textContent=opt;
+    btn.onclick=()=>onAnswer(i,correctIdx);
+    container.appendChild(btn);
+  });
+}
+function lockMCOptions(containerId,chosenIdx,correctIdx){
+  document.querySelectorAll(`#${containerId} .mc-option`).forEach((btn,i)=>{
+    btn.classList.add('disabled');
+    if(i===correctIdx)btn.classList.add('correct');
+    else if(i===chosenIdx)btn.classList.add('wrong');
+  });
+}
+function doneScreen(cardId, progId, counterId, score, total, reinitFn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen">
+    <div class="big-check">✓</div>
+    <p>Final score: ${score} / ${total}</p>
+    <small>${Math.round(score/total*100)}% correct</small><br>
+    <button class="restart-btn" onclick="${reinitFn}()">Try again ↺</button>
+  </div>`;
+  document.getElementById(progId).style.width='100%';
+  document.getElementById(counterId).textContent='Done!';
+}
+
+
+// ─────────────────────────────────────────────
+// SUPABASE USER-SPECIFIC SPACED REPETITION
+// ─────────────────────────────────────────────
+const SRS_LESSON = "lesson3";
+
+const client = window.supabase.createClient(
+  "https://ighwjwnkwfbhsgtqdkui.supabase.co",
+  "sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg"
+);
+
+let currentUser = null;
+let srsProgress = {};
+
+function srsCardId(item, idx) {
+  return String(idx) + "::" + JSON.stringify(item).slice(0, 400);
+}
+
+function srsStorageKey(tab, cardId) {
+  return `${SRS_LESSON}::${tab}::${cardId}`;
+}
+
+async function requireLogin() {
+  const { data, error } = await client.auth.getSession();
+
+  if (error || !data.session || !data.session.user) {
+    document.body.innerHTML = `
+      <div style="max-width:560px;margin:60px auto;padding:24px;background:white;border:1px solid #d4c9b0;border-radius:12px;font-family:Georgia,serif;text-align:center;">
+        <h2>Please log in first</h2>
+        <p>Go back to the Fawakih Arabic home page, log in, then open Lesson 3 again.</p>
+        <a href="index.html" style="display:inline-block;margin-top:12px;padding:10px 14px;border:1px solid #d4c9b0;border-radius:6px;color:#1c1a16;text-decoration:none;background:#efe9dc;">Back to login</a>
+      </div>
+    `;
+    return false;
+  }
+
+  currentUser = data.session.user;
+  document.getElementById("auth-bar").textContent = "Logged in as " + currentUser.email + " · Lesson 3 progress saves to Supabase";
+  await srsLoadProgress();
+  return true;
+}
+
+async function srsLoadProgress() {
+  if (!currentUser) return;
+
+  const { data, error } = await client
+    .from("card_progress")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .eq("lesson", SRS_LESSON);
+
+  if (error) {
+    console.error("SRS load error", error);
+    document.getElementById("auth-bar").textContent = "Supabase progress load error: " + error.message;
+    return;
+  }
+
+  srsProgress = {};
+  (data || []).forEach(row => {
+    srsProgress[srsStorageKey(row.tab, row.card_id)] = row;
+  });
+}
+
+function srsIsDue(tab, cardId) {
+  const item = srsProgress[srsStorageKey(tab, cardId)];
+  if (!item || !item.due_at) return true;
+  return Number(item.due_at) <= Date.now();
+}
+
+async function srsRecord(tab, cardId, correct) {
+  if (!currentUser) return;
+
+  const key = srsStorageKey(tab, cardId);
+  const old = srsProgress[key] || {};
+  const now = Date.now();
+
+  let intervalDays = Number(old.interval_days || 0);
+  let reps = Number(old.reps || 0);
+  let ease = Number(old.ease || 2.5);
+
+  if (correct) {
+    reps += 1;
+    if (reps === 1) intervalDays = 1;
+    else if (reps === 2) intervalDays = 3;
+    else intervalDays = Math.max(1, Math.round(intervalDays * ease));
+    ease = Math.min(3.0, ease + 0.05);
+  } else {
+    reps = 0;
+    intervalDays = 0;
+    ease = Math.max(1.3, ease - 0.2);
+  }
+
+  const delayMs = correct ? intervalDays * 24 * 60 * 60 * 1000 : 10 * 60 * 1000;
+
+  const row = {
+    user_id: currentUser.id,
+    lesson: SRS_LESSON,
+    tab: tab,
+    card_id: cardId,
+    interval_days: intervalDays,
+    reps: reps,
+    ease: ease,
+    due_at: now + delayMs,
+    last_correct: correct,
+    updated_at: new Date().toISOString()
+  };
+
+  const { data, error } = await client
+    .from("card_progress")
+    .upsert(row, { onConflict: "user_id,lesson,tab,card_id" })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("SRS save error", error);
+    document.getElementById("auth-bar").textContent = "Supabase save error: " + error.message;
+    return;
+  }
+
+  srsProgress[key] = data || row;
+}
+
+function srsDueQueue(tab, items, idFn) {
+  const withIds = items.map((item, idx) => ({ ...item, _srsId: idFn(item, idx) }));
+  const due = withIds.filter(item => srsIsDue(tab, item._srsId));
+  return shuffle(due);
+}
+
+function srsNoDue(cardId, progId, counterId, reinitFn) {
+  document.getElementById(cardId).innerHTML = `<div class="done-screen">
+    <div class="big-check">✓</div>
+    <p>No cards due right now</p>
+    <small>Come back later, or reset this lesson's progress to review again.</small><br>
+    <button class="restart-btn" onclick="${reinitFn}()">Check again ↺</button>
+  </div>`;
+  document.getElementById(progId).style.width = '100%';
+  document.getElementById(counterId).textContent = 'No due cards';
+}
+
+async function srsResetLesson() {
+  if (!currentUser) return;
+  if (!confirm("Reset your Supabase spaced repetition progress for Lesson 3?")) return;
+
+  const { error } = await client
+    .from("card_progress")
+    .delete()
+    .eq("user_id", currentUser.id)
+    .eq("lesson", SRS_LESSON);
+
+  if (error) {
+    alert("Reset error: " + error.message);
+    return;
+  }
+
+  srsProgress = {};
+  location.reload();
+}
+
+// ─── VOCABULARY ───
+const vocabData = [
+  // Main vocab list
+  {ar:"سَمَاءٌ", en:"sky / heaven (f.)"},
+  {ar:"سَمَاوَاتٌ", en:"skies / heavens"},
+  {ar:"أَرْضٌ", en:"earth / land (f.)"},
+  {ar:"أَرَاضٍ", en:"lands (أَرَاضٍ)"},
+  {ar:"الأَرَاضِي", en:"lands (الأَرَاضِي)"},
+  {ar:"رِيحٌ", en:"wind (f.)"},
+  {ar:"رِيَاحٌ", en:"winds"},
+  {ar:"مَاءٌ", en:"water"},
+  {ar:"مِيَاهٌ", en:"waters"},
+  {ar:"نَارٌ", en:"fire (f.)"},
+  {ar:"نِيرَانٌ", en:"fires"},
+  {ar:"جَنَّةٌ", en:"garden / paradise"},
+  {ar:"جَنَّاتٌ", en:"gardens / paradises"},
+  {ar:"نَفْسٌ", en:"self / soul / person (f.)"},
+  {ar:"نُفُوسٌ", en:"souls (نُفُوسٌ)"},
+  {ar:"أَنْفُسٌ", en:"souls (أَنْفُسٌ)"},
+  {ar:"قَلْبٌ", en:"heart"},
+  {ar:"قُلُوبٌ", en:"hearts"},
+  // Vocabulary subtleties
+  {ar:"جَنَّةٌ", en:"garden — lush AND large"},
+  {ar:"بُسْتَانٌ", en:"garden — large but not lush"},
+  {ar:"حَدِيقَةٌ", en:"garden — neither large nor lush"},
+  // Text analysis (Sūrat al-Nās)
+  {ar:"نَاسٌ", en:"people / mankind"},
+  {ar:"وَسْوَاسٌ", en:"whisper / devilish insinuation"},
+  {ar:"وَسَاوِسُ", en:"whispers / insinuations"},
+  {ar:"صُدُورٌ", en:"chests"},
+  {ar:"صَدْرٌ", en:"chest"},
+  {ar:"مُفَسِّرٌ", en:"exegete / Qur'ān commentator"},
+  {ar:"مُفَسِّرُونَ", en:"exegetes / commentators"},
+  {ar:"خَنَسَ", en:"to retreat / to withdraw"},
+  {ar:"اِعْتَصِمْ بِـ", en:"seek refuge in / hold fast to"},
+  {ar:"مُرَبِّي", en:"nurturer"},
+  {ar:"مُدَبِّر", en:"planner / arranger of affairs"},
+];
+
+let vQ,vIdx,vScore,vTotal;
+function vInit(){vQ=srsDueQueue("vocab", vocabData, (d,i)=>srsCardId(d,i));vIdx=0;vScore=0;vTotal=0;if(vQ.length===0){srsNoDue('v-card','v-prog','v-counter','vInit');return;}vShow();}
+function vShow(){
+  if(vIdx>=vQ.length){ doneScreen('v-card','v-prog','v-counter',vScore,vTotal,'vInit'); return; }
+  const q=vQ[vIdx];
+  document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';
+  document.getElementById('v-next-row').style.display='none';
+  const allEn=vocabData.map(d=>d.en);
+  const distractors=shuffle(allEn.filter(a=>a!==q.en)).slice(0,3);
+  const opts=shuffle([q.en,...distractors]);
+  const ci=opts.indexOf(q.en);
+  buildMCOptions('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("vocab", vQ[vIdx]._srsId, ok);
+    vTotal++;if(ok)vScore++;
+    vMeta();
+    lockMCOptions('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct!</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';
+    vIdx++;
+  });
+  vMeta();
+}
+function vMeta(){
+  document.getElementById('v-score').textContent=`Score: ${vScore} / ${vTotal}`;
+  document.getElementById('v-counter').textContent=`Q ${Math.min(vIdx+1,vQ.length)} of ${vQ.length}`;
+  document.getElementById('v-prog').style.width=(vIdx/vQ.length*100).toFixed(0)+'%';
+}
+function vNext(){vShow();}
+
+// ─── GENDER TAB ───
+const genderData = [
+  // Lesson 3 vocabulary gender
+  {ar:"قَلْبٌ", gender:"m", hint:"No feminine ending — default gender is masculine."},
+  {ar:"الكُبْرَى", gender:"f", hint:"Ends in alif maqṣūra (ى) — a feminine ending."},
+  {ar:"نَارٌ", gender:"f", hint:"Feminine by convention — fire is treated as feminine."},
+  {ar:"سَاعَةٌ", gender:"f", hint:"Ends in tā' marbūṭah (ة) — a feminine ending."},
+  {ar:"رِيحٌ", gender:"f", hint:"Feminine by convention — wind is treated as feminine."},
+  {ar:"جَبَلٌ", gender:"m", hint:"No feminine ending — default gender is masculine."},
+  {ar:"نَهْرٌ", gender:"m", hint:"No feminine ending — default gender is masculine."},
+  {ar:"الزَّهْرَاءُ", gender:"f", hint:"Ends in alif mamdūda (اء) — a feminine ending."},
+  {ar:"مُسْلِمَةٌ", gender:"f", hint:"Ends in tā' marbūṭah (ة) and refers to a female."},
+  {ar:"حَقٌّ", gender:"m", hint:"No feminine ending — default gender is masculine."},
+  {ar:"الأَرْضُ", gender:"f", hint:"Feminine by convention — earth is treated as feminine."},
+  {ar:"الصَّحْرَاءُ", gender:"f", hint:"Ends in alif mamdūda (اء) — a feminine ending."},
+  {ar:"مُؤْمِنَةٌ", gender:"f", hint:"Ends in tā' marbūṭah (ة) — a feminine ending."},
+  {ar:"سَمَاءٌ", gender:"f", hint:"Sky is feminine by convention."},
+  {ar:"شَهْرٌ", gender:"m", hint:"No feminine ending — default gender is masculine."},
+  {ar:"بَيْتٌ", gender:"m", hint:"No feminine ending — default gender is masculine."},
+  {ar:"مِصْرُ", gender:"f", hint:"Country names are generally feminine by convention."},
+  {ar:"شَمْسٌ", gender:"f", hint:"Sun is feminine by convention."},
+  {ar:"قَمَرٌ", gender:"m", hint:"Moon is masculine — no feminine ending and not by convention."},
+  {ar:"جَنَّةٌ", gender:"f", hint:"Ends in tā' marbūṭah (ة) — a feminine ending."},
+];
+
+const genderOpts = ["مُذَكَّر (masculine)", "مُؤَنَّث (feminine)"];
+
+let geQ,geIdx,geScore,geTotal;
+function geInit(){geQ=srsDueQueue("gender", genderData, (d,i)=>srsCardId(d,i));geIdx=0;geScore=0;geTotal=0;if(geQ.length===0){srsNoDue('ge-card','ge-prog','ge-counter','geInit');return;}geShow();}
+function geShow(){
+  if(geIdx>=geQ.length){ doneScreen('ge-card','ge-prog','ge-counter',geScore,geTotal,'geInit'); return; }
+  const q=geQ[geIdx];
+  document.getElementById('ge-prompt').textContent=q.ar;
+  document.getElementById('ge-feedback').innerHTML='';
+  document.getElementById('ge-next-row').style.display='none';
+  const correctIdx = q.gender==='m' ? 0 : 1;
+  buildMCOptions('ge-options', genderOpts, correctIdx, (chosen, correct)=>{
+    const ok=chosen===correct;srsRecord("gender", geQ[geIdx]._srsId, ok);
+    geTotal++;if(ok)geScore++;
+    geMeta();
+    lockMCOptions('ge-options',chosen,correct);
+    document.getElementById('ge-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct!</div>`
+      :`<div class="feedback-box feedback-wrong"><strong>${genderOpts[correct]}</strong> — ${q.hint}</div>`;
+    document.getElementById('ge-next-row').style.display='flex';
+    geIdx++;
+  });
+  geMeta();
+}
+function geMeta(){
+  document.getElementById('ge-score').textContent=`Score: ${geScore} / ${geTotal}`;
+  document.getElementById('ge-counter').textContent=`Q ${Math.min(geIdx+1,geQ.length)} of ${geQ.length}`;
+  document.getElementById('ge-prog').style.width=(geIdx/geQ.length*100).toFixed(0)+'%';
+}
+function geNext(){geShow();}
+
+// ─── CONJUGATION ───
+// ─── CONJUGATION MC ───
+const conjugations = [
+  {
+    verb:"دَرَسَ", meaning:"to study",
+    forms:[
+      {arabic:"دَرَسْتَ",   translation:"you studied (m)"},
+      {arabic:"دَرَسْتُمَا", translation:"you two studied (m/f)"},
+      {arabic:"دَرَسْتُمْ",  translation:"you studied (3+, m)"},
+      {arabic:"دَرَسْتِ",   translation:"you studied (f)"},
+      {arabic:"دَرَسْتُنَّ", translation:"you studied (3+, f)"},
+    ]
+  },
+  {
+    verb:"كَتَبَ", meaning:"to write",
+    forms:[
+      {arabic:"كَتَبْتَ",   translation:"you wrote (m)"},
+      {arabic:"كَتَبْتُمَا", translation:"you two wrote (m/f)"},
+      {arabic:"كَتَبْتُمْ",  translation:"you wrote (3+, m)"},
+      {arabic:"كَتَبْتِ",   translation:"you wrote (f)"},
+      {arabic:"كَتَبْتُنَّ", translation:"you wrote (3+, f)"},
+    ]
+  },
+  {
+    verb:"سَمِعَ", meaning:"to hear",
+    forms:[
+      {arabic:"سَمِعْتَ",   translation:"you heard (m)"},
+      {arabic:"سَمِعْتُمَا", translation:"you two heard (m/f)"},
+      {arabic:"سَمِعْتُمْ",  translation:"you heard (3+, m)"},
+      {arabic:"سَمِعْتِ",   translation:"you heard (f)"},
+      {arabic:"سَمِعْتُنَّ", translation:"you heard (3+, f)"},
+    ]
+  },
+  {
+    verb:"فَتَحَ", meaning:"to open",
+    forms:[
+      {arabic:"فَتَحْتَ",   translation:"you opened (m)"},
+      {arabic:"فَتَحْتُمَا", translation:"you two opened (m/f)"},
+      {arabic:"فَتَحْتُمْ",  translation:"you opened (3+, m)"},
+      {arabic:"فَتَحْتِ",   translation:"you opened (f)"},
+      {arabic:"فَتَحْتُنَّ", translation:"you opened (3+, f)"},
+    ]
+  },
+];
+
+const allConjForms = conjugations.flatMap(v => v.forms.map(f => ({...f, verb:v.verb, meaning:v.meaning})));
+let cjQueue, cjIdx, cjScore, cjTotal;
+
+function cjInit(){cjQueue=srsDueQueue("conj", allConjForms, (d,i)=>srsCardId(d,i));cjIdx=0;cjScore=0;cjTotal=0;if(cjQueue.length===0){srsNoDue('cj-card','cj-prog','cj-counter','cjInit');return;}cjShow();}
+function cjShow(){
+  if(cjIdx>=cjQueue.length){ doneScreen('cj-card','cj-prog','cj-counter',cjScore,cjTotal,'cjInit'); return; }
+  const q=cjQueue[cjIdx];
+  document.getElementById('cj-prompt').textContent=q.arabic;
+  document.getElementById('cj-feedback').innerHTML='';
+  document.getElementById('cj-next-row').style.display='none';
+  const allTrans=allConjForms.map(f=>f.translation);
+  const distractors=shuffle(allTrans.filter(t=>t!==q.translation)).slice(0,3);
+  const opts=shuffle([q.translation,...distractors]);
+  const ci=opts.indexOf(q.translation);
+  buildMCOptions('cj-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("conj", cjQueue[cjIdx]._srsId, ok);
+    cjTotal++;if(ok)cjScore++;
+    cjMeta();
+    lockMCOptions('cj-options',chosen,correct);
+    document.getElementById('cj-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! (${q.verb} — ${q.meaning})</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.translation}</strong> (${q.verb} — ${q.meaning})</div>`;
+    document.getElementById('cj-next-row').style.display='flex';
+    cjIdx++;
+  });
+  cjMeta();
+}
+function cjMeta(){
+  document.getElementById('cj-score').textContent=`Score: ${cjScore} / ${cjTotal}`;
+  document.getElementById('cj-counter').textContent=`Q ${Math.min(cjIdx+1,cjQueue.length)} of ${cjQueue.length}`;
+  document.getElementById('cj-prog').style.width=(cjIdx/cjQueue.length*100).toFixed(0)+'%';
+}
+function cjNext(){cjShow();}
+
+// ─── GRAMMAR MC ───
+const grammarData = [
+  // ── GENDER: BASICS ──
+  {
+    q: "In Arabic, every noun is assigned which gender?",
+    options: ["Masculine, feminine, or neuter", "Masculine or feminine only", "Positive or negative", "Definite or indefinite"],
+    answer: 1,
+    explain: "Arabic has no neuter — every word is either مُذَكَّر (masculine) or مُؤَنَّث (feminine). There is no 'it'."
+  },
+  {
+    q: "What is the 'default' gender for an Arabic word?",
+    options: ["Feminine", "Masculine", "Neither — it depends on meaning", "It varies by category"],
+    answer: 1,
+    explain: "Masculine is the default. A word is feminine only if it has a feminine ending or is feminine by convention."
+  },
+  {
+    q: "Which word type (parts of speech) in Arabic has gender?",
+    options: ["Only verbs (fi'l)", "Only particles (harf)", "Nouns and adjectives (أَسْمَاء)", "All three word types equally"],
+    answer: 2,
+    explain: "Nouns and adjectives (both are isms) carry gender. Particles (harf) and verbs conjugate for gender but don't 'have' gender themselves."
+  },
+
+  // ── TĀ' MARBŪṬAH ──
+  {
+    q: "The most common feminine ending in Arabic is:",
+    options: ["Alif maqṣūra (ى)", "Alif mamdūda (اء)", "Tā' marbūṭah (ة)", "Tanwīn (ٌ)"],
+    answer: 2,
+    explain: "Tā' marbūṭah (ة) is the most common feminine marker — e.g. مُسْلِمَةٌ (female Muslim), كَبِيرَةٌ (big, f.)."
+  },
+  {
+    q: "The word خَلِيفَةٌ ends in tā' marbūṭah but refers to:",
+    options: ["A female ruler only", "A male caliph", "A place", "An abstract concept"],
+    answer: 1,
+    explain: "Some words end in ة but are masculine in meaning — خَلِيفَةٌ (caliph), حَمْزَةٌ (male name), عَلَّامَةٌ (learned scholar) are all masculine."
+  },
+  {
+    q: "The word مُسْلِمَةٌ ends in tā' marbūṭah. This indicates it refers to:",
+    options: ["The religion Islam", "A male Muslim", "A female Muslim", "The concept of submission"],
+    answer: 2,
+    explain: "مُسْلِمَةٌ means 'female Muslim' — here the ة marks both feminine ending AND feminine meaning."
+  },
+  {
+    q: "Which of these words ends in tā' marbūṭah (ة)?",
+    options: ["رَسُولٌ", "مُؤْمِنٌ", "جَنَّةٌ", "قَلْبٌ"],
+    answer: 2,
+    explain: "جَنَّةٌ (garden/paradise) ends in ة — making it feminine."
+  },
+
+  // ── ALIF MAQṢŪRA ──
+  {
+    q: "Which ending marks a word as feminine (when additional to the root letters)?",
+    options: ["Alif maqṣūra (ى)", "Tanwīn ḍamma (ٌ)", "Shadda (ّ)", "Sukūn (ْ)"],
+    answer: 0,
+    explain: "Alif maqṣūra (ى) is a feminine ending when it is additional to the three root letters — e.g. حُسْنَى (most beautiful, f.), كُبْرَى (greatest, f.)."
+  },
+  {
+    q: "The word كُبْرَى means 'greatest (feminine)'. What ending makes it feminine?",
+    options: ["Tā' marbūṭah (ة)", "Alif mamdūda (اء)", "Alif maqṣūra (ى)", "Tanwīn fatḥa (ً)"],
+    answer: 2,
+    explain: "كُبْرَى ends in alif maqṣūra (ى) — a feminine ending when additional to the root."
+  },
+
+  // ── ALIF MAMDŪDA ──
+  {
+    q: "Which ending makes words like زَهْرَاءُ (radiant) and صَحْرَاءُ (desert) feminine?",
+    options: ["Tā' marbūṭah (ة)", "Alif maqṣūra (ى)", "Alif mamdūda (اء)", "Ḍamma (ُ)"],
+    answer: 2,
+    explain: "Alif mamdūda (اء) — an alif followed by hamza — is a feminine ending: زَهْرَاءُ, صَحْرَاءُ, حَمْرَاءُ."
+  },
+  {
+    q: "Which of these is feminine due to an alif mamdūda ending?",
+    options: ["سَاعَةٌ", "الصَّحْرَاءُ", "كُبْرَى", "مُؤْمِنَةٌ"],
+    answer: 1,
+    explain: "الصَّحْرَاءُ (the desert) ends in اء (alif mamdūda) — a feminine marker."
+  },
+
+  // ── FEMININE BY CONVENTION ──
+  {
+    q: "Some words are feminine without any obvious ending. This type of femininity is called:",
+    options: ["مُؤَنَّث لَفْظِي (apparent feminine)", "مُؤَنَّث سَمَاعِي (feminine by convention)", "مُؤَنَّث حَقِيقِي (real feminine)", "مُؤَنَّث مَجَازِي (metaphorical)"],
+    answer: 1,
+    explain: "مُؤَنَّث سَمَاعِي means 'heard' or 'convention-based' feminine — you just have to learn it, 'because the Arabs said so'."
+  },
+  {
+    q: "Which of these is feminine by convention (no obvious ending)?",
+    options: ["جَبَلٌ", "نَهْرٌ", "نَارٌ", "قَلْبٌ"],
+    answer: 2,
+    explain: "نَارٌ (fire) is feminine by convention — no ة, ى, or اء ending, but Arabs treat it as feminine."
+  },
+  {
+    q: "Which of these is feminine by convention?",
+    options: ["شَهْرٌ", "رَبٌّ", "أَرْضٌ", "بَيْتٌ"],
+    answer: 2,
+    explain: "أَرْضٌ (earth/land) is feminine by convention — it has no feminine ending but is treated as feminine."
+  },
+  {
+    q: "Country names in Arabic are generally:",
+    options: ["Masculine", "Feminine", "Neutral", "It depends on the country"],
+    answer: 1,
+    explain: "Most country names are treated as feminine in Arabic — e.g. مِصْرُ (Egypt), الرُّومُ (the Roman Empire)."
+  },
+  {
+    q: "Common body parts that come in pairs are generally:",
+    options: ["Masculine", "Feminine", "Neutral", "It depends on the body part"],
+    answer: 1,
+    explain: "Paired body parts like يَدٌ (hand) and عَيْنٌ (eye) are feminine by convention."
+  },
+  {
+    q: "Which of these is feminine by convention as a specific word?",
+    options: ["جَبَلٌ (mountain)", "شَمْسٌ (sun)", "نَهْرٌ (river)", "قَمَرٌ (moon)"],
+    answer: 1,
+    explain: "شَمْسٌ (sun) is feminine by convention — no feminine ending, but Arabs treat it as feminine. Interestingly, قَمَرٌ (moon) is masculine."
+  },
+  {
+    q: "نَفْسٌ (soul/self) is which gender?",
+    options: ["Masculine", "Feminine", "Either — it depends on context", "Neuter"],
+    answer: 1,
+    explain: "نَفْسٌ is feminine by convention — it has no feminine ending but is treated as feminine in Arabic."
+  },
+  {
+    q: "دَارٌ (home) is which gender?",
+    options: ["Masculine", "Feminine", "Either depending on context", "Neuter"],
+    answer: 1,
+    explain: "دَارٌ (home/abode) is feminine by convention, even though it has no obvious feminine ending."
+  },
+  {
+    q: "In Muslim belief, Allah is neither male nor female. How is اللهُ treated grammatically?",
+    options: [
+      "As feminine, to reflect His mercy",
+      "As masculine, as He chose to refer to Himself in the Qur'ān",
+      "As neutral — it has no gender",
+      "As both masculine and feminine alternately"
+    ],
+    answer: 1,
+    explain: "Due to the limits of language, اللهُ is treated grammatically as masculine — this is how He refers to Himself throughout the Qur'ān."
+  },
+
+  // ── 2ND PERSON CONJUGATION ──
+  {
+    q: "In Lesson 3 we cover the 2nd person (الْمُخَاطَب) past tense. What does 'second person' mean?",
+    options: ["Talking about someone (he/she/they)", "Talking to someone (you)", "Talking as yourself (I/we)", "Talking about a thing"],
+    answer: 1,
+    explain: "Second person (الْمُخَاطَب = the one being addressed) means 'you' — the person you are speaking to directly."
+  },
+  {
+    q: "What suffix gives أَنْتَ (you, m. singular) from دَرَسَ?",
+    options: ["تُمَا", "تِ", "تَ", "تُمْ"],
+    answer: 2,
+    explain: "دَرَسْتَ — the suffix تَ marks أَنْتَ (you, masculine singular)."
+  },
+  {
+    q: "What suffix gives أَنْتِ (you, f. singular) from دَرَسَ?",
+    options: ["تَ", "تِ", "تُمْ", "تُنَّ"],
+    answer: 1,
+    explain: "دَرَسْتِ — the suffix تِ marks أَنْتِ (you, feminine singular). Note the kasra instead of fatḥa."
+  },
+  {
+    q: "What suffix gives أَنْتُمْ (you, 3+, masculine) from دَرَسَ?",
+    options: ["تَ", "تُمَا", "تُمْ", "تُنَّ"],
+    answer: 2,
+    explain: "دَرَسْتُمْ — the suffix تُمْ marks أَنْتُمْ (you, 3+, masculine plural)."
+  },
+  {
+    q: "What suffix gives أَنْتُنَّ (you, 3+, feminine) from دَرَسَ?",
+    options: ["تُمْ", "تُمَا", "تِ", "تُنَّ"],
+    answer: 3,
+    explain: "دَرَسْتُنَّ — the suffix تُنَّ marks أَنْتُنَّ (you, 3+, feminine plural)."
+  },
+  {
+    q: "What suffix gives أَنْتُمَا (you two, dual) from دَرَسَ?",
+    options: ["تَا", "تُمَا", "تِ", "تُمْ"],
+    answer: 1,
+    explain: "دَرَسْتُمَا — the suffix تُمَا marks the dual أَنْتُمَا (you two). This form is the same for both masculine and feminine dual."
+  },
+  {
+    q: "The dual form أَنْتُمَا uses the same suffix for both masculine and feminine. What is that suffix?",
+    options: ["تُمْ", "تُنَّ", "تُمَا", "تَا"],
+    answer: 2,
+    explain: "تُمَا is used for أَنْتُمَا in both masculine and feminine dual — it is gender-neutral for the dual."
+  },
+  {
+    q: "All 2nd person past tense suffixes begin with which letter?",
+    options: ["نـ", "اـ", "تـ", "وـ"],
+    answer: 2,
+    explain: "All 2nd person (you) suffixes start with تـ: تَ, تِ, تُمَا, تُمْ, تُنَّ. This تـ is the mark of the second person."
+  },
+
+  // ── SŪRAT AL-NĀS TEXT ANALYSIS ──
+  {
+    q: "What is Sūrat al-Nās about?",
+    options: [
+      "Praising Allah's attributes",
+      "Seeking refuge in the Lord of Mankind from the retreating whisperer",
+      "The story of the Prophet",
+      "The Day of Judgment"
+    ],
+    answer: 1,
+    explain: "Sūrat al-Nās is a supplication — seeking refuge in Allah (as Lord, King, and God of mankind) from the evil of the whispering shayṭān."
+  },
+  {
+    q: "In Sūrat al-Nās, Allah is described with three titles. Which of the following is NOT one of them?",
+    options: ["رَبِّ النَّاسِ (Lord of Mankind)", "مَلِكِ النَّاسِ (King of Mankind)", "خَالِقِ النَّاسِ (Creator of Mankind)", "إِلَهِ النَّاسِ (God of Mankind)"],
+    answer: 2,
+    explain: "The three titles in Sūrat al-Nās are: رَبِّ النَّاسِ, مَلِكِ النَّاسِ, and إِلَهِ النَّاسِ. خَالِقِ النَّاسِ does not appear."
+  },
+  {
+    q: "الْخَنَّاسُ in Sūrat al-Nās refers to the whisperer who:",
+    options: [
+      "Constantly increases in volume",
+      "Retreats when Allah is remembered",
+      "Only appears at night",
+      "Lives in the hearts of believers"
+    ],
+    answer: 1,
+    explain: "الْخَنَّاسُ comes from خَنَسَ (to retreat) — the shayṭān retreats and withdraws when a person remembers Allah."
+  },
+  {
+    q: "وَسْوَاسٌ means:",
+    options: ["A loud shout", "A whisper / devilish insinuation", "A command", "A blessing"],
+    answer: 1,
+    explain: "وَسْوَاسٌ means whisper or devilish insinuation — the subtle suggestions that lead a person astray."
+  },
+  {
+    q: "الَّذِي يُوَسْوِسُ فِي صُدُورِ النَّاسِ — where does the whisperer whisper?",
+    options: ["In the ears of people", "In the chests / hearts of people", "In the minds of scholars", "In the mosques"],
+    answer: 1,
+    explain: "The whisperer whispers فِي صُدُورِ النَّاسِ — into the chests/hearts of people."
+  },
+  {
+    q: "According to one of the exegetes quoted in the text analysis, to whom is the command قُلْ ('say') in Sūrat al-Nās addressed?",
+    options: [
+      "Only to the Prophet exclusively",
+      "To the Prophet AND his entire nation",
+      "Only to scholars",
+      "Only to those who memorise the Qur'ān"
+    ],
+    answer: 1,
+    explain: "One exegete said: 'O Muhammad, the speech is also directed to your nation' — making the sūra a supplication for all Muslims."
+  },
+  {
+    q: "مِنَ الْجِنَّةِ وَالنَّاسِ — the whisperers are from two sources. What are they?",
+    options: ["Angels and humans", "Jinn and humans", "Jinn and animals", "Humans and shayāṭīn"],
+    answer: 1,
+    explain: "The final verse clarifies that whispered evil comes from both الْجِنَّة (jinn) and النَّاس (humans/mankind)."
+  },
+  {
+    q: "The exegete instructs: seek refuge in the one who is مُرَبِّي النَّاسِ. What does مُرَبِّي mean?",
+    options: ["Creator of people", "Nurturer / raiser of people", "Judge of people", "Destroyer of people"],
+    answer: 1,
+    explain: "مُرَبِّي means nurturer — the one who raises, nurtures, and looks after creation."
+  },
+  {
+    q: "The exegete also describes Allah as مُدَبِّرُ أُمُورِهِمْ. What does مُدَبِّر mean?",
+    options: ["Creator", "Forgiver", "Planner / arranger of affairs", "Sender of messengers"],
+    answer: 2,
+    explain: "مُدَبِّر means planner or arranger — the one who manages and orders all affairs."
+  },
+  {
+    q: "Sūrat al-Nās is from the final two sūras of the Qur'ān. Together these two sūras are known as:",
+    options: ["الْمُعَوِّذَتَان (the two seeking-refuge sūras)", "الْفَاتِحَتَان (the two opening sūras)", "الْمُسَبِّحَات (the glorifying sūras)", "الْحَوَامِيم (the Ḥā Mīm sūras)"],
+    answer: 0,
+    explain: "Sūrat al-Falaq and Sūrat al-Nās are called الْمُعَوِّذَتَان — the two sūras of seeking refuge, both beginning with قُلْ أَعُوذُ."
+  },
+];
+
+let gQ,gIdx,gScore,gTotal;
+function gInit(){gQ=srsDueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i)=>srsCardId(d,i));gIdx=0;gScore=0;gTotal=0;if(gQ.length===0){srsNoDue('g-card','g-prog','g-counter','gInit');return;}gShow();}
+function gShow(){
+  if(gIdx>=gQ.length){ doneScreen('g-card','g-prog','g-counter',gScore,gTotal,'gInit'); return; }
+  const q=gQ[gIdx];
+  document.getElementById('g-prompt').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';
+  document.getElementById('g-next-row').style.display='none';
+  const indices=[0,1,2,3];
+  shuffle(indices);
+  const newCorrect=indices.indexOf(q.answer);
+  const opts=document.getElementById('g-options');
+  opts.innerHTML='';
+  indices.forEach((origIdx,newIdx)=>{
+    const btn=document.createElement('button');
+    btn.className='mc-option';
+    btn.textContent=q.options[origIdx];
+    btn.onclick=()=>gAnswer(newIdx,newCorrect,q.explain,q.options[q.answer]);
+    opts.appendChild(btn);
+  });
+  gMeta();
+}
+function gMeta(){
+  document.getElementById('g-score').textContent=`Score: ${gScore} / ${gTotal}`;
+  document.getElementById('g-counter').textContent=`Q ${Math.min(gIdx+1,gQ.length)} of ${gQ.length}`;
+  document.getElementById('g-prog').style.width=(gIdx/gQ.length*100).toFixed(0)+'%';
+}
+function gAnswer(chosen,correct,explain,correctText){
+  const ok=chosen===correct;srsRecord("grammar", gQ[gIdx]._srsId, ok);
+  gTotal++;if(ok)gScore++;
+  gMeta();
+  document.querySelectorAll('#g-options .mc-option').forEach((btn,i)=>{
+    btn.classList.add('disabled');
+    if(i===correct)btn.classList.add('correct');
+    else if(i===chosen&&!ok)btn.classList.add('wrong');
+  });
+  document.getElementById('g-feedback').innerHTML=ok
+    ?`<div class="feedback-box feedback-correct">Correct! ${explain}</div>`
+    :`<div class="feedback-box feedback-wrong">The answer is <strong>${correctText}</strong>. ${explain}</div>`;
+  document.getElementById('g-next-row').style.display='flex';
+  gIdx++;
+}
+function gNext(){gShow();}
+
+// ─── INIT ───
+async function bootLesson() {
+  const ok = await requireLogin();
+  if (!ok) return;
+  vInit(); geInit(); cjInit(); gInit();
+}
+bootLesson();
+</script>
+</body>
+</html>

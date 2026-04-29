@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Lesson 8 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 16px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;}
+  .tab-btn:first-child{border-radius:6px 0 0 0;}
+  .tab-btn:last-child{border-radius:0 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-arabic-sm{font-size:24px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.6;margin-bottom:0.4rem;}
+  .prompt-english{font-size:18px;font-family:'Playfair Display',serif;font-style:italic;text-align:center;color:var(--ink);margin-bottom:0.4rem;line-height:1.4;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+
+<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
+  Checking login...
+</div>
+
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1</div>
+  <h1>Lesson 8</h1>
+  <div class="arabic-subtitle">الدَّرْسُ الثَّامِنُ</div>
+</header>
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('idafa')">Iḍāfah</button>
+  <button class="tab-btn" onclick="switchTab('pronouns')">Attached Pronouns</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+</div>
+
+<!-- TAB 1: VOCABULARY -->
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 8 vocabulary — new particles, nouns, and wuḍū' text analysis words. Choose the correct English meaning.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the English meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 2: IḌĀFAH -->
+<div id="tab-idafa" class="tab-content">
+  <div class="section-intro">The possessive construct (الإِضَافَة) links two nouns: the first (مُضَافٌ) has no اَلـ and no tanwīn; the second (مُضَافٌ إِلَيْهِ) is in the genitive case. It translates as "the X of Y." Translate each phrase or identify its structure.</div>
+  <div class="quiz-meta"><span id="id-counter">Q 1 of 20</span><span id="id-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="id-prog" style="width:0%"></div></div>
+  <div class="question-card" id="id-card">
+    <div class="prompt-arabic-sm" id="id-prompt"></div>
+    <div class="prompt-sub" id="id-sub">→ choose the correct answer</div>
+    <div id="id-feedback"></div>
+    <div class="mc-options" id="id-options"></div>
+    <div class="btn-row" id="id-next-row" style="display:none"><button class="btn btn-primary" onclick="idNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 3: ATTACHED PRONOUNS -->
+<div id="tab-pronouns" class="tab-content">
+  <div class="section-intro">Attached pronouns (ضَمَائِرُ مُتَّصِلَة) attach to nouns (possession) or verbs (direct object). You'll see an Arabic phrase — choose the correct English translation.</div>
+  <div class="quiz-meta"><span id="ap-counter">Q 1 of 20</span><span id="ap-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="ap-prog" style="width:0%"></div></div>
+  <div class="question-card" id="ap-card">
+    <div class="prompt-arabic" id="ap-prompt"></div>
+    <div class="prompt-sub">→ choose the correct translation</div>
+    <div id="ap-feedback"></div>
+    <div class="mc-options" id="ap-options"></div>
+    <div class="btn-row" id="ap-next-row" style="display:none"><button class="btn btn-primary" onclick="apNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- TAB 4: GRAMMAR -->
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro">Theory questions on Lesson 8 concepts: iḍāfah rules, the three noun-based compound structures, attached pronouns, sandwiched nūn rule, and wuḍū' text analysis.</div>
+  <div class="quiz-meta"><span id="g-counter">Q 1 of 40</span><span id="g-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-english" id="g-prompt"></div>
+    <div class="prompt-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none"><button class="btn btn-primary" onclick="gNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['vocab','idafa','pronouns','grammar'][i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function buildMC(id,opts,ci,cb){
+  const c=document.getElementById(id);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>cb(i,ci);c.appendChild(b);});
+}
+function lockMC(id,chosen,ci){
+  document.querySelectorAll(`#${id} .mc-option`).forEach((b,i)=>{b.classList.add('disabled');if(i===ci)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneScreen(cardId,progId,cntId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(cntId).textContent='Done!';
+}
+
+// ── VOCABULARY ──
+const vocabData=[
+  {ar:"أَوْ / أَمْ",en:"or"},
+  {ar:"إِلَّا",en:"except"},
+  {ar:"كُلّ",en:"every / all"},
+  {ar:"بَعْض",en:"some"},
+  {ar:"عَنْ",en:"about / from / concerning"},
+  {ar:"لِ",en:"for / to / to have"},
+  {ar:"زَكَاةٌ",en:"purity / alms tax (zakāh)"},
+  {ar:"صَلَاةٌ",en:"prayer / ṣalāh"},
+  {ar:"صَلَوَاتٌ",en:"prayers"},
+  {ar:"ذَنْبٌ",en:"sin"},
+  {ar:"ذُنُوبٌ",en:"sins"},
+  {ar:"نِيَّةٌ",en:"intention"},
+  {ar:"وُضُوءٌ",en:"ablution / wuḍū'"},
+  {ar:"غَسْلٌ",en:"washing"},
+  {ar:"مَسْحٌ",en:"wiping"},
+  {ar:"تَرْتِيبٌ",en:"order / arrangement"},
+  {ar:"بِدَايَةٌ",en:"beginning"},
+  {ar:"بَعْدَ",en:"after"},
+  {ar:"اِجْعَلْنِي",en:"make me (command)"},
+  {ar:"تَوَّابٌ",en:"one who repents / oft-repenting"},
+  {ar:"مُتَطَهِّرٌ",en:"one who purifies themselves"},
+  {ar:"مِرْفَقٌ",en:"elbow"},
+  {ar:"كَعْبٌ",en:"ankle"},
+];
+let vQ,vIdx,vScore,vTotal;
+function vInit(){vQ=srsDueQueue("vocab", vocabData, (d,i)=>srsCardId(d,i));vIdx=0;vScore=0;vTotal=0;if(vQ.length===0){srsNoDue('v-card','v-prog','v-counter','vInit');return;}vShow();}
+function vShow(){
+  if(vIdx>=vQ.length){doneScreen('v-card','v-prog','v-counter',vScore,vTotal,'vInit');return;}
+  const q=vQ[vIdx];
+  document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';
+  document.getElementById('v-next-row').style.display='none';
+  const dist=shuffle(vocabData.map(d=>d.en).filter(a=>a!==q.en)).slice(0,3);
+  const opts=shuffle([q.en,...dist]);const ci=opts.indexOf(q.en);
+  buildMC('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("vocab", vQ[vIdx]._srsId, ok);vTotal++;if(ok)vScore++;vMeta();lockMC('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vIdx++;
+  });vMeta();
+}
+function vMeta(){document.getElementById('v-score').textContent=`Score: ${vScore} / ${vTotal}`;document.getElementById('v-counter').textContent=`Q ${Math.min(vIdx+1,vQ.length)} of ${vQ.length}`;document.getElementById('v-prog').style.width=(vIdx/vQ.length*100).toFixed(0)+'%';}
+function vNext(){vShow();}
+
+// ── IḌĀFAH TAB ──
+const idafaData=[
+  {prompt:"رَسُولُ اللهِ",question:"Translate:",answer:"the messenger of Allah",wrong:["a messenger of Allah","Allah's messengers","the messengers of Allah"],explain:"رَسُولُ = مُضَافٌ (no اَلـ, no tanwīn); اللهِ = مُضَافٌ إِلَيْهِ (genitive). 'The messenger of Allah' / 'Allah's messenger.'"},
+  {prompt:"بَيْتُ الرَّجُلِ",question:"Translate:",answer:"the man's house / the house of the man",wrong:["a man's house","the man's houses","the house of a man"],explain:"بَيْتُ = مُضَافٌ; الرَّجُلِ = definite مُضَافٌ إِلَيْهِ. Result is definite: 'the house of the man.'"},
+  {prompt:"بَيْتُ رَجُلٍ",question:"Translate:",answer:"a man's house / the house of a man",wrong:["the man's house","the house of the man","a man's houses"],explain:"بَيْتُ = مُضَافٌ; رَجُلٍ = indefinite مُضَافٌ إِلَيْهِ. Result is indefinite: 'a man's house.'"},
+  {prompt:"أَهْلُ الْكِتَابِ",question:"Translate:",answer:"the people of the book",wrong:["the book of the people","a people and a book","the family of the book"],explain:"أَهْلُ = مُضَافٌ; الْكِتَابِ = مُضَافٌ إِلَيْهِ. 'People of the Book' — a famous Qur'ānic phrase for Jews and Christians."},
+  {prompt:"يَوْمُ الْقِيَامَةِ",question:"Translate:",answer:"the day of resurrection",wrong:["a day of resurrection","the days of resurrection","the resurrection of the day"],explain:"يَوْمُ = مُضَافٌ; الْقِيَامَةِ = مُضَافٌ إِلَيْهِ. 'The Day of Resurrection/Rising.'"},
+  {prompt:"صَلَاةُ اللَّيْلِ",question:"Translate:",answer:"the prayer of the night",wrong:["the night is a prayer","a night prayer","the prayers of night"],explain:"صَلَاةُ = مُضَافٌ; اللَّيْلِ = مُضَافٌ إِلَيْهِ. 'The night prayer.'"},
+  {prompt:"أُمَّهَاتُ الْبَنَاتِ الْكَبِيرَاتِ",question:"Translate:",answer:"the mothers of the elder daughters",wrong:["the elder mothers of the daughters","the big mothers and daughters","the daughters of the elder mothers"],explain:"الْكَبِيرَاتِ is the adjective of الْبَنَاتِ (the مُضَافٌ إِلَيْهِ), placed after the full iḍāfah. 'The mothers of the elder daughters.'"},
+  {prompt:"بَابُ بَيْتِ الرَّجُلِ",question:"Translate (chained iḍāfah):",answer:"the door of the man's house",wrong:["the man of the house's door","the door and the house of the man","a door of a man's house"],explain:"Chained iḍāfah: بَابُ → بَيْتِ → الرَّجُلِ. 'The door of the house of the man' = 'the door of the man's house.'"},
+  {prompt:"بَعْضُ النِّسَاءِ",question:"Translate:",answer:"some (of the) women",wrong:["all the women","the women's son","the best of the women"],explain:"بَعْضُ in iḍāfah means 'some of.' بَعْضُ النِّسَاءِ = 'some of the women.'"},
+  {prompt:"كُلُّ الرِّجَالِ",question:"Translate:",answer:"all of the men",wrong:["some of the men","the men's all","every man"],explain:"كُلُّ in iḍāfah means 'all of.' كُلُّ الرِّجَالِ = 'all of the men.'"},
+  {prompt:"بَيْتَا الرَّجُلِ",question:"Translate (dual مُضَافٌ):",answer:"the man's two houses",wrong:["the two men's house","two houses of men","the man's houses"],explain:"بَيْتَانِ → بَيْتَا (nūn dropped in iḍāfah dual). 'The man's two houses.' Not بَيْتَانِ الرَّجُلِ."},
+  {prompt:"مُسْلِمُو الصِّينِ",question:"Translate (sound masculine plural مُضَافٌ):",answer:"the Muslims of China",wrong:["China's Muslim","the Chinese Muslim","Muslims in general"],explain:"مُسْلِمُونَ → مُسْلِمُو (nūn dropped). 'The Muslims of China.' Not مُسْلِمُونَ الصِّينِ."},
+  {prompt:"بَنُو إِسْرَائِيلَ",question:"Translate:",answer:"the Children of Israel",wrong:["the sons of Israel","Israel's fathers","the tribe of Israel"],explain:"بَنُونَ → بَنُو (nūn dropped in iḍāfah). 'The Children of Israel' — a famous Qur'ānic phrase."},
+  {prompt:"اِبْنَةُ الرَّجُلِ الصَّالِحِ",question:"Translate:",answer:"the pious man's daughter",wrong:["the pious daughter of the man","the daughter is a pious man","the man's pious daughter"],explain:"الصَّالِحِ is in jarr → it modifies الرَّجُلِ (the مُضَافٌ إِلَيْهِ). 'The pious man's daughter.'"},
+  {prompt:"اِبْنَةُ الرَّجُلِ الصَّالِحَةُ",question:"Translate:",answer:"the man's pious daughter",wrong:["the pious man's daughter","the pious man and his daughter","the daughter of the pious"],explain:"الصَّالِحَةُ is in raf' → it modifies اِبْنَةُ (the مُضَافٌ). 'The man's pious daughter.'"},
+  {prompt:"رَحْمَةُ اللهِ",question:"What does this iḍāfah with Allah's name convey?",answer:"An attribute of Allah — 'the mercy of Allah'",wrong:["Allah possesses mercy like people possess things","A grammatical error — Allah cannot be مُضَافٌ إِلَيْهِ","The mercy of all creation"],explain:"When Allah is مُضَافٌ إِلَيْهِ and the مُضَافٌ is an attribute, it describes Allah's attribute: رَحْمَةُ اللهِ = 'the mercy of Allah.'"},
+  {prompt:"بَيْتُ اللهِ",question:"What does this iḍāfah with Allah's name convey?",answer:"A rank of honor for بَيْتٌ — 'the house honored by Allah'",wrong:["Allah owns the house literally like a person","It is incorrect to use Allah in iḍāfah","It means Allah lives in the house"],explain:"When the مُضَافٌ is a created thing and Allah is مُضَافٌ إِلَيْهِ, it conveys honor: بَيْتُ اللهِ = 'the house honored by Allah.'"},
+  {prompt:"ذُنُوبُ الأَبْنَاءِ الْكِبَارِ",question:"Translate:",answer:"the sins of the elder sons",wrong:["the elder sins of the sons","the sons of the elder sinners","the big sins of the sons"],explain:"ذُنُوبُ = مُضَافٌ; الأَبْنَاءِ = مُضَافٌ إِلَيْهِ; الْكِبَارِ = adjective of الأَبْنَاءِ (jarr). 'The sins of the elder sons.'"},
+  {prompt:"عَنْ شَهَادَةِ أُخْتِ الْمَلِكِ",question:"Translate:",answer:"about the testimony of the king's sister",wrong:["about the king of the sister's testimony","the sister's testimony about the king","about a testimony of a king's sister"],explain:"Chained: شَهَادَةِ → أُخْتِ → الْمَلِكِ. With عَنْ (about): 'about the testimony of the king's sister.'"},
+  {prompt:"What are the three types of ism-ism compound structures?",question:"Choose the correct list:",answer:"Adjectival phrase (L5), nominal sentence (L6), possessive construct/iḍāfah (L8)",wrong:["iḍāfah (L5), nominal sentence (L6), adjectival phrase (L8)","Subject-predicate (L5), possessive (L6), adjectival (L7)","Question sentence, command sentence, nominal sentence"],explain:"Lesson 5 = adjectival phrase (both match in G-E-N-D), Lesson 6 = nominal sentence (مُبْتَدَأٌ + خَبَرٌ), Lesson 8 = possessive construct (الإِضَافَة)."},
+];
+let idQ,idIdx,idScore,idTotal;
+function idInit(){idQ=srsDueQueue("idafa", idafaData, (d,i)=>srsCardId(d,i));idIdx=0;idScore=0;idTotal=0;if(idQ.length===0){srsNoDue('id-card','id-prog','id-counter','idInit');return;}idShow();}
+function idShow(){
+  if(idIdx>=idQ.length){doneScreen('id-card','id-prog','id-counter',idScore,idTotal,'idInit');return;}
+  const q=idQ[idIdx];
+  document.getElementById('id-prompt').textContent=q.prompt;
+  document.getElementById('id-sub').textContent=q.question;
+  document.getElementById('id-feedback').innerHTML='';
+  document.getElementById('id-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildMC('id-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("idafa", idQ[idIdx]._srsId, ok);idTotal++;if(ok)idScore++;idMeta();lockMC('id-options',chosen,correct);
+    document.getElementById('id-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('id-next-row').style.display='flex';idIdx++;
+  });idMeta();
+}
+function idMeta(){document.getElementById('id-score').textContent=`Score: ${idScore} / ${idTotal}`;document.getElementById('id-counter').textContent=`Q ${Math.min(idIdx+1,idQ.length)} of ${idQ.length}`;document.getElementById('id-prog').style.width=(idIdx/idQ.length*100).toFixed(0)+'%';}
+function idNext(){idShow();}
+
+// ── ATTACHED PRONOUNS ──
+const apData=[
+  {ar:"كِتَابُهُ",en:"his book",explain:"ـهُ = his (3rd person m singular). كِتَابُ + ـهُ = his book."},
+  {ar:"أُمُّهَا",en:"her mother",explain:"ـهَا = her (3rd person f singular). أُمّ + ـهَا = her mother."},
+  {ar:"أَنْفُسُهُمْ",en:"their souls (3+, m)",explain:"ـهُمْ = their (3rd person m plural). أَنْفُس + ـهُمْ = their souls."},
+  {ar:"آيَاتُنَا",en:"our signs",explain:"ـنَا = our. آيَات + ـنَا = our signs."},
+  {ar:"اِبْنَتُهَا",en:"her daughter",explain:"ـهَا = her. اِبْنَة + ـهَا → اِبْنَتُهَا (tā' marbūṭah opens before pronoun)."},
+  {ar:"صَلَاتِي",en:"my prayer",explain:"ـي = my. صَلَاة + ـي → صَلَاتِي (tā' marbūṭah opens). 'My prayer.'"},
+  {ar:"كِتَابُكَ",en:"your (m) book",explain:"ـكَ = your (2nd person m singular). كِتَاب + ـكَ = your book."},
+  {ar:"رَبُّكُمْ",en:"your (3+, m) Lord",explain:"ـكُمْ = your (2nd person m plural). رَبّ + ـكُمْ = your Lord."},
+  {ar:"رَبُّكِ",en:"your (f) Lord",explain:"ـكِ = your (2nd person f singular). رَبّ + ـكِ = your Lord (f)."},
+  {ar:"بَيْتُهُمْ",en:"their house (3+, m)",explain:"ـهُمْ = their (3rd person m plural). بَيْت + ـهُمْ = their house."},
+  {ar:"أَوْلَادِي",en:"my children",explain:"ـي = my. أَوْلَاد + ـي = my children."},
+  {ar:"بَنَاتُنَا",en:"our daughters",explain:"ـنَا = our. بَنَات + ـنَا = our daughters."},
+  {ar:"هُوَ رَسُولُكُمْ",en:"He is your (3+) messenger.",explain:"ـكُمْ = your (plural). 'He is your messenger.' Full nominal sentence."},
+  {ar:"هَذَا كِتَابُنَا",en:"This is our book.",explain:"ـنَا = our. 'This is our book.' هَذَا = subject; كِتَابُنَا = predicate."},
+  {ar:"هِيَ آيَاتُهُ",en:"They are his signs.",explain:"ـهُ = his. هِيَ = subject (pronoun); آيَاتُهُ = predicate with possessive pronoun."},
+  {ar:"أُمُّنَا جَمِيلَةٌ",en:"Our mother is beautiful.",explain:"ـنَا = our. أُمُّنَا = subject (our mother); جَمِيلَةٌ = predicate. Nominal sentence."},
+  {ar:"ذَلِكَ بَيْتُهُمْ",en:"That is their house.",explain:"ـهُمْ = their. 'That is their house.' Nominal sentence with pointing word as subject."},
+  {ar:"أُولَئِكَ الرِّجَالُ أَوْلَادِي",en:"Those men are my children.",explain:"ـي = my. Full nominal sentence: 'Those men are my children.'"},
+  {ar:"أَيْنَ مَسْجِدُكُمْ؟",en:"Where is your (3+) mosque?",explain:"ـكُمْ = your (plural). 'Where is your mosque?' Uses question word أَيْنَ."},
+  {ar:"مَنْ رَبُّكِ؟",en:"Who is your (f) Lord?",explain:"ـكِ = your (f singular). 'Who is your Lord?' Uses question word مَنْ."},
+];
+let apQ,apIdx,apScore,apTotal;
+function apInit(){apQ=srsDueQueue("activepart", apData, (d,i)=>srsCardId(d,i));apIdx=0;apScore=0;apTotal=0;if(apQ.length===0){srsNoDue('ap-card','ap-prog','ap-counter','apInit');return;}apShow();}
+function apShow(){
+  if(apIdx>=apQ.length){doneScreen('ap-card','ap-prog','ap-counter',apScore,apTotal,'apInit');return;}
+  const q=apQ[apIdx];
+  document.getElementById('ap-prompt').textContent=q.ar;
+  document.getElementById('ap-feedback').innerHTML='';
+  document.getElementById('ap-next-row').style.display='none';
+  const allEn=apData.map(d=>d.en);
+  const dist=shuffle(allEn.filter(a=>a!==q.en)).slice(0,3);
+  const opts=shuffle([q.en,...dist]);const ci=opts.indexOf(q.en);
+  buildMC('ap-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;srsRecord("activepart", apQ[apIdx]._srsId, ok);apTotal++;if(ok)apScore++;apMeta();lockMC('ap-options',chosen,correct);
+    document.getElementById('ap-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong>. ${q.explain}</div>`;
+    document.getElementById('ap-next-row').style.display='flex';apIdx++;
+  });apMeta();
+}
+function apMeta(){document.getElementById('ap-score').textContent=`Score: ${apScore} / ${apTotal}`;document.getElementById('ap-counter').textContent=`Q ${Math.min(apIdx+1,apQ.length)} of ${apQ.length}`;document.getElementById('ap-prog').style.width=(apIdx/apQ.length*100).toFixed(0)+'%';}
+function apNext(){apShow();}
+
+// ── GRAMMAR ──
+const grammarData=[
+  {q:"What is the Arabic term for the possessive construct?",options:["الْمُرَكَّبُ الْوَصْفِيُّ","الْجُمْلَةُ الاِسْمِيَّةُ","الإِضَافَةُ","الْمُبْتَدَأُ"],answer:2,explain:"الإِضَافَةُ is the possessive construct — the third and final type of ism-ism relationship."},
+  {q:"In an iḍāfah, what is the first noun called?",options:["مُضَافٌ إِلَيْهِ","خَبَرٌ","مُضَافٌ","مَوْصُوفٌ"],answer:2,explain:"The first noun is the مُضَافٌ — it has no اَلـ and no tanwīn, and is generally treated as definite."},
+  {q:"In an iḍāfah, what is the second noun called?",options:["مُضَافٌ","مُضَافٌ إِلَيْهِ","مُبْتَدَأٌ","صِفَةٌ"],answer:1,explain:"The second noun is the مُضَافٌ إِلَيْهِ — it is always in the genitive case (مَجْرُورٌ) and has either اَلـ or tanwīn."},
+  {q:"The مُضَافٌ (first noun) in iḍāfah has which of the following?",options:["اَلـ and tanwīn","Neither اَلـ nor tanwīn","Only اَلـ","Only tanwīn"],answer:1,explain:"The مُضَافٌ has NO اَلـ and NO tanwīn — both are stripped. It becomes generally definite through the iḍāfah relationship."},
+  {q:"The مُضَافٌ إِلَيْهِ (second noun) is always in which case?",options:["Nominative (raf')","Accusative (naṣb)","Genitive (jarr)","Any case"],answer:2,explain:"The مُضَافٌ إِلَيْهِ is always in the genitive (jarr) case — marked by kasra or ـٍ."},
+  {q:"رَسُولُ اللهِ — what case is اللهِ in?",options:["Nominative","Accusative","Genitive","It has no case ending"],answer:2,explain:"اللهِ (with kasra) is in the genitive case — it is the مُضَافٌ إِلَيْهِ. The iḍāfah always puts the second noun in jarr."},
+  {q:"How is an iḍāfah usually translated into English?",options:["word1 is word2","the word1 of word2 (or word2's word1)","word2 the word1","word1 and word2"],answer:1,explain:"Iḍāfah translates as 'the X of Y' or 'Y's X': بَيْتُ الرَّجُلِ = 'the house of the man' or 'the man's house.'"},
+  {q:"Where do adjectives go in an iḍāfah phrase?",options:["Before the مُضَافٌ","Between مُضَافٌ and مُضَافٌ إِلَيْهِ","After the entire iḍāfah","Adjectives cannot be used with iḍāfah"],answer:2,explain:"Adjectives always follow the full iḍāfah. Whether the adjective modifies the مُضَافٌ or مُضَافٌ إِلَيْهِ is determined by case and context."},
+  {q:"What is the 'sandwiched nūn rule'?",options:["The نُون of dual or sound masculine plural مُضَافٌ is dropped","The nūn of the مُضَافٌ إِلَيْهِ is dropped","A nūn is added between the two nouns","The rule about tanwīn in iḍāfah"],answer:0,explain:"When the مُضَافٌ is a dual or sound masculine plural, the نُون is dropped: بَيْتَانِ → بَيْتَا الرَّجُلِ; مُسْلِمُونَ → مُسْلِمُو الصِّينِ."},
+  {q:"بَيْتَا الرَّجُلِ means:",options:["The man's house","The two houses of the man","Two houses of men","The man and his two houses"],answer:1,explain:"بَيْتَانِ → بَيْتَا (nūn dropped in iḍāfah dual). 'The man's two houses' or 'the two houses of the man.'"},
+  {q:"Can كُلُّ and بَعْضُ be used in iḍāfah?",options:["No — they are adjectives only","Yes — كُلُّ means 'all of' and بَعْضُ means 'some of'","Only كُلُّ can be used","Only بَعْضُ can be used"],answer:1,explain:"Yes: كُلُّ الرِّجَالِ = 'all of the men'; بَعْضُ النِّسَاءِ = 'some of the women.' These are iḍāfah constructs, not possession."},
+  // Attached pronouns
+  {q:"Attached pronouns are similar to detached pronouns in that they are both:",options:["Used as the subject of a sentence","Definite (مَعْرِفَةٌ)","Indefinite (نَكِرَةٌ)","Only used after verbs"],answer:1,explain:"Like detached pronouns, attached pronouns are definite (مَعْرِفَةٌ). They differ in function — attached pronouns show possession or are direct objects."},
+  {q:"If an attached pronoun is added to a noun, it functions as:",options:["A مُضَافٌ إِلَيْهِ showing possession","A subject of a sentence","A question word","A verb ending"],answer:0,explain:"When attached to a noun, the attached pronoun is the مُضَافٌ إِلَيْهِ — it shows possession: كِتَابُهُ = 'his book.'"},
+  {q:"What happens to tā' marbūṭah (ة) when an attached pronoun is added?",options:["It disappears","It stays as ة","It changes to a regular (open) تَ","It becomes alif"],answer:2,explain:"Tā' marbūṭah changes to a regular open تَ before an attached pronoun: صَلَاةٌ + ـي = صَلَاتِي (my prayer); جَنَّةٌ + ـهَا = جَنَّتُهَا."},
+  {q:"What does ـهُ mean when attached to a noun?",options:["her","his / him","our","their"],answer:1,explain:"ـهُ = his (when attached to a noun). e.g. كِتَابُهُ = his book. As a direct object on a verb, it means 'him.'"},
+  {q:"What does ـهَا mean when attached to a noun?",options:["his","her / hers","our","your (f)"],answer:1,explain:"ـهَا = her. e.g. اِبْنَتُهَا = her daughter."},
+  {q:"What does ـنَا mean when attached to a noun?",options:["my","your (pl)","our","their"],answer:2,explain:"ـنَا = our. e.g. رَبُّنَا = our Lord; آيَاتُنَا = our signs."},
+  {q:"What does ـي (or ـنِي) mean when attached to a noun?",options:["his","your","our","my"],answer:3,explain:"ـي = my. e.g. صَلَاتِي = my prayer; أَوْلَادِي = my children."},
+  {q:"What does ـكَ mean when attached to a noun?",options:["his","her","your (m singular)","your (plural)"],answer:2,explain:"ـكَ = your (masculine singular). e.g. كِتَابُكَ = your (m) book. For feminine singular: ـكِ."},
+  {q:"What does ـكُمْ mean when attached to a noun?",options:["your (m singular)","your (f singular)","your (3+, m)","their (3+, m)"],answer:2,explain:"ـكُمْ = your (3+, masculine). e.g. رَبُّكُمْ = your Lord (addressing a group of men)."},
+  // Wuḍū' text analysis
+  {q:"The eighth text covers which topic?",options:["The Adhān","Ablution (wuḍū') and its supplications","The prayer of the night","The Tashahhud"],answer:1,explain:"The eighth text is about الوُضُوءُ وَأَدْعِيَتُهُ — Ablution and its supplications."},
+  {q:"What are the foundations of wuḍū' mentioned in the text?",options:["Intention, then washing face, hands (with elbows), wiping head, washing feet (with ankles)","Washing hands, face, feet only","Intention and reciting Bismillah only","Washing, wiping, drying in order"],answer:0,explain:"أَسَاسِيَّاتُ الوُضُوءِ: النِّيَّة (intention) + washing face, then hands with elbows, wiping head, washing feet with ankles — all in order (تَرْتِيبٌ)."},
+  {q:"What is said at the beginning of wuḍū'?",options:["اللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ","بِسْمِ اللهِ","أَشْهَدُ أَنْ لَا إِلَهَ إِلَّا اللهُ","الْحَمْدُ لِلَّهِ"],answer:1,explain:"قُلْ فِي بِدَايَةِ الوُضُوءِ: بِسْمِ اللهِ — 'Say at the beginning of ablution: In the Name of Allah.'"},
+  {q:"The supplication after wuḍū' includes أَشْهَدُ أَنَّ مُحَمَّدًا عَبْدُهُ وَرَسُولُهُ. What do عَبْدُهُ and رَسُولُهُ mean?",options:["His prophet and His guide","His servant and His messenger","His slave and His king","His companion and His beloved"],answer:1,explain:"عَبْدُهُ = His servant; رَسُولُهُ = His messenger. The attached pronoun ـهُ = His (referring to Allah)."},
+  {q:"اللَّهُمَّ اجْعَلْنِي مِنَ التَّوَّابِينَ وَاجْعَلْنِي مِنَ الْمُتَطَهِّرِينَ — what does التَّوَّابِينَ mean?",options:["those who pray","those who repent","those who fast","those who give charity"],answer:1,explain:"التَّوَّابُ = one who repents (oft-repenting). اجْعَلْنِي مِنَ التَّوَّابِينَ = 'Make me among those who repent.'"},
+  {q:"What does الْمُتَطَهِّرِينَ mean in the wuḍū' supplication?",options:["those who pray at night","those who fast","those who purify themselves","those who give charity"],answer:2,explain:"الْمُتَطَهِّرُونَ = those who purify themselves. The supplication asks to be counted among the repenters and the purifiers."},
+];
+let gQ,gIdx,gScore,gTotal;
+function gInit(){gQ=srsDueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i)=>srsCardId(d,i));gIdx=0;gScore=0;gTotal=0;if(gQ.length===0){srsNoDue('g-card','g-prog','g-counter','gInit');return;}gShow();}
+function gShow(){
+  if(gIdx>=gQ.length){doneScreen('g-card','g-prog','g-counter',gScore,gTotal,'gInit');return;}
+  const q=gQ[gIdx];
+  document.getElementById('g-prompt').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';
+  document.getElementById('g-next-row').style.display='none';
+  const indices=[0,1,2,3];shuffle(indices);
+  const nc=indices.indexOf(q.answer);
+  const opts=document.getElementById('g-options');opts.innerHTML='';
+  indices.forEach((oi,ni)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=q.options[oi];b.onclick=()=>gAnswer(ni,nc,q.explain,q.options[q.answer]);opts.appendChild(b);});
+  gMeta();
+}
+function gMeta(){document.getElementById('g-score').textContent=`Score: ${gScore} / ${gTotal}`;document.getElementById('g-counter').textContent=`Q ${Math.min(gIdx+1,gQ.length)} of ${gQ.length}`;document.getElementById('g-prog').style.width=(gIdx/gQ.length*100).toFixed(0)+'%';}
+function gAnswer(chosen,correct,explain,correctText){
+  const ok=chosen===correct;srsRecord("grammar", gQ[gIdx]._srsId, ok);gTotal++;if(ok)gScore++;gMeta();
+  document.querySelectorAll('#g-options .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen&&!ok)b.classList.add('wrong');});
+  document.getElementById('g-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${correctText}</strong>. ${explain}</div>`;
+  document.getElementById('g-next-row').style.display='flex';gIdx++;
+}
+function gNext(){gShow();}
+
+async function bootLesson() {
+  const ok = await requireLogin();
+  if (!ok) return;
+  vInit(); idInit(); apInit(); gInit();
+}
+bootLesson();
+</script>
+</body>
+</html>

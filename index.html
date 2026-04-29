@@ -6,213 +6,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{
-  --ink:#1c1a16;
-  --parchment:#f7f3ec;
-  --cream:#efe9dc;
-  --gold:#b8860b;
-  --rust:#8b3a2a;
-  --border:#d4c9b0;
-}
-body{
-  font-family: Georgia, serif;
-  background:var(--parchment);
-  color:var(--ink);
-  margin:0;
-  padding:30px;
-}
-.card{
-  max-width:520px;
-  margin:30px auto;
-  background:white;
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:24px;
-  box-shadow:0 2px 16px rgba(28,26,22,.12);
-}
-input{
-  width:100%;
-  padding:11px;
-  margin:7px 0;
-  font-size:16px;
-  box-sizing:border-box;
-  border:1px solid var(--border);
-  border-radius:6px;
-}
-button, a.lesson-link{
-  display:inline-block;
-  margin:6px 6px 6px 0;
-  padding:10px 14px;
-  cursor:pointer;
-  border:1px solid var(--border);
-  border-radius:6px;
-  background:var(--cream);
-  color:var(--ink);
-  text-decoration:none;
-  font-family: Georgia, serif;
-  font-size:15px;
-}
-button:hover, a.lesson-link:hover{background:#fdf8ee;}
-#status{
-  color:var(--rust);
-  margin-top:12px;
-  white-space:pre-wrap;
-}
+:root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--rust:#8b3a2a;--border:#d4c9b0;}
+body{font-family:Georgia,serif;background:var(--parchment);color:var(--ink);margin:0;padding:30px;}
+.card{max-width:620px;margin:30px auto;background:white;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:0 2px 16px rgba(28,26,22,.12);}
+input{width:100%;padding:11px;margin:7px 0;font-size:16px;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;}
+button,a.lesson-link{display:inline-block;margin:6px 6px 6px 0;padding:10px 14px;cursor:pointer;border:1px solid var(--border);border-radius:6px;background:var(--cream);color:var(--ink);text-decoration:none;font-family:Georgia,serif;font-size:15px;}
+button:hover,a.lesson-link:hover{background:#fdf8ee;}
+#status{color:var(--rust);margin-top:12px;white-space:pre-wrap;}
 #app{display:none;}
-.lesson-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
-  gap:10px;
-  margin-top:18px;
-}
-.lesson-link.disabled{
-  opacity:.5;
-  pointer-events:none;
-}
+.lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:18px;}
 </style>
 </head>
 <body>
-
 <div id="login" class="card">
   <h2>Fawakih Arabic</h2>
   <p>Login or create an account.</p>
-
   <input id="email" placeholder="Email" autocomplete="email">
   <input id="password" type="password" placeholder="Password" autocomplete="current-password">
-
   <button onclick="login()">Login</button>
   <button onclick="signup()">Create account</button>
   <button onclick="testConnection()">Test connection</button>
-
   <div id="status"></div>
 </div>
-
 <div id="app" class="card">
   <h2>Select Lesson</h2>
   <p>You are logged in. Open a lesson below.</p>
-
   <div class="lesson-grid">
-    <a class="lesson-link" href="lesson1.html">Lesson 1</a>
-   <a class="lesson-link" href="lesson2.html">Lesson 2</a>
-    <a class="lesson-link disabled" href="#">Lesson 3</a>
-    <a class="lesson-link disabled" href="#">Lesson 4</a>
-    <a class="lesson-link disabled" href="#">Lesson 5</a>
-    <a class="lesson-link disabled" href="#">Lesson 6</a>
-    <a class="lesson-link disabled" href="#">Lesson 7</a>
-    <a class="lesson-link disabled" href="#">Lesson 8</a>
-    <a class="lesson-link disabled" href="#">Lesson 9</a>
-    <a class="lesson-link disabled" href="#">Lesson 10</a>
-    <a class="lesson-link disabled" href="#">Lesson 11</a>
-    <a class="lesson-link disabled" href="#">Lesson 12</a>
+    <a class="lesson-link" href="lesson1.html">Lesson 1</a><a class="lesson-link" href="lesson2.html">Lesson 2</a><a class="lesson-link" href="lesson3.html">Lesson 3</a><a class="lesson-link" href="lesson4.html">Lesson 4</a><a class="lesson-link" href="lesson5.html">Lesson 5</a><a class="lesson-link" href="lesson6.html">Lesson 6</a><a class="lesson-link" href="lesson7.html">Lesson 7</a><a class="lesson-link" href="lesson8.html">Lesson 8</a><a class="lesson-link" href="lesson9.html">Lesson 9</a><a class="lesson-link" href="lesson10.html">Lesson 10</a><a class="lesson-link" href="lesson11.html">Lesson 11</a><a class="lesson-link" href="lesson12.html">Lesson 12</a>
   </div>
-
   <hr style="margin:22px 0;">
   <button onclick="logout()">Log out</button>
 </div>
-
 <script>
-const client = window.supabase.createClient(
-  "https://ighwjwnkwfbhsgtqdkui.supabase.co",
-  "sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg"
-);
-
-function setStatus(msg){
-  document.getElementById("status").textContent = msg;
-}
-
-function showApp(){
-  document.getElementById("login").style.display = "none";
-  document.getElementById("app").style.display = "block";
-}
-
-function showLogin(){
-  document.getElementById("login").style.display = "block";
-  document.getElementById("app").style.display = "none";
-}
-
-async function testConnection(){
-  setStatus("Testing Supabase connection...");
-  try{
-    const { error } = await client.auth.getSession();
-    if(error){
-      setStatus("Connection error: " + error.message);
-      return;
-    }
-    setStatus("Connection OK.");
-  }catch(err){
-    setStatus("JavaScript/network error: " + err.message);
-  }
-}
-
-async function signup(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if(!email || !password){
-    setStatus("Enter email and password first.");
-    return;
-  }
-
-  setStatus("Creating account...");
-
-  try{
-    const { error } = await client.auth.signUp({ email, password });
-
-    if(error){
-      setStatus("Sign-up error: " + error.message);
-      return;
-    }
-
-    setStatus("Account created. Now click Login. If it says email not confirmed, turn off email confirmation in Supabase for testing.");
-  }catch(err){
-    setStatus("JavaScript/network error: " + err.message);
-  }
-}
-
-async function login(){
-  const email = document.getElementById("email").value.trim();
-  const password = document.getElementById("password").value;
-
-  if(!email || !password){
-    setStatus("Enter email and password first.");
-    return;
-  }
-
-  setStatus("Logging in...");
-
-  try{
-    const { error } = await client.auth.signInWithPassword({ email, password });
-
-    if(error){
-      setStatus("Login error: " + error.message);
-      return;
-    }
-
-    setStatus("");
-    showApp();
-  }catch(err){
-    setStatus("JavaScript/network error: " + err.message);
-  }
-}
-
-async function logout(){
-  await client.auth.signOut();
-  showLogin();
-}
-
-async function checkSession(){
-  try{
-    const { data } = await client.auth.getSession();
-    if(data && data.session){
-      showApp();
-    }
-  }catch(err){
-    setStatus("Session check error: " + err.message);
-  }
-}
-
+const client = window.supabase.createClient("https://ighwjwnkwfbhsgtqdkui.supabase.co","sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg");
+function setStatus(msg){document.getElementById("status").textContent=msg;}
+function showApp(){document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";}
+function showLogin(){document.getElementById("login").style.display="block";document.getElementById("app").style.display="none";}
+async function testConnection(){setStatus("Testing Supabase connection...");try{const {error}=await client.auth.getSession();if(error){setStatus("Connection error: "+error.message);return;}setStatus("Connection OK.");}catch(err){setStatus("JavaScript/network error: "+err.message);}}
+async function signup(){const email=document.getElementById("email").value.trim();const password=document.getElementById("password").value;if(!email||!password){setStatus("Enter email and password first.");return;}setStatus("Creating account...");try{const {error}=await client.auth.signUp({email,password});if(error){setStatus("Sign-up error: "+error.message);return;}setStatus("Account created. Now click Login. If it says email not confirmed, turn off email confirmation in Supabase for testing.");}catch(err){setStatus("JavaScript/network error: "+err.message);}}
+async function login(){const email=document.getElementById("email").value.trim();const password=document.getElementById("password").value;if(!email||!password){setStatus("Enter email and password first.");return;}setStatus("Logging in...");try{const {error}=await client.auth.signInWithPassword({email,password});if(error){setStatus("Login error: "+error.message);return;}setStatus("");showApp();}catch(err){setStatus("JavaScript/network error: "+err.message);}}
+async function logout(){await client.auth.signOut();showLogin();}
+async function checkSession(){try{const {data}=await client.auth.getSession();if(data&&data.session){showApp();}}catch(err){setStatus("Session check error: "+err.message);}}
 checkSession();
 </script>
-
 </body>
 </html>
