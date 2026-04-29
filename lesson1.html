@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Lesson 1 — Fawakih Arabic</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   :root {
     --ink: #1c1a16;
@@ -299,6 +300,19 @@
   }
   .restart-btn:hover { background: #fdf8ee; }
 
+
+  .srs-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-family: 'Courier New', monospace;
+    color: var(--gold);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 3px 8px;
+    margin-left: 8px;
+    background: #fffaf0;
+  }
+
   /* SECTION INTRO */
   .section-intro {
     background: var(--cream);
@@ -315,6 +329,11 @@
 </head>
 <body>
 
+<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
+  Checking login...
+</div>
+
+
 <header>
   <div class="lesson-label">Fawakih Arabic · Level 1</div>
   <h1>Lesson 1</h1>
@@ -326,6 +345,10 @@
   <button class="tab-btn" onclick="switchTab('classify')">Word Types</button>
   <button class="tab-btn" onclick="switchTab('pronouns')">Pronouns</button>
   <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+</div>
+
+<div style="text-align:center; margin: 1rem auto 0;">
+  <button class="restart-btn" onclick="srsResetLesson()">Reset Lesson 1 SRS</button>
 </div>
 
 <!-- ══════════════ TAB 1: VOCABULARY ══════════════ -->
@@ -441,6 +464,163 @@ function switchTab(name) {
 }
 
 
+
+// ─────────────────────────────────────────────
+// SUPABASE USER-SPECIFIC SPACED REPETITION
+// ─────────────────────────────────────────────
+const SRS_LESSON = "lesson1";
+const SRS_INTERVALS_DAYS = [0, 1, 3, 7, 14, 30, 60];
+
+const client = window.supabase.createClient(
+  "https://ighwjwnkwfbhsgtqdkui.supabase.co",
+  "sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg"
+);
+
+let currentUser = null;
+let srsProgress = {};
+
+function srsStorageKey(tab, cardId) {
+  return `${SRS_LESSON}::${tab}::${cardId}`;
+}
+
+async function requireLogin() {
+  const { data, error } = await client.auth.getSession();
+
+  if (error || !data.session || !data.session.user) {
+    document.body.innerHTML = `
+      <div style="max-width:560px;margin:60px auto;padding:24px;background:white;border:1px solid #d4c9b0;border-radius:12px;font-family:Georgia,serif;text-align:center;">
+        <h2>Please log in first</h2>
+        <p>Go back to the Fawakih Arabic home page, log in, then open Lesson 1 again.</p>
+        <a href="index.html" style="display:inline-block;margin-top:12px;padding:10px 14px;border:1px solid #d4c9b0;border-radius:6px;color:#1c1a16;text-decoration:none;background:#efe9dc;">Back to login</a>
+      </div>
+    `;
+    return false;
+  }
+
+  currentUser = data.session.user;
+  document.getElementById("auth-bar").textContent = "Logged in as " + currentUser.email + " · Lesson 1 progress saves to Supabase";
+  await srsLoadProgress();
+  return true;
+}
+
+async function srsLoadProgress() {
+  if (!currentUser) return;
+
+  const { data, error } = await client
+    .from("card_progress")
+    .select("*")
+    .eq("user_id", currentUser.id)
+    .eq("lesson", SRS_LESSON);
+
+  if (error) {
+    console.error("SRS load error", error);
+    document.getElementById("auth-bar").textContent = "Supabase progress load error: " + error.message;
+    return;
+  }
+
+  srsProgress = {};
+  (data || []).forEach(row => {
+    srsProgress[srsStorageKey(row.tab, row.card_id)] = row;
+  });
+}
+
+function srsIsDue(tab, cardId) {
+  const item = srsProgress[srsStorageKey(tab, cardId)];
+  if (!item || !item.due_at) return true;
+  return Number(item.due_at) <= Date.now();
+}
+
+async function srsRecord(tab, cardId, correct) {
+  if (!currentUser) return;
+
+  const key = srsStorageKey(tab, cardId);
+  const old = srsProgress[key] || {};
+  const now = Date.now();
+
+  let intervalDays = Number(old.interval_days || 0);
+  let reps = Number(old.reps || 0);
+  let ease = Number(old.ease || 2.5);
+
+  if (correct) {
+    reps += 1;
+    if (reps === 1) intervalDays = 1;
+    else if (reps === 2) intervalDays = 3;
+    else intervalDays = Math.max(1, Math.round(intervalDays * ease));
+    ease = Math.min(3.0, ease + 0.05);
+  } else {
+    reps = 0;
+    intervalDays = 0;
+    ease = Math.max(1.3, ease - 0.2);
+  }
+
+  const delayMs = correct
+    ? intervalDays * 24 * 60 * 60 * 1000
+    : 10 * 60 * 1000; // wrong cards come back in 10 minutes
+
+  const row = {
+    user_id: currentUser.id,
+    lesson: SRS_LESSON,
+    tab: tab,
+    card_id: cardId,
+    interval_days: intervalDays,
+    reps: reps,
+    ease: ease,
+    due_at: now + delayMs,
+    last_correct: correct,
+    updated_at: new Date().toISOString()
+  };
+
+  const { data, error } = await client
+    .from("card_progress")
+    .upsert(row, { onConflict: "user_id,lesson,tab,card_id" })
+    .select()
+    .single();
+
+  if (error) {
+    console.error("SRS save error", error);
+    document.getElementById("auth-bar").textContent = "Supabase save error: " + error.message;
+    return;
+  }
+
+  srsProgress[key] = data || row;
+}
+
+function srsDueQueue(tab, items, idFn) {
+  const withIds = items.map((item, idx) => ({ ...item, _srsId: idFn(item, idx) }));
+  const due = withIds.filter(item => srsIsDue(tab, item._srsId));
+  return shuffle(due);
+}
+
+function srsNoDue(cardId, progId, counterId, reinitFn) {
+  document.getElementById(cardId).innerHTML = `<div class="done-screen">
+    <div class="big-check">✓</div>
+    <p>No cards due right now</p>
+    <small>Come back later, or reset this lesson's progress to review again.</small><br>
+    <button class="restart-btn" onclick="${reinitFn}()">Check again ↺</button>
+  </div>`;
+  document.getElementById(progId).style.width = '100%';
+  document.getElementById(counterId).textContent = 'No due cards';
+}
+
+async function srsResetLesson() {
+  if (!currentUser) return;
+  if (!confirm("Reset your Supabase spaced repetition progress for Lesson 1?")) return;
+
+  const { error } = await client
+    .from("card_progress")
+    .delete()
+    .eq("user_id", currentUser.id)
+    .eq("lesson", SRS_LESSON);
+
+  if (error) {
+    alert("Reset error: " + error.message);
+    return;
+  }
+
+  srsProgress = {};
+  location.reload();
+}
+
 // ─────────────────────────────────────────────
 // SHARED MC HELPER
 // ─────────────────────────────────────────────
@@ -497,8 +677,9 @@ const vocabData = [
 
 let vQueue, vIdx, vScore, vTotal;
 function vInit() {
-  vQueue = shuffle([...vocabData]);
+  vQueue = srsDueQueue("vocab", vocabData, (d,i) => d.ar + "|" + d.en);
   vIdx = 0; vScore = 0; vTotal = 0;
+  if (vQueue.length === 0) { srsNoDue('v-card','v-prog','v-counter','vInit'); return; }
   vShow();
 }
 function vShow() {
@@ -506,7 +687,7 @@ function vShow() {
     document.getElementById('v-card').innerHTML = `<div class="done-screen">
       <div class="big-check">✓</div>
       <p>Final score: ${vScore} / ${vTotal}</p>
-      <small>${Math.round(vScore/vTotal*100)}% correct</small><br>
+      <small>${Math.round((vScore/(vTotal||1))*100)}% correct</small><br>
       <button class="restart-btn" onclick="vInit()">Try again ↺</button>
     </div>`;
     document.getElementById('v-prog').style.width = '100%';
@@ -524,6 +705,7 @@ function vShow() {
   const correctIdx = opts.indexOf(q.en);
   buildMCOptions('v-options', opts, correctIdx, (chosen, correct) => {
     const ok = chosen === correct;
+    srsRecord("vocab", q._srsId, ok);
     vTotal++; if (ok) vScore++;
     vMeta();
     lockMCOptions('v-options', chosen, correct);
@@ -568,8 +750,9 @@ const classifyKeys = ["ism","fil","harf"];
 
 let cQueue, cIdx, cScore, cTotal;
 function cInit() {
-  cQueue = shuffle([...classifyData]);
+  cQueue = srsDueQueue("classify", classifyData, (d,i) => d.ar + "|" + d.type);
   cIdx = 0; cScore = 0; cTotal = 0;
+  if (cQueue.length === 0) { srsNoDue('c-card','c-prog','c-counter','cInit'); return; }
   cShow();
 }
 function cShow() {
@@ -577,7 +760,7 @@ function cShow() {
     document.getElementById('c-card').innerHTML = `<div class="done-screen">
       <div class="big-check">✓</div>
       <p>Final score: ${cScore} / ${cTotal}</p>
-      <small>${Math.round(cScore/cTotal*100)}% correct</small><br>
+      <small>${Math.round((cScore/(cTotal||1))*100)}% correct</small><br>
       <button class="restart-btn" onclick="cInit()">Try again ↺</button>
     </div>`;
     document.getElementById('c-prog').style.width = '100%';
@@ -592,6 +775,7 @@ function cShow() {
   // Always show all 3 options (don't shuffle — ism/fi'l/harf order is consistent and learnable)
   buildMCOptions('c-options', classifyOpts, correctIdx, (chosen, correct) => {
     const ok = chosen === correct;
+    srsRecord("classify", q._srsId, ok);
     cTotal++; if (ok) cScore++;
     cMeta();
     lockMCOptions('c-options', chosen, correct);
@@ -632,8 +816,9 @@ const pronounData = [
 
 let pQueue, pIdx, pScore, pTotal;
 function pInit() {
-  pQueue = shuffle([...pronounData]);
+  pQueue = srsDueQueue("pronouns", pronounData, (d,i) => d.ar + "|" + d.en + "|" + i);
   pIdx = 0; pScore = 0; pTotal = 0;
+  if (pQueue.length === 0) { srsNoDue('p-card','p-prog','p-counter','pInit'); return; }
   pShow();
 }
 function pShow() {
@@ -641,7 +826,7 @@ function pShow() {
     document.getElementById('p-card').innerHTML = `<div class="done-screen">
       <div class="big-check">✓</div>
       <p>Final score: ${pScore} / ${pTotal}</p>
-      <small>${Math.round(pScore/pTotal*100)}% correct</small><br>
+      <small>${Math.round((pScore/(pTotal||1))*100)}% correct</small><br>
       <button class="restart-btn" onclick="pInit()">Try again ↺</button>
     </div>`;
     document.getElementById('p-prog').style.width = '100%';
@@ -658,6 +843,7 @@ function pShow() {
   const correctIdx = opts.indexOf(q.en);
   buildMCOptions('p-options', opts, correctIdx, (chosen, correct) => {
     const ok = chosen === correct;
+    srsRecord("pronouns", q._srsId, ok);
     pTotal++; if (ok) pScore++;
     pMeta();
     lockMCOptions('p-options', chosen, correct);
@@ -923,8 +1109,9 @@ const grammarData = [
 
 let gQueue, gIdx, gScore, gTotal;
 function gInit() {
-  gQueue = shuffle(grammarData.map((q,i) => ({...q, origIdx: i})));
+  gQueue = srsDueQueue("grammar", grammarData.map((q,i) => ({...q, origIdx: i})), (d,i) => d.q);
   gIdx = 0; gScore = 0; gTotal = 0;
+  if (gQueue.length === 0) { srsNoDue('g-card','g-prog','g-counter','gInit'); return; }
   gShow();
 }
 function gShow() {
@@ -932,7 +1119,7 @@ function gShow() {
     document.getElementById('g-card').innerHTML = `<div class="done-screen">
       <div class="big-check">✓</div>
       <p>Final score: ${gScore} / ${gTotal}</p>
-      <small>${Math.round(gScore/gTotal*100)}% correct</small><br>
+      <small>${Math.round((gScore/(gTotal||1))*100)}% correct</small><br>
       <button class="restart-btn" onclick="gInit()">Try again ↺</button>
     </div>`;
     document.getElementById('g-prog').style.width = '100%';
@@ -967,6 +1154,7 @@ function gMeta() {
 }
 function gAnswer(chosen, correct, explain, correctText) {
   const ok = chosen === correct;
+  srsRecord("grammar", gQueue[gIdx]._srsId, ok);
   gTotal++; if (ok) gScore++;
   gMeta();
   document.querySelectorAll('.mc-option').forEach((btn, i) => {
@@ -985,7 +1173,12 @@ function gNext() { gShow(); }
 // ─────────────────────────────────────────────
 // INIT ALL
 // ─────────────────────────────────────────────
-vInit(); cInit(); pInit(); gInit();
+async function bootLesson() {
+  const ok = await requireLogin();
+  if (!ok) return;
+  vInit(); cInit(); pInit(); gInit();
+}
+bootLesson();
 </script>
 </body>
 </html>
