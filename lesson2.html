@@ -6,7 +6,9 @@
 <title>Lesson 2 — Fawakih Arabic</title>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="srs.js"></script>
 <style>
+
   :root {
     --ink: #1c1a16;
     --parchment: #f7f3ec;
@@ -19,6 +21,7 @@
     --shadow: rgba(28,26,22,0.12);
   }
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
     font-family: 'Source Serif 4', Georgia, serif;
     background: var(--parchment);
@@ -28,10 +31,25 @@
       radial-gradient(ellipse at 20% 20%, rgba(184,134,11,0.06) 0%, transparent 60%),
       radial-gradient(ellipse at 80% 80%, rgba(74,103,65,0.05) 0%, transparent 60%);
   }
+
+  /* AUTH BAR */
+  #auth-bar {
+    text-align: center;
+    padding: 8px 12px;
+    background: #fff7e8;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    color: var(--rust);
+    min-height: 32px;
+  }
+
+  /* HEADER */
   header {
     text-align: center;
     padding: 2.5rem 1rem 1.5rem;
     border-bottom: 1px solid var(--border);
+    position: relative;
   }
   header::after {
     content: '';
@@ -46,6 +64,7 @@
     letter-spacing: 0.2em;
     text-transform: uppercase;
     color: var(--gold);
+    font-family: 'Source Serif 4', serif;
     font-weight: 600;
     margin-bottom: 0.5rem;
   }
@@ -53,6 +72,8 @@
     font-family: 'Playfair Display', Georgia, serif;
     font-size: clamp(1.6rem, 4vw, 2.4rem);
     font-weight: 600;
+    color: var(--ink);
+    line-height: 1.2;
   }
   .arabic-subtitle {
     font-size: 1.5rem;
@@ -61,9 +82,12 @@
     margin-top: 0.3rem;
     direction: rtl;
   }
+
+  /* TABS */
   .tabs {
     display: flex;
     justify-content: center;
+    gap: 0;
     padding: 1.5rem 1rem 0;
     flex-wrap: wrap;
   }
@@ -83,69 +107,188 @@
     top: 1px;
   }
   .tab-btn:first-child { border-radius: 6px 0 0 0; }
-  .tab-btn:last-child { border-radius: 0 6px 0 0; }
-  .tab-btn.active { background: var(--parchment); color: var(--ink); border-bottom: 1px solid var(--parchment); z-index: 2; }
+  .tab-btn:last-child  { border-radius: 0 6px 0 0; }
+  .tab-btn.active {
+    background: var(--parchment);
+    color: var(--ink);
+    border-color: var(--border);
+    border-bottom: 1px solid var(--parchment);
+    z-index: 2;
+  }
   .tab-btn:hover:not(.active) { background: #e8e2d6; color: var(--ink); }
-  .tab-content { border-top: 1px solid var(--border); max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem 3rem; display: none; }
+
+  /* LESSON TOOLBAR (reset + home) */
+  .lesson-toolbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 0.8rem 1rem 0;
+    flex-wrap: wrap;
+  }
+  .toolbar-btn {
+    padding: 7px 16px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    transition: background 0.15s;
+  }
+  .toolbar-btn:hover { background: #fdf8ee; }
+  .toolbar-btn.reset { color: var(--rust); border-color: #e0b8b0; }
+  .toolbar-btn.reset:hover { background: #fdf0ee; }
+
+  /* TAB CONTENT */
+  .tab-content {
+    border-top: 1px solid var(--border);
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 3rem;
+    display: none;
+  }
   .tab-content.active { display: block; }
 
-  .quiz-meta { display: flex; justify-content: space-between; font-size: 12px; color: #9a8e7a; font-family: 'Courier New', monospace; margin-bottom: 10px; letter-spacing: 0.04em; }
-  .progress-bar { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 1.8rem; }
+  /* QUIZ META */
+  .quiz-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+    color: #9a8e7a;
+    font-family: 'Courier New', monospace;
+    margin-bottom: 10px;
+    letter-spacing: 0.04em;
+  }
+  .progress-bar  { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 1.8rem; }
   .progress-fill { height: 2px; background: var(--gold); border-radius: 1px; transition: width 0.4s ease; }
-  .question-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 2rem; box-shadow: 0 2px 16px var(--shadow); }
-  .prompt-arabic { font-size: 36px; font-family: 'Traditional Arabic', 'Scheherazade New', serif; text-align: center; direction: rtl; color: var(--ink); line-height: 1.5; margin-bottom: 0.4rem; }
-  .prompt-english { font-size: 19px; font-family: 'Playfair Display', serif; font-style: italic; text-align: center; color: var(--ink); margin-bottom: 0.4rem; line-height: 1.4; }
-  .prompt-sub { font-size: 11px; text-align: center; color: #b0a490; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem; font-family: 'Courier New', monospace; }
-  .feedback-box { font-size: 14px; text-align: center; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; line-height: 1.5; }
+
+  /* QUESTION CARD */
+  .question-card {
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 2rem;
+    box-shadow: 0 2px 16px var(--shadow);
+  }
+  .prompt-arabic {
+    font-size: 36px;
+    font-family: 'Traditional Arabic', 'Scheherazade New', serif;
+    text-align: center;
+    direction: rtl;
+    color: var(--ink);
+    line-height: 1.5;
+    margin-bottom: 0.4rem;
+  }
+  .prompt-english {
+    font-size: 20px;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    text-align: center;
+    color: var(--ink);
+    margin-bottom: 0.4rem;
+  }
+  .prompt-sub {
+    font-size: 11px;
+    text-align: center;
+    color: #b0a490;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    font-family: 'Courier New', monospace;
+  }
+
+  /* FEEDBACK */
+  .feedback-box { font-size: 14px; text-align: center; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; }
   .feedback-correct { background: #eef5ee; color: #2e5c2e; border: 1px solid #b8d4b8; }
-  .feedback-wrong { background: #fdf0ee; color: #7a2e20; border: 1px solid #e0b8b0; }
-  input[type=text] { width: 100%; font-size: 17px; padding: 11px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--parchment); color: var(--ink); font-family: 'Source Serif 4', serif; margin-bottom: 12px; outline: none; transition: border-color 0.2s; }
-  input[type=text]:focus { border-color: var(--gold); }
+  .feedback-wrong   { background: #fdf0ee; color: #7a2e20; border: 1px solid #e0b8b0; }
+
+  /* NEXT ROW */
   .btn-row { display: flex; gap: 10px; }
-  .btn { flex: 1; padding: 11px; border-radius: 6px; font-size: 13px; font-family: 'Courier New', monospace; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; border: 1px solid var(--border); background: transparent; color: var(--ink); }
+  .btn {
+    flex: 1;
+    padding: 11px;
+    border-radius: 6px;
+    font-size: 13px;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--ink);
+  }
   .btn:hover { background: var(--cream); }
   .btn-primary { border-color: var(--gold); color: var(--gold); }
   .btn-primary:hover { background: #fdf8ee; }
-  .mc-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .mc-option { padding: 12px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--parchment); font-size: 14px; font-family: 'Source Serif 4', serif; cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.4; }
+
+  /* MULTIPLE CHOICE OPTIONS */
+  .mc-options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .mc-option {
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: var(--parchment);
+    font-size: 14px;
+    font-family: 'Source Serif 4', serif;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+    line-height: 1.4;
+  }
   .mc-option:hover:not(.disabled) { border-color: var(--gold-light); background: #fdf8ee; }
-  .mc-option.correct { background: #eef5ee; border-color: var(--sage); color: var(--sage); font-weight: 600; }
-  .mc-option.wrong { background: #fdf0ee; border-color: var(--rust); color: var(--rust); }
+  .mc-option.correct  { background: #eef5ee; border-color: var(--sage); color: var(--sage); font-weight: 600; }
+  .mc-option.wrong    { background: #fdf0ee; border-color: var(--rust); color: var(--rust); }
   .mc-option.disabled { cursor: default; }
 
-  /* CONJUGATION TABLE */
-  .conj-table { width: 100%; border-collapse: collapse; margin-bottom: 14px; font-size: 14px; }
-  .conj-table th { background: var(--cream); padding: 8px 10px; border: 1px solid var(--border); font-weight: 600; font-size: 12px; letter-spacing: 0.04em; text-align: center; }
-  .conj-table td { padding: 10px; border: 1px solid var(--border); text-align: center; }
-  .conj-table .arabic-cell { font-size: 22px; font-family: 'Traditional Arabic', serif; direction: rtl; }
-  .conj-table .pronoun-cell { font-size: 20px; font-family: 'Traditional Arabic', serif; direction: rtl; color: var(--gold); }
-  .conj-table input { width: 100%; padding: 6px 8px; font-size: 13px; border: 1px solid var(--border); border-radius: 4px; background: var(--parchment); font-family: 'Source Serif 4', serif; outline: none; text-align: center; }
-  .conj-table input:focus { border-color: var(--gold); }
-  .conj-table input.cell-correct { background: #eef5ee; border-color: var(--sage); }
-  .conj-table input.cell-wrong { background: #fdf0ee; border-color: var(--rust); }
-  .conj-table input.cell-revealed { background: #fdf8ee; border-color: var(--gold-light); }
-
-  .section-intro { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; font-size: 14px; line-height: 1.6; color: #5a5040; }
-  .section-intro strong { color: var(--ink); }
-
+  /* DONE SCREEN */
   .done-screen { text-align: center; padding: 2rem 0; }
   .done-screen .big-check { font-size: 48px; margin-bottom: 1rem; }
-  .done-screen p { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.4rem; }
+  .done-screen p   { font-family: 'Playfair Display', serif; font-size: 1.3rem; color: var(--ink); margin-bottom: 0.4rem; }
   .done-screen small { font-size: 13px; color: #9a8e7a; font-family: 'Courier New', monospace; }
-  .restart-btn { margin-top: 1.5rem; padding: 12px 30px; border: 1px solid var(--gold); border-radius: 6px; background: transparent; color: var(--gold); font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.08em; cursor: pointer; }
+  .restart-btn {
+    margin-top: 1.5rem;
+    padding: 12px 30px;
+    border: 1px solid var(--gold);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--gold);
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
   .restart-btn:hover { background: #fdf8ee; }
 
-  .verb-label { font-family: 'Playfair Display', serif; font-size: 1.1rem; text-align: center; margin-bottom: 1.2rem; }
-  .verb-label span { font-family: 'Traditional Arabic', serif; font-size: 1.4rem; direction: rtl; color: var(--gold); }
-  .conj-check-row { display: flex; gap: 10px; margin-top: 14px; }
+  /* SECTION INTRO */
+  .section-intro {
+    background: var(--cream);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.2rem 1.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #5a5040;
+  }
+  .section-intro strong { color: var(--ink); }
+
 </style>
 </head>
 <body>
 
-<div id="auth-bar" style="text-align:center;padding:10px;background:#fff7e8;border-bottom:1px solid #d4c9b0;font-family:'Courier New',monospace;font-size:12px;color:#8b3a2a;">
-  Checking login...
-</div>
-
+<div id="auth-bar">Connecting…</div>
 
 <header>
   <div class="lesson-label">Fawakih Arabic · Level 1</div>
@@ -154,13 +297,14 @@
 </header>
 
 <div class="tabs">
-  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
-  <button class="tab-btn" onclick="switchTab('conj')">Conjugation</button>
-  <button class="tab-btn" onclick="switchTab('grammar')">Grammar</button>
+  <button class="tab-btn active" onclick="SRS.switchTab('vocab', TABS)">Vocabulary</button>
+  <button class="tab-btn" onclick="SRS.switchTab('conj', TABS)">Conjugation</button>
+  <button class="tab-btn" onclick="SRS.switchTab('grammar', TABS)">Grammar</button>
 </div>
 
-<div style="text-align:center; margin: 1rem auto 0;">
-  <button class="restart-btn" onclick="srsResetLesson()">Reset Lesson 2 SRS</button>
+<div class="lesson-toolbar">
+  <a class="toolbar-btn" href="index.html">← Home</a>
+  <button class="toolbar-btn reset" onclick="srsResetLesson()">Reset Lesson 2 SRS</button>
 </div>
 
 <!-- ══════════ TAB 1: VOCABULARY ══════════ -->
@@ -227,194 +371,6 @@
 </div>
 
 <script>
-// ─── UTILS ───
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-function norm(s){return s.trim().toLowerCase().replace(/[()[\]،,./\\]/g,'').replace(/\s+/g,' ');}
-function match(user, correct){
-  const u=norm(user);
-  return correct.split('/').map(a=>norm(a.trim())).some(a=>u===a);
-}
-function switchTab(name){
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',['vocab','conj','grammar'][i]===name);});
-  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
-  document.getElementById('tab-'+name).classList.add('active');
-}
-
-
-// ─────────────────────────────────────────────
-// SUPABASE USER-SPECIFIC SPACED REPETITION
-// ─────────────────────────────────────────────
-const SRS_LESSON = "lesson2";
-
-const client = window.supabase.createClient(
-  "https://ighwjwnkwfbhsgtqdkui.supabase.co",
-  "sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg"
-);
-
-let currentUser = null;
-let srsProgress = {};
-
-function srsStorageKey(tab, cardId) {
-  return `${SRS_LESSON}::${tab}::${cardId}`;
-}
-
-async function requireLogin() {
-  const { data, error } = await client.auth.getSession();
-
-  if (error || !data.session || !data.session.user) {
-    document.body.innerHTML = `
-      <div style="max-width:560px;margin:60px auto;padding:24px;background:white;border:1px solid #d4c9b0;border-radius:12px;font-family:Georgia,serif;text-align:center;">
-        <h2>Please log in first</h2>
-        <p>Go back to the Fawakih Arabic home page, log in, then open Lesson 2 again.</p>
-        <a href="index.html" style="display:inline-block;margin-top:12px;padding:10px 14px;border:1px solid #d4c9b0;border-radius:6px;color:#1c1a16;text-decoration:none;background:#efe9dc;">Back to login</a>
-      </div>
-    `;
-    return false;
-  }
-
-  currentUser = data.session.user;
-  document.getElementById("auth-bar").textContent = "Logged in as " + currentUser.email + " · Lesson 2 progress saves to Supabase";
-  await srsLoadProgress();
-  return true;
-}
-
-async function srsLoadProgress() {
-  if (!currentUser) return;
-
-  const { data, error } = await client
-    .from("card_progress")
-    .select("*")
-    .eq("user_id", currentUser.id)
-    .eq("lesson", SRS_LESSON);
-
-  if (error) {
-    console.error("SRS load error", error);
-    document.getElementById("auth-bar").textContent = "Supabase progress load error: " + error.message;
-    return;
-  }
-
-  srsProgress = {};
-  (data || []).forEach(row => {
-    srsProgress[srsStorageKey(row.tab, row.card_id)] = row;
-  });
-}
-
-function srsIsDue(tab, cardId) {
-  const item = srsProgress[srsStorageKey(tab, cardId)];
-  if (!item || !item.due_at) return true;
-  return Number(item.due_at) <= Date.now();
-}
-
-async function srsRecord(tab, cardId, correct) {
-  if (!currentUser) return;
-
-  const key = srsStorageKey(tab, cardId);
-  const old = srsProgress[key] || {};
-  const now = Date.now();
-
-  let intervalDays = Number(old.interval_days || 0);
-  let reps = Number(old.reps || 0);
-  let ease = Number(old.ease || 2.5);
-
-  if (correct) {
-    reps += 1;
-    if (reps === 1) intervalDays = 1;
-    else if (reps === 2) intervalDays = 3;
-    else intervalDays = Math.max(1, Math.round(intervalDays * ease));
-    ease = Math.min(3.0, ease + 0.05);
-  } else {
-    reps = 0;
-    intervalDays = 0;
-    ease = Math.max(1.3, ease - 0.2);
-  }
-
-  const delayMs = correct ? intervalDays * 24 * 60 * 60 * 1000 : 10 * 60 * 1000;
-
-  const row = {
-    user_id: currentUser.id,
-    lesson: SRS_LESSON,
-    tab: tab,
-    card_id: cardId,
-    interval_days: intervalDays,
-    reps: reps,
-    ease: ease,
-    due_at: now + delayMs,
-    last_correct: correct,
-    updated_at: new Date().toISOString()
-  };
-
-  const { data, error } = await client
-    .from("card_progress")
-    .upsert(row, { onConflict: "user_id,lesson,tab,card_id" })
-    .select()
-    .single();
-
-  if (error) {
-    console.error("SRS save error", error);
-    document.getElementById("auth-bar").textContent = "Supabase save error: " + error.message;
-    return;
-  }
-
-  srsProgress[key] = data || row;
-}
-
-function srsDueQueue(tab, items, idFn) {
-  const withIds = items.map((item, idx) => ({ ...item, _srsId: idFn(item, idx) }));
-  const due = withIds.filter(item => srsIsDue(tab, item._srsId));
-  return shuffle(due);
-}
-
-function srsNoDue(cardId, progId, counterId, reinitFn) {
-  document.getElementById(cardId).innerHTML = `<div class="done-screen">
-    <div class="big-check">✓</div>
-    <p>No cards due right now</p>
-    <small>Come back later, or reset this lesson's progress to review again.</small><br>
-    <button class="restart-btn" onclick="${reinitFn}()">Check again ↺</button>
-  </div>`;
-  document.getElementById(progId).style.width = '100%';
-  document.getElementById(counterId).textContent = 'No due cards';
-}
-
-async function srsResetLesson() {
-  if (!currentUser) return;
-  if (!confirm("Reset your Supabase spaced repetition progress for Lesson 2?")) return;
-
-  const { error } = await client
-    .from("card_progress")
-    .delete()
-    .eq("user_id", currentUser.id)
-    .eq("lesson", SRS_LESSON);
-
-  if (error) {
-    alert("Reset error: " + error.message);
-    return;
-  }
-
-  srsProgress = {};
-  location.reload();
-}
-
-// ─── SHARED MC HELPER ───
-function buildMCOptions(containerId, options, correctIdx, onAnswer){
-  const container=document.getElementById(containerId);
-  container.innerHTML='';
-  options.forEach((opt,i)=>{
-    const btn=document.createElement('button');
-    btn.className='mc-option';
-    btn.textContent=opt;
-    btn.onclick=()=>onAnswer(i,correctIdx);
-    container.appendChild(btn);
-  });
-}
-function lockMCOptions(containerId,chosenIdx,correctIdx){
-  document.querySelectorAll(`#${containerId} .mc-option`).forEach((btn,i)=>{
-    btn.classList.add('disabled');
-    if(i===correctIdx)btn.classList.add('correct');
-    else if(i===chosenIdx)btn.classList.add('wrong');
-  });
-}
-
-// ─── VOCABULARY (MC) ───
 const vocabData = [
   {ar:"حَقٌّ", en:"truth"},
   {ar:"سَاعَةٌ", en:"hour / time"},
@@ -454,9 +410,9 @@ const vocabData = [
 
 let vQ,vIdx,vScore,vTotal;
 function vInit(){
-  vQ=srsDueQueue("vocab", vocabData, (d,i) => d.ar + "|" + d.en);
+  vQ=SRS.dueQueue("vocab", vocabData, (d,i) => d.ar + "|" + d.en);
   vIdx=0;vScore=0;vTotal=0;
-  if (vQ.length === 0) { srsNoDue('v-card','v-prog','v-counter','vInit'); return; }
+  if (vQ.length === 0) { SRS.noDue('v-card','v-prog','v-counter','vInit'); return; }
   vShow();
 }
 function vShow(){
@@ -476,15 +432,15 @@ function vShow(){
   document.getElementById('v-feedback').innerHTML='';
   document.getElementById('v-next-row').style.display='none';
   const allAnswers=vocabData.map(d=>d.en);
-  const distractors=shuffle(allAnswers.filter(a=>a!==q.en)).slice(0,3);
-  const opts=shuffle([q.en,...distractors]);
+  const distractors=SRS.shuffle(allAnswers.filter(a=>a!==q.en)).slice(0,3);
+  const opts=SRS.shuffle([q.en,...distractors]);
   const correctIdx=opts.indexOf(q.en);
-  buildMCOptions('v-options',opts,correctIdx,(chosen,correct)=>{
+  SRS.SRS.buildMC('v-options',opts,correctIdx,(chosen,correct)=>{
     const ok=chosen===correct;
-    srsRecord("vocab", q._srsId, ok);
+    SRS.record("vocab", q._srsId, ok);
     vTotal++;if(ok)vScore++;
     vMeta();
-    lockMCOptions('v-options',chosen,correct);
+    SRS.SRS.lockMC('v-options',chosen,correct);
     document.getElementById('v-feedback').innerHTML=ok
       ?`<div class="feedback-box feedback-correct">Correct!</div>`
       :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
@@ -553,9 +509,9 @@ let cjQueue, cjIdx, cjScore, cjTotal;
 const allConjForms = conjugations.flatMap(v => v.forms.map(f => ({...f, verb:v.verb, meaning:v.meaning})));
 
 function cjInit(){
-  cjQueue = srsDueQueue("conj", allConjForms, (d,i) => d.arabic + "|" + d.translation + "|" + d.verb);
+  cjQueue = SRS.dueQueue("conj", allConjForms, (d,i) => d.arabic + "|" + d.translation + "|" + d.verb);
   cjIdx=0; cjScore=0; cjTotal=0;
-  if (cjQueue.length === 0) { srsNoDue('cj-card','cj-prog','cj-counter','cjInit'); return; }
+  if (cjQueue.length === 0) { SRS.noDue('cj-card','cj-prog','cj-counter','cjInit'); return; }
   cjShow();
 }
 function cjShow(){
@@ -576,15 +532,15 @@ function cjShow(){
   document.getElementById('cj-next-row').style.display='none';
   // 3 distractors from other forms (different translation)
   const allTrans = allConjForms.map(f=>f.translation);
-  const distractors = shuffle(allTrans.filter(t=>t!==q.translation)).slice(0,3);
-  const opts = shuffle([q.translation, ...distractors]);
+  const distractors = SRS.shuffle(allTrans.filter(t=>t!==q.translation)).slice(0,3);
+  const opts = SRS.shuffle([q.translation, ...distractors]);
   const ci = opts.indexOf(q.translation);
-  buildMCOptions('cj-options', opts, ci, (chosen, correct)=>{
+  SRS.SRS.buildMC('cj-options', opts, ci, (chosen, correct)=>{
     const ok=chosen===correct;
-    srsRecord("conj", q._srsId, ok);
+    SRS.record("conj", q._srsId, ok);
     cjTotal++; if(ok)cjScore++;
     cjMeta();
-    lockMCOptions('cj-options', chosen, correct);
+    SRS.SRS.lockMC('cj-options', chosen, correct);
     document.getElementById('cj-feedback').innerHTML=ok
       ?`<div class="feedback-box feedback-correct">Correct! (${q.verb} — ${q.meaning})</div>`
       :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.translation}</strong> (${q.verb} — ${q.meaning})</div>`;
@@ -992,9 +948,9 @@ const grammarData = [
 
 let gQ,gIdx,gScore,gTotal;
 function gInit(){
-  gQ=srsDueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i) => d.q);
+  gQ=SRS.dueQueue("grammar", grammarData.map((q,i)=>({...q, origIdx:i})), (d,i) => d.q);
   gIdx=0;gScore=0;gTotal=0;
-  if (gQ.length === 0) { srsNoDue('g-card','g-prog','g-counter','gInit'); return; }
+  if (gQ.length === 0) { SRS.noDue('g-card','g-prog','g-counter','gInit'); return; }
   gShow();
 }
 function gShow(){
@@ -1014,7 +970,7 @@ function gShow(){
   document.getElementById('g-feedback').innerHTML='';
   document.getElementById('g-next-row').style.display='none';
   const indices=[0,1,2,3];
-  shuffle(indices);
+  SRS.shuffle(indices);
   const newCorrect=indices.indexOf(q.answer);
   const opts=document.getElementById('g-options');
   opts.innerHTML='';
@@ -1034,7 +990,7 @@ function gMeta(){
 }
 function gAnswer(chosen,correct,explain,correctText){
   const ok=chosen===correct;
-  srsRecord("grammar", gQ[gIdx]._srsId, ok);
+  SRS.record("grammar", gQ[gIdx]._srsId, ok);
   gTotal++;if(ok)gScore++;
   gMeta();
   document.querySelectorAll('.mc-option').forEach((btn,i)=>{
@@ -1051,12 +1007,18 @@ function gAnswer(chosen,correct,explain,correctText){
 function gNext(){gShow();}
 
 // ─── INIT ───
-async function bootLesson() {
-  const ok = await requireLogin();
-  if (!ok) return;
-  vInit(); cjInit(); gInit();
-}
-bootLesson();
+
+// ── LESSON INIT ──
+const TABS = ['vocab', 'conj', 'grammar'];
+
+// Wire SRS.switchTab to know this lesson's tab names
+window.switchTab = function(name) { SRS.switchTab(name, TABS); };
+
+// Wire SRS.resetLesson for HTML onclick
+window.srsResetLesson = function() { SRS.resetLesson(); };
+
+SRS.boot('lesson2', [vInit, cjInit, gInit]);
+
 </script>
 </body>
 </html>
