@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Midterm Weak Points — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --ink: #1c1a16; --parchment: #f7f3ec; --cream: #efe9dc;
+    --gold: #b8860b; --gold-light: #d4a843; --rust: #8b3a2a;
+    --sage: #4a6741; --border: #d4c9b0; --shadow: rgba(28,26,22,0.12);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Source Serif 4', Georgia, serif; background: var(--parchment); color: var(--ink); min-height: 100vh;
+    background-image: radial-gradient(ellipse at 20% 20%, rgba(184,134,11,0.06) 0%, transparent 60%), radial-gradient(ellipse at 80% 80%, rgba(74,103,65,0.05) 0%, transparent 60%); }
+  header { text-align: center; padding: 2.5rem 1rem 1.5rem; border-bottom: 1px solid var(--border); }
+  header::after { content: ''; display: block; width: 60px; height: 2px; background: var(--gold); margin: 1rem auto 0; }
+  .lesson-label { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--gold); font-weight: 600; margin-bottom: 0.5rem; }
+  h1 { font-family: 'Playfair Display', Georgia, serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 600; }
+  .arabic-subtitle { font-size: 1.4rem; font-family: serif; color: var(--gold); margin-top: 0.3rem; direction: rtl; }
+  .header-sub { font-size: 13px; color: #9a8e7a; margin-top: 0.4rem; font-style: italic; }
+  .tabs { display: flex; justify-content: center; padding: 1.5rem 1rem 0; flex-wrap: wrap; gap: 2px; }
+  .tab-btn { font-family: 'Source Serif 4', serif; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 9px 14px; border: 1px solid var(--border); background: var(--cream); color: #7a7060; cursor: pointer; transition: all 0.2s; border-bottom: none; position: relative; top: 1px; border-radius: 6px 6px 0 0; }
+  .tab-btn.active { background: var(--parchment); color: var(--ink); border-bottom: 1px solid var(--parchment); z-index: 2; }
+  .tab-btn:hover:not(.active) { background: #e8e2d6; color: var(--ink); }
+  .tab-content { border-top: 1px solid var(--border); max-width: 700px; margin: 0 auto; padding: 2rem 1.5rem 3rem; display: none; }
+  .tab-content.active { display: block; }
+  .quiz-meta { display: flex; justify-content: space-between; font-size: 12px; color: #9a8e7a; font-family: 'Courier New', monospace; margin-bottom: 10px; }
+  .progress-bar { height: 2px; background: var(--border); border-radius: 1px; margin-bottom: 1.8rem; }
+  .progress-fill { height: 2px; background: var(--gold); border-radius: 1px; transition: width 0.4s ease; }
+  .question-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 2rem; box-shadow: 0 2px 16px var(--shadow); }
+  .prompt-arabic { font-size: 36px; font-family: 'Traditional Arabic', 'Scheherazade New', serif; text-align: center; direction: rtl; color: var(--ink); line-height: 1.6; margin-bottom: 0.4rem; }
+  .prompt-arabic-sm { font-size: 26px; font-family: 'Traditional Arabic', 'Scheherazade New', serif; text-align: center; direction: rtl; color: var(--ink); line-height: 1.7; margin-bottom: 0.4rem; }
+  .prompt-english { font-size: 18px; font-family: 'Playfair Display', serif; font-style: italic; text-align: center; color: var(--ink); margin-bottom: 0.4rem; line-height: 1.4; }
+  .prompt-sub { font-size: 11px; text-align: center; color: #b0a490; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem; font-family: 'Courier New', monospace; }
+  .feedback-box { font-size: 13.5px; text-align: center; padding: 10px 14px; border-radius: 6px; margin-bottom: 14px; line-height: 1.6; }
+  .feedback-correct { background: #eef5ee; color: #2e5c2e; border: 1px solid #b8d4b8; }
+  .feedback-wrong { background: #fdf0ee; color: #7a2e20; border: 1px solid #e0b8b0; }
+  .mc-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+  .mc-options.single-col { grid-template-columns: 1fr; }
+  .mc-option { padding: 12px 14px; border: 1px solid var(--border); border-radius: 6px; background: var(--parchment); font-size: 13.5px; font-family: 'Source Serif 4', serif; cursor: pointer; transition: all 0.15s; text-align: center; line-height: 1.4; }
+  .mc-option:hover:not(.disabled) { border-color: var(--gold-light); background: #fdf8ee; }
+  .mc-option.correct { background: #eef5ee; border-color: var(--sage); color: var(--sage); font-weight: 600; }
+  .mc-option.wrong { background: #fdf0ee; border-color: var(--rust); color: var(--rust); }
+  .mc-option.disabled { cursor: default; }
+  .btn-row { display: flex; gap: 10px; }
+  .btn { flex: 1; padding: 11px; border-radius: 6px; font-size: 13px; font-family: 'Courier New', monospace; letter-spacing: 0.06em; cursor: pointer; transition: all 0.15s; border: 1px solid var(--border); background: transparent; color: var(--ink); }
+  .btn:hover { background: var(--cream); }
+  .btn-primary { border-color: var(--gold); color: var(--gold); }
+  .btn-primary:hover { background: #fdf8ee; }
+  .section-intro { background: var(--cream); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin-bottom: 1.5rem; font-size: 13.5px; line-height: 1.7; color: #5a5040; }
+  .section-intro strong { color: var(--ink); }
+  .section-intro .rule { font-size: 20px; font-family: 'Traditional Arabic', serif; direction: rtl; color: var(--gold); display: block; text-align: center; margin: 0.5rem 0; }
+  .done-screen { text-align: center; padding: 2rem 0; }
+  .done-screen .big-check { font-size: 48px; margin-bottom: 1rem; }
+  .done-screen p { font-family: 'Playfair Display', serif; font-size: 1.3rem; margin-bottom: 0.4rem; }
+  .done-screen small { font-size: 13px; color: #9a8e7a; font-family: 'Courier New', monospace; }
+  .restart-btn { margin-top: 1.5rem; padding: 12px 30px; border: 1px solid var(--gold); border-radius: 6px; background: transparent; color: var(--gold); font-family: 'Courier New', monospace; font-size: 13px; letter-spacing: 0.08em; cursor: pointer; }
+  .restart-btn:hover { background: #fdf8ee; }
+  .arabic-inline { font-family: 'Traditional Arabic', 'Scheherazade New', serif; font-size: 1.15em; direction: rtl; display: inline; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1 · Midterm Review</div>
+  <h1>Weak Points Drill</h1>
+  <div class="arabic-subtitle">نِقَاطُ الضَّعْفِ</div>
+  <div class="header-sub">7 concepts from today's midterm — train until they stick</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('idafa')">إِضَافَة</button>
+  <button class="tab-btn" onclick="switchTab('noon')">Sandwiched ن</button>
+  <button class="tab-btn" onclick="switchTab('plural')">Non-Human Plural</button>
+  <button class="tab-btn" onclick="switchTab('states')">4 States</button>
+  <button class="tab-btn" onclick="switchTab('fail')">فَاعِل / مَفْعُول</button>
+  <button class="tab-btn" onclick="switchTab('tense')">Verb Tenses</button>
+  <button class="tab-btn" onclick="switchTab('demo')">Demonstratives</button>
+</div>
+
+<!-- ══════════ TAB 1: IḌĀFAH ══════════ -->
+<div id="tab-idafa" class="tab-content active">
+  <div class="section-intro">
+    <strong>الإِضَافَة (Iḍāfah)</strong> — a possessive/genitive construction of two nouns. The first noun is the <strong>مُضَاف</strong> (annexed noun — it loses tanwīn and al-). The second noun is the <strong>مُضَافٌ إِلَيْهِ</strong> (annexed-to noun — always مَجْرُور). Together they mean "the X of Y" or "Y's X."<br><br>
+    <span class="rule">كِتَابُ اللهِ · بَيْتُ الرَّجُلِ · رَبُّ الْعَالَمِينَ</span>
+    The مُضَاف never takes tanwīn and never takes ال. The مُضَافٌ إِلَيْهِ is always in the genitive (مَجْرُور).
+  </div>
+  <div class="quiz-meta">
+    <span id="id-counter">Q 1 of ?</span>
+    <span id="id-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="id-prog" style="width:0%"></div></div>
+  <div class="question-card" id="id-card">
+    <div class="prompt-arabic-sm" id="id-prompt"></div>
+    <div class="prompt-sub" id="id-sub">choose the correct answer</div>
+    <div id="id-feedback"></div>
+    <div class="mc-options" id="id-options"></div>
+    <div class="btn-row" id="id-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="idNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 2: SANDWICHED NŪN ══════════ -->
+<div id="tab-noon" class="tab-content">
+  <div class="section-intro">
+    <strong>The Sandwiched ن Rule:</strong> When a dual (مُثَنَّى) or masculine sound plural (جَمْعُ مُذَكَّرٍ سَالِم) is used as the <strong>مُضَاف</strong> in an إِضَافَة, its ن is dropped.<br><br>
+    <span class="rule">رَبُّ الْعَالَمِينَ ← عَالَمُونَ loses ن → عَالَمِي</span>
+    Dual: كِتَابَانِ → كِتَابَا اللهِ &nbsp;|&nbsp; Masc. pl: مُسْلِمُونَ → مُسْلِمُو الْبَلَدِ<br>
+    The ن is "sandwiched" between the مُضَاف and مُضَافٌ إِلَيْهِ — so it is dropped.
+  </div>
+  <div class="quiz-meta">
+    <span id="nn-counter">Q 1 of ?</span>
+    <span id="nn-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="nn-prog" style="width:0%"></div></div>
+  <div class="question-card" id="nn-card">
+    <div class="prompt-arabic-sm" id="nn-prompt"></div>
+    <div class="prompt-sub" id="nn-sub">choose the correct answer</div>
+    <div id="nn-feedback"></div>
+    <div class="mc-options" id="nn-options"></div>
+    <div class="btn-row" id="nn-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="nnNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 3: NON-HUMAN PLURAL ══════════ -->
+<div id="tab-plural" class="tab-content">
+  <div class="section-intro">
+    <strong>Non-Human Plural Adjective Agreement:</strong> In Arabic, non-human plurals (animals, objects, abstract things) are treated grammatically as <strong>feminine singular</strong>. Any adjective describing them must also be <strong>feminine singular</strong>.<br><br>
+    <span class="rule">الْكُتُبُ الْكَبِيرَةُ · الْجِبَالُ الشَّامِخَةُ · الأَيَّامُ الطَّوِيلَةُ</span>
+    This rule applies even if the noun looks masculine or is grammatically plural — if it's a non-human plural, the adjective becomes feminine singular (ending ـَةٌ / ـَةُ / ـَةَ / ـَةِ).
+  </div>
+  <div class="quiz-meta">
+    <span id="pl-counter">Q 1 of ?</span>
+    <span id="pl-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="pl-prog" style="width:0%"></div></div>
+  <div class="question-card" id="pl-card">
+    <div class="prompt-arabic-sm" id="pl-prompt"></div>
+    <div class="prompt-sub" id="pl-sub">choose the correct answer</div>
+    <div id="pl-feedback"></div>
+    <div class="mc-options" id="pl-options"></div>
+    <div class="btn-row" id="pl-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="plNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 4: 4 GRAMMATICAL STATES ══════════ -->
+<div id="tab-states" class="tab-content">
+  <div class="section-intro">
+    Arabic nouns and adjectives have <strong>4 grammatical states (الأَحْوَالُ الإِعْرَابِيَّة)</strong>:<br>
+    <strong>مَرْفُوع</strong> — nominative (default; subject, مُبْتَدَأ, خَبَر, فَاعِل) · ضَمَّة (ُ)<br>
+    <strong>مَنْصُوب</strong> — accusative (مَفْعُول بِهِ, objects of إِنَّ, after كَانَ) · فَتْحَة (َ)<br>
+    <strong>مَجْرُور</strong> — genitive (after prepositions, مُضَافٌ إِلَيْهِ) · كَسْرَة (ِ)<br>
+    <strong>مَجْزُوم</strong> — jussive (verbs only: after لَمْ، لِـ، لَا النَّاهِيَة) · سُكُون (ْ)
+  </div>
+  <div class="quiz-meta">
+    <span id="st-counter">Q 1 of ?</span>
+    <span id="st-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="st-prog" style="width:0%"></div></div>
+  <div class="question-card" id="st-card">
+    <div class="prompt-arabic-sm" id="st-prompt"></div>
+    <div class="prompt-sub" id="st-sub">choose the correct answer</div>
+    <div id="st-feedback"></div>
+    <div class="mc-options" id="st-options"></div>
+    <div class="btn-row" id="st-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="stNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 5: FĀIL VS MAFŪL BIH ══════════ -->
+<div id="tab-fail" class="tab-content">
+  <div class="section-intro">
+    <strong>فَاعِل vs مَفْعُولٌ بِهِ</strong> — the two main noun roles in a verbal sentence (جُمْلَة فِعْلِيَّة):<br><br>
+    <strong>فَاعِل</strong> (doer/agent) — comes right after the verb, مَرْفُوع (ضَمَّة ُ), answers "who did it?"<br>
+    <strong>مَفْعُولٌ بِهِ</strong> (direct object) — comes after the فَاعِل, مَنْصُوب (فَتْحَة َ), answers "what was done?"<br><br>
+    <span class="rule">ضَرَبَ زَيْدٌ عَمْرًا — Zayd struck ʿAmr</span>
+    زَيْدٌ = فَاعِل (ُ) &nbsp;|&nbsp; عَمْرًا = مَفْعُولٌ بِهِ (َ)
+  </div>
+  <div class="quiz-meta">
+    <span id="fa-counter">Q 1 of ?</span>
+    <span id="fa-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="fa-prog" style="width:0%"></div></div>
+  <div class="question-card" id="fa-card">
+    <div class="prompt-arabic-sm" id="fa-prompt"></div>
+    <div class="prompt-sub" id="fa-sub">choose the correct answer</div>
+    <div id="fa-feedback"></div>
+    <div class="mc-options" id="fa-options"></div>
+    <div class="btn-row" id="fa-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="faNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 6: VERB TENSES ══════════ -->
+<div id="tab-tense" class="tab-content">
+  <div class="section-intro">
+    Arabic has <strong>3 verb tenses / types</strong>:<br>
+    <strong>الفِعْل الْمَاضِي</strong> — past tense (he did). Built on root letters, ends in ـَ for he-singular.<br>
+    <strong>الفِعْل الْمُضَارِع</strong> — present/future (he does / he will do). Prefix يـ / تـ / أـ / نـ.<br>
+    <strong>فِعْل الأَمْر</strong> — command (do!). Built from the مُضَارِع by removing the prefix and adjusting the vowel.<br><br>
+    <span class="rule">كَتَبَ · يَكْتُبُ · اُكْتُبْ</span>
+  </div>
+  <div class="quiz-meta">
+    <span id="vt-counter">Q 1 of ?</span>
+    <span id="vt-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="vt-prog" style="width:0%"></div></div>
+  <div class="question-card" id="vt-card">
+    <div class="prompt-arabic" id="vt-prompt"></div>
+    <div class="prompt-sub" id="vt-sub">choose the correct answer</div>
+    <div id="vt-feedback"></div>
+    <div class="mc-options" id="vt-options"></div>
+    <div class="btn-row" id="vt-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="vtNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ TAB 7: DEMONSTRATIVES ══════════ -->
+<div id="tab-demo" class="tab-content">
+  <div class="section-intro">
+    <strong>Demonstrative Pronouns (أَسْمَاءُ الإِشَارَةِ)</strong>:<br><br>
+    <strong>Near (this/these):</strong> هَذَا (m.s.) · هَذِهِ (f.s.) · هَذَانِ (m. dual) · هَاتَانِ (f. dual) · هَؤُلَاءِ (pl. humans)<br>
+    <strong>Far (that/those):</strong> ذَلِكَ (m.s.) · تِلْكَ (f.s.) · ذَانِكَ (m. dual) · تَانِكَ (f. dual) · أُولَئِكَ (pl. humans)<br><br>
+    Non-human plurals → use the <em>feminine singular</em> demonstrative: هَذِهِ الْكُتُبُ (these books).
+  </div>
+  <div class="quiz-meta">
+    <span id="dm-counter">Q 1 of ?</span>
+    <span id="dm-score">Score: 0 / 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="dm-prog" style="width:0%"></div></div>
+  <div class="question-card" id="dm-card">
+    <div class="prompt-arabic-sm" id="dm-prompt"></div>
+    <div class="prompt-sub" id="dm-sub">choose the correct answer</div>
+    <div id="dm-feedback"></div>
+    <div class="mc-options" id="dm-options"></div>
+    <div class="btn-row" id="dm-next-row" style="display:none">
+      <button class="btn btn-primary" onclick="dmNext()">Next →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ─── UTILS ───
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  const names=['idafa','noon','plural','states','fail','tense','demo'];
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{b.classList.toggle('active',names[i]===name);});
+  document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+}
+function buildOptions(cId,opts,correctIdx,onAnswer,singleCol){
+  const c=document.getElementById(cId); c.innerHTML='';
+  if(singleCol) c.classList.add('single-col'); else c.classList.remove('single-col');
+  opts.forEach((opt,i)=>{
+    const btn=document.createElement('button'); btn.className='mc-option'; btn.textContent=opt;
+    btn.onclick=()=>onAnswer(i,correctIdx); c.appendChild(btn);
+  });
+}
+function lockOptions(cId,chosenIdx,correctIdx){
+  document.querySelectorAll(`#${cId} .mc-option`).forEach((btn,i)=>{
+    btn.classList.add('disabled');
+    if(i===correctIdx)btn.classList.add('correct');
+    else if(i===chosenIdx)btn.classList.add('wrong');
+  });
+}
+function doneScreen(cardId,progId,counterId,score,total,reinitFn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen">
+    <div class="big-check">✓</div><p>Final score: ${score} / ${total}</p>
+    <small>${Math.round(score/total*100)}% correct</small><br>
+    <button class="restart-btn" onclick="${reinitFn}()">Try again ↺</button>
+  </div>`;
+  document.getElementById(progId).style.width='100%';
+  document.getElementById(counterId).textContent='Done!';
+}
+function makeMeta(prefix,idx,total,score,answered){
+  document.getElementById(prefix+'-score').textContent=`Score: ${score} / ${answered}`;
+  document.getElementById(prefix+'-counter').textContent=`Q ${Math.min(idx+1,total)} of ${total}`;
+  document.getElementById(prefix+'-prog').style.width=(idx/total*100).toFixed(0)+'%';
+}
+
+// ─── TAB 1: IḌĀFAH ───
+const idafaData = [
+  {prompt:"كِتَابُ اللهِ", q:"Which word is the مُضَاف?", answer:"كِتَابُ", wrong:["اللهِ","كِتَابُ اللهِ","Neither"], explain:"كِتَابُ is the مُضَاف (annexed noun — notice no tanwīn, no ال). اللهِ is the مُضَافٌ إِلَيْهِ, in the genitive."},
+  {prompt:"كِتَابُ اللهِ", q:"Which word is the مُضَافٌ إِلَيْهِ?", answer:"اللهِ", wrong:["كِتَابُ","كِتَابُ اللهِ","Neither"], explain:"اللهِ is the مُضَافٌ إِلَيْهِ — always مَجْرُور (genitive), marked by a kasra ـِ."},
+  {prompt:"رَبُّ الْعَالَمِينَ", q:"Identify the مُضَاف:", answer:"رَبُّ", wrong:["الْعَالَمِينَ","رَبُّ الْعَالَمِينَ","There is none"], explain:"رَبُّ is the مُضَاف — Lord of. It has no tanwīn and no ال attached. الْعَالَمِينَ is the مُضَافٌ إِلَيْهِ."},
+  {prompt:"رَبُّ الْعَالَمِينَ", q:"What case is الْعَالَمِينَ in?", answer:"مَجْرُور (genitive)", wrong:["مَرْفُوع (nominative)","مَنْصُوب (accusative)","مَجْزُوم (jussive)"], explain:"The مُضَافٌ إِلَيْهِ is always مَجْرُور. In جَمْعُ مُذَكَّرٍ سَالِم, genitive is marked by ـِينَ (not ـُونَ)."},
+  {prompt:"بَيْتُ الرَّجُلِ", q:"Translate this إِضَافَة:", answer:"The man's house / The house of the man", wrong:["A man's house","The house and the man","The man in the house"], explain:"بَيْتُ = house (مُضَاف) + الرَّجُلِ = the man (مُضَافٌ إِلَيْهِ) → the man's house / the house of the man."},
+  {prompt:"أَهْلُ الْكِتَابِ", q:"What does this إِضَافَة mean?", answer:"People of the Book", wrong:["The book's people are here","People with books","The written people"], explain:"أَهْلُ = people (مُضَاف) + الْكِتَابِ = the book (مُضَافٌ إِلَيْهِ) → People of the Book. A famous Qur'ānic term."},
+  {prompt:"آلُ مُحَمَّدٍ", q:"Identify the مُضَافٌ إِلَيْهِ:", answer:"مُحَمَّدٍ", wrong:["آلُ","آلُ مُحَمَّدٍ","There is none"], explain:"مُحَمَّدٍ (note the kasra tanwīn ـٍ marking genitive on a proper name) is the مُضَافٌ إِلَيْهِ. آلُ is the مُضَاف meaning 'family of.'"},
+  {prompt:"عَبْدُ اللهِ", q:"Why does عَبْدُ have no tanwīn here?", answer:"It is the مُضَاف in an إِضَافَة — مُضَاف drops tanwīn", wrong:["It is مَجْرُور","It is a proper noun","It is مَنْصُوب"], explain:"The مُضَاف always loses tanwīn (and ال if it had one). This is one of the clearest signs of an إِضَافَة construction."},
+  {prompt:"وَلِيُّ الأَمْرِ", q:"Translate:", answer:"Guardian of the affair / The one in authority", wrong:["The affair of the guardian","Guarding the affair","Affairs of authority"], explain:"وَلِيُّ = guardian/trustee (مُضَاف) + الأَمْرِ = the matter/authority (مُضَافٌ إِلَيْهِ). A well-known Islamic governance term."},
+  {prompt:"مَسْجِدُ الْمَدِينَةِ", q:"Which part of the إِضَافَة is مَجْرُور?", answer:"الْمَدِينَةِ", wrong:["مَسْجِدُ","Both","Neither"], explain:"The مُضَافٌ إِلَيْهِ (الْمَدِينَةِ) is always مَجْرُور. Notice ـِ on الْمَدِينَةِ. The مُضَاف (مَسْجِدُ) itself is مَرْفُوع here."},
+  {prompt:"صِرَاطَ الَّذِينَ أَنْعَمْتَ عَلَيْهِمْ", q:"What is the مُضَاف in this phrase from al-Fātiḥa?", answer:"صِرَاطَ", wrong:["الَّذِينَ","أَنْعَمْتَ","عَلَيْهِمْ"], explain:"صِرَاطَ is the مُضَاف (path of). الَّذِينَ is the مُضَافٌ إِلَيْهِ (those whom). Together: the path of those whom You blessed."},
+  {prompt:"يَوْمَ الدِّينِ", q:"Translate:", answer:"The Day of Judgment / Recompense", wrong:["The religion of the day","A day of religion","The religious day"], explain:"يَوْمَ = day (مُضَاف, مَنْصُوب here as object of إِيَّاكَ نَعْبُدُ context) + الدِّينِ = the recompense/judgment. Famous from al-Fātiḥa."},
+  {prompt:"كَلِمَةُ الْإِخْلَاصِ", q:"Identify the مُضَاف:", answer:"كَلِمَةُ", wrong:["الْإِخْلَاصِ","كَلِمَةُ الْإِخْلَاصِ","Neither"], explain:"كَلِمَةُ = word (مُضَاف — no tanwīn). الْإِخْلَاصِ = sincerity (مُضَافٌ إِلَيْهِ, مَجْرُور). Meaning: The Word of Sincerity (referring to the kalimah)."},
+  {prompt:"رَسُولُ اللهِ", q:"Can the مُضَاف (رَسُولُ) take ال — becoming الرَّسُولُ — while still being مُضَاف?", answer:"No — the مُضَاف cannot take ال", wrong:["Yes — any noun can take ال","Yes — only in questions","Yes — if the مُضَافٌ إِلَيْهِ is a proper noun"], explain:"A defining rule: the مُضَاف loses both tanwīn AND ال. رَسُولُ اللهِ is correct; الرَّسُولُ اللهِ would be incorrect as an إِضَافَة."},
+  {prompt:"سُورَةُ الْبَقَرَةِ", q:"What case is الْبَقَرَةِ in?", answer:"مَجْرُور — because it is the مُضَافٌ إِلَيْهِ", wrong:["مَرْفُوع — it comes after a noun","مَنْصُوب — it is the object","مَجْزُوم — after a particle"], explain:"الْبَقَرَةِ is مَجْرُور (genitive, marked ـِ) because every مُضَافٌ إِلَيْهِ is مَجْرُور without exception."},
+];
+
+let idQ,idIdx,idScore,idTotal;
+function idInit(){idQ=shuffle([...idafaData]);idIdx=0;idScore=0;idTotal=0;idShow();}
+function idShow(){
+  if(idIdx>=idQ.length){doneScreen('id-card','id-prog','id-counter',idScore,idTotal,'idInit');return;}
+  const q=idQ[idIdx];
+  document.getElementById('id-prompt').textContent=q.prompt;
+  document.getElementById('id-sub').textContent=q.q;
+  document.getElementById('id-feedback').innerHTML='';
+  document.getElementById('id-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]); const ci=opts.indexOf(q.answer);
+  buildOptions('id-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct; idTotal++;if(ok)idScore++; makeMeta('id',idIdx,idQ.length,idScore,idTotal);
+    lockOptions('id-options',chosen,correct);
+    document.getElementById('id-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('id-next-row').style.display='flex'; idIdx++;
+  },false);
+  makeMeta('id',idIdx,idQ.length,idScore,idTotal);
+}
+function idNext(){idShow();}
+
+// ─── TAB 2: SANDWICHED NŪN ───
+const noonData = [
+  {prompt:"عَالَمُونَ → مُضَاف → ؟", q:"What is the correct form of عَالَمُونَ when it becomes مُضَاف?", answer:"عَالَمُو (ن drops)", wrong:["عَالَمُونَ stays the same","عَالَمُنَ","عَالَمَا"], explain:"When a masculine sound plural (جمع مذكر سالم) becomes مُضَاف, the ن is dropped. عَالَمُونَ → عَالَمُو + مُضَافٌ إِلَيْهِ. Example: رَبُّ الْعَالَمِينَ (genitive: الْعَالَمِينَ → ن stays because the ي is part of the genitive marker, but the ن of the plural ending is the one dropped in the nominative form)."},
+  {prompt:"رَبُّ الْعَالَمِينَ", q:"Why is it الْعَالَمِينَ and not الْعَالَمِيُونَ?", answer:"Because عَالَمُونَ is مُضَاف and loses its ن; in genitive it becomes عَالَمِينَ", wrong:["Because it is feminine","Because it is dual","Because it is a broken plural"], explain:"الْعَالَمِينَ is the genitive/accusative form of عَالَمُونَ (مَجْرُور → ـِينَ). The ن of the plural is dropped because this noun is the مُضَاف. From Sūrat al-Fātiḥa: رَبِّ الْعَالَمِينَ."},
+  {prompt:"كِتَابَانِ → مُضَاف → ؟", q:"What form does كِتَابَانِ (two books) take when it is مُضَاف?", answer:"كِتَابَا (ن drops)", wrong:["كِتَابَانِ stays","كِتَابَايَ","كِتَابِي"], explain:"Dual nouns (مُثَنَّى) also drop the ن when becoming مُضَاف. كِتَابَانِ → كِتَابَا الطَّالِبِ (the two books of the student)."},
+  {prompt:"مُؤْمِنُونَ → مُضَاف → ؟", q:"Select the correct مُضَاف form:", answer:"مُؤْمِنُو", wrong:["مُؤْمِنُونَ","مُؤْمِنِيُونَ","مُؤْمِنَا"], explain:"Masculine sound plural مُضَاف drops ن: مُؤْمِنُونَ → مُؤْمِنُو الْبَلَدِ (the believers of the city). This is the sandwiched ن rule."},
+  {prompt:"أَبَوَانِ → مُضَاف → ؟", q:"Which is correct for 'the two parents of Zayd'?", answer:"أَبَوَا زَيْدٍ", wrong:["أَبَوَانِ زَيْدٌ","أَبَوَانِ زَيْدٍ","أَبَوَيْنِ زَيْدٍ"], explain:"Dual مُضَاف: أَبَوَانِ → أَبَوَا + زَيْدٍ. The ن is dropped, and زَيْدٍ takes kasra tanwīn (مَجْرُور)."},
+  {prompt:"The ن in مُثَنَّى and جَمْعُ مُذَكَّرٍ سَالِم drops when…", q:"When exactly is the ن dropped?", answer:"When the word becomes مُضَاف (first part of إِضَافَة)", wrong:["When the word is مَجْرُور","When the word is مَنْصُوب","Always in Qur'ānic Arabic"], explain:"The ن drops ONLY when the مُثَنَّى or جمع مذكر سالم functions as the مُضَاف. In all other cases (مَرْفُوع / مَنْصُوب / مَجْرُور as non-مُضَاف), the ن remains."},
+  {prompt:"وَالِدَانِ → مُضَاف → ؟", q:"Correct form for 'the two parents of the boy':", answer:"وَالِدَا الْوَلَدِ", wrong:["وَالِدَانِ الْوَلَدِ","وَالِدَيَا الْوَلَدِ","وَالِدَانِي الْوَلَدِ"], explain:"Dual مُضَاف: وَالِدَانِ → وَالِدَا + الْوَلَدِ. The ن drops, الْوَلَدِ is مَجْرُور as مُضَافٌ إِلَيْهِ."},
+  {prompt:"مُسْلِمُونَ + الْمَدِينَةِ = ؟", q:"Which is the correct إِضَافَة?", answer:"مُسْلِمُو الْمَدِينَةِ", wrong:["مُسْلِمُونَ الْمَدِينَةِ","مُسْلِمُوَ الْمَدِينَةِ","مُسْلِمَا الْمَدِينَةِ"], explain:"مُسْلِمُونَ (masc. pl.) becomes مُضَاف → ن drops → مُسْلِمُو الْمَدِينَةِ (the Muslims of the city)."},
+  {prompt:"Why is the rule called 'sandwiched ن'?", q:"The ن is dropped because:", answer:"It is sandwiched between the مُضَاف and the مُضَافٌ إِلَيْهِ", wrong:["It is a weak letter","It is the possessive suffix","It always drops in إِضَافَة"], explain:"Visually: [مُضَاف + ن + مُضَافٌ إِلَيْهِ]. The ن gets sandwiched between the two parts of the إِضَافَة, so Arabic drops it for phonological smoothness."},
+  {prompt:"عِبَادُ الرَّحْمَنِ (Qur'ān 25:63)", q:"Is عِبَادُ a مُضَاف? And is ن dropped?", answer:"Yes — عِبَادٌ is a broken plural (not جمع سالم), so no ن rule applies; it simply loses tanwīn", wrong:["Yes — ن was dropped from عِبَادُونَ","No — there is no إِضَافَة here","Yes — ن drops from all plurals in إِضَافَة"], explain:"عِبَادٌ is a broken plural (جمع تكسير) — it never had ن to drop. The sandwiched ن rule applies ONLY to مُثَنَّى and جمع مذكر سالم. Broken plurals just drop tanwīn as مُضَاف."},
+];
+
+let nnQ,nnIdx,nnScore,nnTotal;
+function nnInit(){nnQ=shuffle([...noonData]);nnIdx=0;nnScore=0;nnTotal=0;nnShow();}
+function nnShow(){
+  if(nnIdx>=nnQ.length){doneScreen('nn-card','nn-prog','nn-counter',nnScore,nnTotal,'nnInit');return;}
+  const q=nnQ[nnIdx];
+  document.getElementById('nn-prompt').textContent=q.prompt;
+  document.getElementById('nn-sub').textContent=q.q;
+  document.getElementById('nn-feedback').innerHTML='';
+  document.getElementById('nn-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]); const ci=opts.indexOf(q.answer);
+  buildOptions('nn-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct; nnTotal++;if(ok)nnScore++; makeMeta('nn',nnIdx,nnQ.length,nnScore,nnTotal);
+    lockOptions('nn-options',chosen,correct);
+    document.getElementById('nn-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('nn-next-row').style.display='flex'; nnIdx++;
+  },true);
+  makeMeta('nn',nnIdx,nnQ.length,nnScore,nnTotal);
+}
+function nnNext(){nnShow();}
+
+// ─── TAB 3: NON-HUMAN PLURAL ───
+const pluralData = [
+  {prompt:"الْكُتُبُ ___ (كَبِير)", q:"Choose the correct adjective form for 'the big books':", answer:"الْكُتُبُ الْكَبِيرَةُ", wrong:["الْكُتُبُ الْكَبِيرُ","الْكُتُبُ الْكِبَارُ","الْكُتُبُ الْكَبِيرَاتُ"], explain:"كُتُب (books) is a non-human plural → adjective is feminine singular: كَبِيرَةُ. Even though كُتُب looks like a masculine broken plural, it is non-human → fem. sing. adjective."},
+  {prompt:"الجِبَالُ ___", q:"Which adjective correctly means 'the high mountains'?", answer:"الجِبَالُ الشَّامِخَةُ", wrong:["الجِبَالُ الشَّامِخُ","الجِبَالُ الشَّامِخُونَ","الجِبَالُ الشَّوَامِخُ"], explain:"جِبَال (mountains) = non-human plural → feminine singular adjective: شَامِخَةُ. The plural adjective شَوَامِخُ is only used in some classical contexts, not standard grammatical agreement."},
+  {prompt:"وَالنَّجْمُ وَالشَّجَرُ يَسْجُدَانِ", q:"'النَّجْمُ وَالشَّجَرُ' (the star and the tree) are treated grammatically as:", answer:"Dual feminine — hence يَسْجُدَانِ", wrong:["Masculine plural — يَسْجُدُونَ","Masculine singular — يَسْجُدُ","No specific gender"], explain:"From Sūrat al-Raḥmān (55:6). Non-human things (stars, trees) are grammatically treated as feminine. Two non-human things → dual feminine → يَسْجُدَانِ."},
+  {prompt:"الأَيَّامُ ___ (طَوِيل)", q:"Fill in: the long days:", answer:"الأَيَّامُ الطَّوِيلَةُ", wrong:["الأَيَّامُ الطِّوَالُ","الأَيَّامُ الطَّوِيلُ","الأَيَّامُ الطَّوِيلُونَ"], explain:"أَيَّام (days) = non-human plural → feminine singular adjective: طَوِيلَةُ. الطِّوَالُ is a broken plural adjective used in certain styles, but standard grammar gives feminine singular."},
+  {prompt:"الْأَنْهَارُ تَجْرِي", q:"The verb تَجْرِي (flows) is feminine singular. Why?", answer:"Because الأَنْهَار (rivers) is a non-human plural — treated as feminine singular", wrong:["Because الأَنْهَار is a feminine noun","Because rivers are grammatically dual","Because all verbs in Arabic are feminine by default"], explain:"Non-human plurals take feminine singular verbs and adjectives. الأَنْهَار (rivers) → verb/adjective is feminine singular. This is a core Arabic grammar rule."},
+  {prompt:"الرِّجَالُ ___", q:"'The tall men' — which adjective form is correct?", answer:"الرِّجَالُ الطِّوَالُ", wrong:["الرِّجَالُ الطَّوِيلَةُ","الرِّجَالُ الطَّوِيلُ","الرِّجَالُ الطَّوِيلَاتُ"], explain:"رِجَال (men) = human plural → adjective agrees as plural: الطِّوَالُ. The feminine singular rule applies ONLY to non-human plurals. Human plurals take sound/broken plural adjectives."},
+  {prompt:"الْمُسْلِمُونَ ___", q:"'The faithful Muslims' — correct form:", answer:"الْمُسْلِمُونَ الصَّادِقُونَ", wrong:["الْمُسْلِمُونَ الصَّادِقَةُ","الْمُسْلِمُونَ الصَّادِقُ","الْمُسْلِمُونَ الصَّوَادِقُ"], explain:"مُسْلِمُون = human plural (masculine) → adjective is masculine sound plural: الصَّادِقُونَ. The non-human rule does NOT apply to humans."},
+  {prompt:"الْقُلُوبُ ___ (عَمِي)", q:"Qur'ān 22:46: 'the hearts are blind' — correct form:", answer:"الْقُلُوبُ الَّتِي فِي الصُّدُورِ تَعْمَى (verb is feminine singular)", wrong:["الْقُلُوبُ تَعْمَوْنَ","الْقُلُوبُ أَعْمَى","الْقُلُوبُ عَمِيُونَ"], explain:"From Sūrat al-Ḥajj. قُلُوب (hearts) = non-human plural → verb/adjective is feminine singular. تَعْمَى is the 3rd person feminine singular present of عَمِيَ (to be blind)."},
+  {prompt:"السَّمَاوَاتُ وَالأَرْضُ", q:"'The heavens and the earth' — are these human or non-human?", answer:"Non-human — adjectives and verbs referring to them are feminine singular", wrong:["Human — they are Allah's creation","Non-human — but they take masculine plural adjectives","Human — heavens are associated with angels"], explain:"السَّمَاوَات and الأَرْض are non-human plurals/nouns. In Qur'ānic Arabic, adjectives and verbs referring to them are feminine singular (e.g. السَّمَاوَاتُ مَبْنِيَّةٌ، الأَرْضُ مَدْحِيَّةٌ)."},
+  {prompt:"الْأَشْجَارُ ___ (جَمِيل)", q:"'The beautiful trees' — choose the correct phrase:", answer:"الأَشْجَارُ الْجَمِيلَةُ", wrong:["الأَشْجَارُ الْجَمِيلُونَ","الأَشْجَارُ الْجَمِيلُ","الأَشْجَارُ جَمِيلٌ"], explain:"أَشْجَار (trees) = non-human plural → feminine singular adjective: الْجَمِيلَةُ. Also note that when the adjective follows the noun in a phrase (not a sentence), it must agree in definiteness too."},
+];
+
+let plQ,plIdx,plScore,plTotal;
+function plInit(){plQ=shuffle([...pluralData]);plIdx=0;plScore=0;plTotal=0;plShow();}
+function plShow(){
+  if(plIdx>=plQ.length){doneScreen('pl-card','pl-prog','pl-counter',plScore,plTotal,'plInit');return;}
+  const q=plQ[plIdx];
+  document.getElementById('pl-prompt').textContent=q.prompt;
+  document.getElementById('pl-sub').textContent=q.q;
+  document.getElementById('pl-feedback').innerHTML='';
+  document.getElementById('pl-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]); const ci=opts.indexOf(q.answer);
+  buildOptions('pl-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct; plTotal++;if(ok)plScore++; makeMeta('pl',plIdx,plQ.length,plScore,plTotal);
+    lockOptions('pl-options',chosen,correct);
+    document.getElementById('pl-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('pl-next-row').style.display='flex'; plIdx++;
+  },true);
+  makeMeta('pl',plIdx,plQ.length,plScore,plTotal);
+}
+function plNext(){plShow();}
+
+// ─── TAB 4: 4 GRAMMATICAL STATES ───
+const statesData = [
+  {prompt:"What are the 4 grammatical states of Arabic?", q:"Choose all 4 correct names:", answer:"مَرْفُوع · مَنْصُوب · مَجْرُور · مَجْزُوم", wrong:["مَرْفُوع · مَكْسُور · مَفْتُوح · مَجْزُوم","مُبْتَدَأ · خَبَر · فَاعِل · مَفْعُول","مَضْمُوم · مَفْتُوح · مَكْسُور · سَاكِن"], explain:"The 4 إِعْرَاب states: مَرْفُوع (nominative, ضَمَّة), مَنْصُوب (accusative, فَتْحَة), مَجْرُور (genitive, كَسْرَة), مَجْزُوم (jussive, سُكُون — verbs only)."},
+  {prompt:"الْفَاعِل في الجُمْلَة الفِعْلِيَّة", q:"The فَاعِل (doer/subject) takes which state?", answer:"مَرْفُوع (ضَمَّة ُ)", wrong:["مَنْصُوب (فَتْحَة َ)","مَجْرُور (كَسْرَة ِ)","مَجْزُوم (سُكُون ْ)"], explain:"The فَاعِل is always مَرْفُوع — marked by ضَمَّة (ُ) or its equivalent (ـُونَ for masc. pl., ـَانِ for dual)."},
+  {prompt:"الْمَفْعُولُ بِهِ", q:"Which grammatical state does the direct object (مَفْعُولٌ بِهِ) take?", answer:"مَنْصُوب (فَتْحَة َ)", wrong:["مَرْفُوع (ضَمَّة ُ)","مَجْرُور (كَسْرَة ِ)","مَجْزُوم (سُكُون ْ)"], explain:"The مَفْعُولٌ بِهِ is always مَنْصُوب — marked by فَتْحَة (َ) or its equivalent (ـِينَ for masc. pl., ـَيْنِ for dual)."},
+  {prompt:"بَعْدَ حَرْفِ الجَرِّ", q:"A noun after a preposition (حرف الجر) takes:", answer:"مَجْرُور (كَسْرَة ِ)", wrong:["مَرْفُوع (ضَمَّة ُ)","مَنْصُوب (فَتْحَة َ)","مَجْزُوم (سُكُون ْ)"], explain:"Prepositions govern جَرّ. In اللهِ، بِاللهِ، فِي الْبَيْتِ — the noun after a حرف الجر is always مَجْرُور."},
+  {prompt:"لَمْ يَذْهَبْ", q:"The verb يَذْهَبْ (after لَمْ) is in which state?", answer:"مَجْزُوم (سُكُون ْ)", wrong:["مَرْفُوع (ضَمَّة ُ)","مَنْصُوب (فَتْحَة َ)","مَجْرُور (كَسْرَة ِ)"], explain:"لَمْ is a particle that jazms (makes jussive) the مُضَارِع. The verb becomes مَجْزُوم — marked by سُكُون on the last root letter. لَمْ يَذْهَبْ = he did not go."},
+  {prompt:"الْمُبْتَدَأُ في الجُمْلَة الاِسْمِيَّة", q:"The مُبْتَدَأ (subject of a nominal sentence) takes:", answer:"مَرْفُوع (ضَمَّة ُ)", wrong:["مَنْصُوب (فَتْحَة َ)","مَجْرُور (كَسْرَة ِ)","مَجْزُوم (سُكُون ْ)"], explain:"Both the مُبْتَدَأ and the خَبَر in a nominal sentence are مَرْفُوع by default. الرَّجُلُ كَبِيرٌ — both end in ُ / ٌ."},
+  {prompt:"مَجْزُوم يَخُصُّ…", q:"Which word type can be مَجْزُوم (jussive)?", answer:"Verbs only (الفِعْل المُضَارِع)", wrong:["Nouns only (الاِسْم)","Both nouns and verbs","Particles (الحَرْف)"], explain:"مَجْزُوم (jussive) applies only to verbs — specifically the مُضَارِع after particles like لَمْ، لَا النَّاهِيَة، لِـ. Nouns and adjectives cannot be مَجْزُوم."},
+  {prompt:"بِسْمِ اللهِ", q:"What state is اللهِ in?", answer:"مَجْرُور — because بِـ is a حرف الجر", wrong:["مَرْفُوع — it is the subject","مَنْصُوب — it comes after a noun","مَجْزُوم — after a particle"], explain:"بِسْمِ = بِ (preposition) + اسْمِ (مَجْرُور noun, مُضَاف). اللهِ is مَجْرُور as مُضَافٌ إِلَيْهِ. Double مَجْرُور!"},
+  {prompt:"إِيَّاكَ نَعْبُدُ", q:"What is the grammatical state of إِيَّاكَ?", answer:"مَنْصُوب — it is the direct object (مَفْعُولٌ بِهِ) placed before the verb", wrong:["مَرْفُوع — it is the subject","مَجْرُور — it follows a preposition","مَجْزُوم — it's jussive"], explain:"إِيَّاكَ is a separated pronoun used as مَفْعُولٌ بِهِ. It is مَنْصُوب. The object was fronted for emphasis/exclusivity: 'You alone we worship.' From al-Fātiḥa."},
+  {prompt:"اَلرَّحْمَنِ الرَّحِيمِ", q:"Why are both الرَّحْمَنِ and الرَّحِيمِ مَجْرُور?", answer:"They are adjectives agreeing with اللهِ which is مَجْرُور in بِسْمِ اللهِ الرَّحْمَنِ الرَّحِيمِ", wrong:["They are مُضَافٌ إِلَيْهِ","They are after a hidden preposition","They are both مُضَاف"], explain:"الرَّحْمَنِ الرَّحِيمِ are adjectives (صِفَة) of اللهِ. Since اللهِ is مَجْرُور, its adjectives must also be مَجْرُور — they match in G-E-N-D and case."},
+  {prompt:"أَنْعَمْتَ عَلَيْهِمْ", q:"What state is هِمْ (them) in — in عَلَيْهِمْ?", answer:"مَجْرُور — because عَلَى is a preposition", wrong:["مَرْفُوع","مَنْصُوب","مَجْزُوم"], explain:"عَلَى is a حرف الجر. The pronoun هِمْ attached to it becomes مَجْرُور. From al-Fātiḥa: عَلَيْهِمْ = upon them."},
+  {prompt:"الْخَبَرُ في الجُمْلَة الاِسْمِيَّة", q:"The خَبَر (predicate) of a nominal sentence takes:", answer:"مَرْفُوع (ضَمَّة ُ)", wrong:["مَنْصُوب (فَتْحَة َ)","مَجْرُور (كَسْرَة ِ)","مَجْزُوم (سُكُون ْ)"], explain:"The خَبَر is مَرْفُوع, just like the مُبْتَدَأ. Both pillars of the nominal sentence are in the nominative state."},
+];
+
+let stQ,stIdx,stScore,stTotal;
+function stInit(){stQ=shuffle([...statesData]);stIdx=0;stScore=0;stTotal=0;stShow();}
+function stShow(){
+  if(stIdx>=stQ.length){doneScreen('st-card','st-prog','st-counter',stScore,stTotal,'stInit');return;}
+  const q=stQ[stIdx];
+  document.getElementById('st-prompt').textContent=q.prompt;
+  document.getElementById('st-sub').textContent=q.q;
+  document.getElementById('st-feedback').innerHTML='';
+  document.getElementById('st-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]); const ci=opts.indexOf(q.answer);
+  buildOptions('st-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct; stTotal++;if(ok)stScore++; makeMeta('st',stIdx,stQ.length,stScore,stTotal);
+    lockOptions('st-options',chosen,correct);
+    document.getElementById('st-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('st-next-row').style.display='flex'; stIdx++;
+  },true);
+  makeMeta('st',stIdx,stQ.length,stScore,stTotal);
+}
+function stNext(){stShow();}
+
+// ─── TAB 5: FĀIL VS MAFŪL BIH ───
+const failData = [
+  {prompt:"ضَرَبَ زَيْدٌ عَمْرًا", q:"Identify the فَاعِل:", answer:"زَيْدٌ", wrong:["ضَرَبَ","عَمْرًا","No فَاعِل here"], explain:"زَيْدٌ is مَرْفُوع (ضَمَّة ُ), comes right after the verb → فَاعِل. عَمْرًا is مَنْصُوب (فَتْحَة َ) → مَفْعُولٌ بِهِ."},
+  {prompt:"ضَرَبَ زَيْدٌ عَمْرًا", q:"Identify the مَفْعُولٌ بِهِ:", answer:"عَمْرًا", wrong:["زَيْدٌ","ضَرَبَ","No مَفْعُولٌ بِهِ"], explain:"عَمْرًا is مَنْصُوب (notice the tanwīn فَتْحَة ً on a masculine name — takes فَتْحَتَانِ) → مَفْعُولٌ بِهِ. Zayd struck ʿAmr."},
+  {prompt:"قَرَأَ الطَّالِبُ الْكِتَابَ", q:"Which is the فَاعِل?", answer:"الطَّالِبُ", wrong:["الْكِتَابَ","قَرَأَ","الطَّالِبُ الْكِتَابَ"], explain:"الطَّالِبُ is مَرْفُوع (ضَمَّة ُ), the doer → فَاعِل. الْكِتَابَ is مَنْصُوب (فَتْحَة َ) → مَفْعُولٌ بِهِ."},
+  {prompt:"قَرَأَ الطَّالِبُ الْكِتَابَ", q:"Which is the مَفْعُولٌ بِهِ?", answer:"الْكِتَابَ", wrong:["الطَّالِبُ","قَرَأَ","There is none"], explain:"الْكِتَابَ is مَنْصُوب (ـَ), the thing that was read → مَفْعُولٌ بِهِ. The student read the book."},
+  {prompt:"عَبَدَ الْمُؤْمِنُونَ اللهَ", q:"Identify the فَاعِل:", answer:"الْمُؤْمِنُونَ", wrong:["اللهَ","عَبَدَ","No فَاعِل"], explain:"الْمُؤْمِنُونَ is مَرْفُوع (ـُونَ for masc. pl.), the doers → فَاعِل. اللهَ is مَنْصُوب (ـَ on a definite noun) → مَفْعُولٌ بِهِ."},
+  {prompt:"نَصَرَ اللهُ الْمُؤْمِنِينَ", q:"Identify both فَاعِل and مَفْعُولٌ بِهِ:", answer:"فَاعِل = اللهُ · مَفْعُولٌ بِهِ = الْمُؤْمِنِينَ", wrong:["فَاعِل = الْمُؤْمِنِينَ · مَفْعُولٌ بِهِ = اللهُ","فَاعِل = نَصَرَ · مَفْعُولٌ بِهِ = اللهُ","Both are فَاعِل"], explain:"اللهُ is مَرْفُوع → فَاعِل. الْمُؤْمِنِينَ is مَنْصُوب (ـِينَ = genitive/accusative form for masc. pl.) → مَفْعُولٌ بِهِ. Allah helped the believers."},
+  {prompt:"أَرْسَلَ اللهُ رَسُولًا", q:"What is the مَفْعُولٌ بِهِ?", answer:"رَسُولًا", wrong:["اللهُ","أَرْسَلَ","No مَفْعُولٌ بِهِ"], explain:"رَسُولًا is مَنْصُوب (tanwīn فَتْحَة ً) → مَفْعُولٌ بِهِ (a messenger). اللهُ is مَرْفُوع → فَاعِل. Allah sent a messenger."},
+  {prompt:"The فَاعِل is always…", q:"Which statement about the فَاعِل is correct?", answer:"مَرْفُوع (nominative), comes right after the verb, answers 'who did it?'", wrong:["مَنْصُوب (accusative), answers 'what was done?'","مَجْرُور (genitive), after a preposition","مَجْزُوم (jussive), after لَمْ"], explain:"The فَاعِل is the DOER. It is always مَرْفُوع, typically placed directly after the verb in a verbal sentence, and answers 'مَنْ فَعَلَ? — who did the action?'"},
+  {prompt:"The مَفْعُولٌ بِهِ is always…", q:"Which statement about the مَفْعُولٌ بِهِ is correct?", answer:"مَنْصُوب (accusative), comes after the فَاعِل, answers 'what was acted upon?'", wrong:["مَرْفُوع (nominative), comes right after the verb","مَجْرُور (genitive), after a preposition","مَجْزُوم (jussive), after a particle"], explain:"The مَفْعُولٌ بِهِ is the RECEIVER of the action. It is always مَنْصُوب, comes after the فَاعِل, and answers 'مَاذَا فَعَلَ؟ — what was done (to whom)?'"},
+  {prompt:"إِيَّاكَ نَعْبُدُ (الفاتحة)", q:"What grammatical role does إِيَّاكَ play?", answer:"مَفْعُولٌ بِهِ — direct object of نَعْبُدُ", wrong:["فَاعِل — the doer of the worship","مُبْتَدَأ — the subject of a nominal sentence","مُضَاف — first part of إِضَافَة"], explain:"إِيَّاكَ is a separated pronoun used as مَفْعُولٌ بِهِ, placed before the verb for exclusivity/emphasis. 'You alone we worship' — the object was fronted to stress that only Allah is worshipped."},
+  {prompt:"هَدَى اللهُ الْمُؤْمِنَ", q:"The verb هَدَى means 'he guided.' Identify فَاعِل and مَفْعُولٌ بِهِ:", answer:"فَاعِل = اللهُ · مَفْعُولٌ بِهِ = الْمُؤْمِنَ", wrong:["فَاعِل = الْمُؤْمِنَ · مَفْعُولٌ بِهِ = اللهُ","Both are فَاعِل","فَاعِل = هَدَى · مَفْعُولٌ بِهِ = اللهُ"], explain:"اللهُ (ضَمَّة → مَرْفُوع) = فَاعِل. الْمُؤْمِنَ (فَتْحَة → مَنْصُوب) = مَفْعُولٌ بِهِ. Allah guided the believer."},
+];
+
+let faQ,faIdx,faScore,faTotal;
+function faInit(){faQ=shuffle([...failData]);faIdx=0;faScore=0;faTotal=0;faShow();}
+function faShow(){
+  if(faIdx>=faQ.length){doneScreen('fa-card','fa-prog','fa-counter',faScore,faTotal,'faInit');return;}
+  const q=faQ[faIdx];
+  document.getElementById('fa-prompt').textContent=q.prompt;
+  document.getElementById('fa-sub').textContent=q.q;
+  document.getElementById('fa-feedback').innerHTML='';
+  document.getElementById('fa-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]); const ci=opts.indexOf(q.answer);
+  buildOptions('fa-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct; faTotal++;if(ok)faScore++; makeMeta('fa',faIdx,faQ.length,faScore,faTotal);
+    lockOptions('fa-options',chosen,correct);
+    document.getElementById('fa-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('fa-next-row').style.display='flex'; faIdx++;
+  },true);
+  makeMeta('fa',faIdx,faQ.length,faScore,faTotal);
+}
+function faNext(){faShow();}
+
+// ─── TAB 6: VERB TENSES ───
+const tenseData = [
+  {prompt:"ذَهَبَ", q:"Which tense/type is ذَهَبَ?", answer:"الفِعْل الْمَاضِي (past tense)", wrong:["الفِعْل الْمُضَارِع (present/future)","فِعْل الأَمْر (command)","Not a verb"], explain:"ذَهَبَ ends in ـَ with no prefix → past tense (he went). Identifying sign: the verb is built on bare root letters with a فَتْحَة at the end."},
+  {prompt:"يَذْهَبُ", q:"Which tense/type is يَذْهَبُ?", answer:"الفِعْل الْمُضَارِع (present/future)", wrong:["الفِعْل الْمَاضِي (past tense)","فِعْل الأَمْر (command)","Not a verb"], explain:"يَذْهَبُ has a يـ prefix → present/future tense (he goes / he will go). Present tense verbs begin with one of: يـ / تـ / أـ / نـ."},
+  {prompt:"اِذْهَبْ", q:"Which tense/type is اِذْهَبْ?", answer:"فِعْل الأَمْر (command)", wrong:["الفِعْل الْمَاضِي (past tense)","الفِعْل الْمُضَارِع (present/future)","Not a verb"], explain:"اِذْهَبْ is a command (go!). فِعْل الأَمْر is built from the مُضَارِع by removing its prefix and applying the command vowel adjustments. It ends in سُكُون or ـِي for fem."},
+  {prompt:"قَرَأَ", q:"Tense/type?", answer:"الفِعْل الْمَاضِي (past tense)", wrong:["الفِعْل الْمُضَارِع","فِعْل الأَمْر","Noun"], explain:"قَرَأَ = he read (past tense). It is a past tense verb built on the root ق-ر-أ with past tense vowels."},
+  {prompt:"يَقْرَأُ", q:"Tense/type?", answer:"الفِعْل الْمُضَارِع (present/future)", wrong:["الفِعْل الْمَاضِي","فِعْل الأَمْر","Noun"], explain:"يَقْرَأُ = he reads / will read. The يـ prefix marks it as 3rd person masculine present tense."},
+  {prompt:"اِقْرَأْ", q:"Tense/type?", answer:"فِعْل الأَمْر (command)", wrong:["الفِعْل الْمَاضِي","الفِعْل الْمُضَارِع","Particle"], explain:"اِقْرَأْ = Read! The command (Qur'ān 96:1: اِقْرَأْ بِاسْمِ رَبِّكَ). Commands for root-initial consonant clusters often begin with a helping vowel كَسْرَة (اِ)."},
+  {prompt:"نَزَّلَ", q:"This is a past tense verb. Translate it:", answer:"He sent down / He revealed (with emphasis/repetition)", wrong:["He is sending down","Send down!","He was sent down"], explain:"نَزَّلَ is past tense (مَاضِي) of the Form II verb. The shaddah on the زّ indicates repeated/intensive action — revealed gradually. Used in القرآن: نَزَّلَ عَلَيْكَ الْكِتَابَ."},
+  {prompt:"يُنَزِّلُ", q:"Tense/type of يُنَزِّلُ?", answer:"الفِعْل الْمُضَارِع (present/future) — Form II", wrong:["الفِعْل الْمَاضِي","فِعْل الأَمْر","Adjective"], explain:"يُنَزِّلُ is present tense of Form II (ضَمَّة on prefix يُـ is the Form II/IV marker in present tense). He sends down / reveals."},
+  {prompt:"كَتَبَ · يَكْتُبُ · ___", q:"What is the command (فِعْل الأَمْر) of this verb?", answer:"اُكْتُبْ", wrong:["كَتَبَ","يَكْتُبْ","كَتِّبْ"], explain:"From يَكْتُبُ → remove يـ → كْتُبُ (starts with sukoon, needs helping vowel) → اُكْتُبْ. The مُضَارِع ضَمَّة vowel on the middle letter is kept."},
+  {prompt:"فَتَحَ · يَفْتَحُ · ___", q:"What is the فِعْل الأَمْر?", answer:"اِفْتَحْ", wrong:["فَتَحَ","يَفْتَحُ","فَتِّحْ"], explain:"From يَفْتَحُ → remove يـ → فْتَحُ (cluster) → helping vowel is كَسْرَة → اِفْتَحْ (open!). The middle vowel in مُضَارِع is فَتْحَة → carries through."},
+  {prompt:"لَمْ يَفْعَلْ", q:"What tense/form is يَفْعَلْ in 'لَمْ يَفْعَلْ'?", answer:"الفِعْل الْمُضَارِع مَجْزُوم (jussive present)", wrong:["الفِعْل الْمَاضِي","فِعْل الأَمْر","الفِعْل الْمُضَارِع مَرْفُوع"], explain:"لَمْ + مُضَارِع → makes it مَجْزُوم (jussive) and negates it, referring to the past: لَمْ يَفْعَلْ = he did not do. The sukoon on the end marks the جزم."},
+  {prompt:"أَرْسَلَ · يُرْسِلُ · ___", q:"Form II فِعْل الأَمْر of أَرْسَلَ?", answer:"أَرْسِلْ", wrong:["اِرْسَلْ","يُرْسِلْ","أَرْسَلَ"], explain:"Form IV (أَرْسَلَ is actually Form IV — أَ prefix in past). Command from Form IV يُرْسِلُ: remove يـ, replace with أَ prefix → أَرْسِلْ. Send! (as in Qur'ān: رَبِّ أَرْسِلْ مَعِيَ هَارُونَ — Mūsā's supplication)."},
+  {prompt:"صَلَّى · يُصَلِّي · ___", q:"Tense of يُصَلِّي?", answer:"الفِعْل الْمُضَارِع — he prays / performs ṣalāh", wrong:["الفِعْل الْمَاضِي — he prayed","فِعْل الأَمْر — pray!","Not a verb"], explain:"يُصَلِّي is present tense (3rd person m. sg.). صَلَّى is past. The command would be صَلِّ — as in اللَّهُمَّ صَلِّ عَلَى مُحَمَّدٍ."},
+];
+
+let vtQ,vtIdx,vtScore,vtTotal;
+function vtInit(){vtQ=shuffle([...tenseData]);vtIdx=0;vtScore=0;vtTotal=0;vtShow();}
+function vtShow(){
+  if(vtIdx>=vtQ.length){doneScreen('vt-card','vt-prog','vt-counter',vtScore,vtTotal,'vtInit');return;}
+  const q=vtQ[vtIdx];
+  document.getElementById('vt-prompt').textContent=q.prompt;
+  document.getElementById('vt-sub').textContent=q.q;
+  document.getElementById('vt-feedback').innerHTML='';
+  document.getElementById('vt-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]); const ci=opts.indexOf(q.answer);
+  buildOptions('vt-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct; vtTotal++;if(ok)vtScore++; makeMeta('vt',vtIdx,vtQ.length,vtScore,vtTotal);
+    lockOptions('vt-options',chosen,correct);
+    document.getElementById('vt-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('vt-next-row').style.display='flex'; vtIdx++;
+  },true);
+  makeMeta('vt',vtIdx,vtQ.length,vtScore,vtTotal);
+}
+function vtNext(){vtShow();}
+
+// ─── TAB 7: DEMONSTRATIVES ───
+const demoData = [
+  {prompt:"هَذَا", q:"What does هَذَا mean?", answer:"This (masculine singular, near)", wrong:["That (masculine singular, far)","This (feminine singular, near)","These (human plural, near)"], explain:"هَذَا = this (m.s., near). Used with masculine singular nouns: هَذَا الْكِتَابُ (this book), هَذَا الرَّجُلُ (this man)."},
+  {prompt:"هَذِهِ", q:"What does هَذِهِ mean?", answer:"This (feminine singular, near)", wrong:["That (feminine singular, far)","This (masculine singular, near)","These (non-human, near)"], explain:"هَذِهِ = this (f.s., near). Used with feminine singular nouns AND non-human plurals: هَذِهِ الْمَرْأَةُ (this woman), هَذِهِ الْكُتُبُ (these books)."},
+  {prompt:"ذَلِكَ", q:"What does ذَلِكَ mean?", answer:"That (masculine singular, far)", wrong:["This (masculine singular, near)","That (feminine singular, far)","Those (human plural, far)"], explain:"ذَلِكَ = that (m.s., far). Used with masculine singular nouns at a distance: ذَلِكَ الْكِتَابُ (that book). Famous from Qur'ān 2:2: ذَلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ."},
+  {prompt:"تِلْكَ", q:"What does تِلْكَ mean?", answer:"That (feminine singular, far)", wrong:["This (feminine singular, near)","That (masculine singular, far)","Those (human plural, far)"], explain:"تِلْكَ = that (f.s., far). Used with feminine singular nouns at a distance, and also non-human plurals far away: تِلْكَ الْمَرْأَةُ (that woman), تِلْكَ الآيَاتُ (those verses)."},
+  {prompt:"هَؤُلَاءِ", q:"What does هَؤُلَاءِ mean?", answer:"These (human plural, near)", wrong:["Those (human plural, far)","These (non-human plural, near)","This (masculine singular, near)"], explain:"هَؤُلَاءِ = these (pl., near) — used for HUMAN plurals only, whether male or female: هَؤُلَاءِ الرِّجَالُ (these men), هَؤُلَاءِ النِّسَاءُ (these women)."},
+  {prompt:"أُولَئِكَ", q:"What does أُولَئِكَ mean?", answer:"Those (human plural, far)", wrong:["These (human plural, near)","Those (non-human plural, far)","That (feminine singular, far)"], explain:"أُولَئِكَ = those (pl., far) — human plurals at a distance. أُولَئِكَ عَلَى هُدًى (those are upon guidance) — Qur'ān 2:5."},
+  {prompt:"هَذِهِ الْكُتُبُ", q:"Why is هَذِهِ used with الْكُتُبُ (books), a non-human plural?", answer:"Non-human plurals use the feminine singular demonstrative هَذِهِ / تِلْكَ", wrong:["هَذِهِ is used because كُتُب is feminine","هَذِهِ is used for all plurals","It should actually be هَؤُلَاءِ الْكُتُبُ"], explain:"A key rule: non-human plurals use the FEMININE SINGULAR demonstrative (هَذِهِ for near, تِلْكَ for far). هَؤُلَاءِ / أُولَئِكَ are for HUMAN plurals only."},
+  {prompt:"ذَلِكَ الْكِتَابُ لَا رَيْبَ فِيهِ (البقرة:٢)", q:"What is ذَلِكَ referring to, and what does it convey?", answer:"That (definite, near/far honorific) — it refers to the Qur'ān with a sense of grandeur/elevation", wrong:["A distant physical book on a shelf","The Torah of Moses","The written tablet in heaven"], explain:"ذَلِكَ here is used to convey the Qur'ān's elevated, lofty status — it is beyond ordinary reach. That Book — there is no doubt in it. The far demonstrative conveys elevated majesty."},
+  {prompt:"Choose: ___ الْمَسْجِدُ (this mosque, near)", q:"Which demonstrative fits?", answer:"هَذَا الْمَسْجِدُ", wrong:["هَذِهِ الْمَسْجِدُ","ذَلِكَ الْمَسْجِدُ","تِلْكَ الْمَسْجِدُ"], explain:"الْمَسْجِدُ is masculine singular + near → هَذَا. Gender must match: masculine noun → هَذَا (not هَذِهِ)."},
+  {prompt:"Choose: ___ الصَّلَاةُ (that prayer, far)", q:"Which demonstrative fits?", answer:"تِلْكَ الصَّلَاةُ", wrong:["ذَلِكَ الصَّلَاةُ","هَذِهِ الصَّلَاةُ","هَذَا الصَّلَاةُ"], explain:"الصَّلَاةُ is feminine singular + far → تِلْكَ. ذَلِكَ is masculine far; this noun is feminine."},
+  {prompt:"Choose: ___ الْعُلَمَاءُ (those scholars, far)", q:"Which demonstrative fits?", answer:"أُولَئِكَ الْعُلَمَاءُ", wrong:["تِلْكَ الْعُلَمَاءُ","هَؤُلَاءِ الْعُلَمَاءُ","ذَلِكَ الْعُلَمَاءُ"], explain:"الْعُلَمَاءُ = human plural + far → أُولَئِكَ. (هَؤُلَاءِ would be near, تِلْكَ would be for non-human plurals)."},
+  {prompt:"Choose: ___ الأَيَّامُ (those days, far)", q:"Which demonstrative fits?", answer:"تِلْكَ الأَيَّامُ", wrong:["أُولَئِكَ الأَيَّامُ","هَذِهِ الأَيَّامُ","ذَلِكَ الأَيَّامُ"], explain:"الأَيَّامُ = non-human plural (days) + far → تِلْكَ (feminine singular far). Famous Qur'ānic phrase: تِلْكَ الأَيَّامُ نُدَاوِلُهَا بَيْنَ النَّاسِ (Āl ʿImrān 3:140)."},
+  {prompt:"تِلْكَ الأَيَّامُ نُدَاوِلُهَا بَيْنَ النَّاسِ", q:"What does this verse mean?", answer:"Those days — We alternate them among the people", wrong:["The days of people are over","Those people control the days","The days are near the people"], explain:"From Sūrat Āl ʿImrān (3:140). تِلْكَ = those (non-human pl., far) · الأَيَّامُ = the days · نُدَاوِلُهَا = We alternate them · بَيْنَ النَّاسِ = among the people."},
+  {prompt:"What is the difference between هَذَا and هَذِهِ?", q:"Choose the correct distinction:", answer:"هَذَا = masculine singular near · هَذِهِ = feminine singular near (and non-human plurals)", wrong:["هَذَا = near · هَذِهِ = far","هَذَا = singular · هَذِهِ = plural","هَذَا = human · هَذِهِ = non-human"], explain:"Both are NEAR demonstratives. هَذَا is masculine singular, هَذِهِ is feminine singular AND covers non-human plurals. The near/far distinction is هَذَا vs ذَلِكَ."},
+];
+
+let dmQ,dmIdx,dmScore,dmTotal;
+function dmInit(){dmQ=shuffle([...demoData]);dmIdx=0;dmScore=0;dmTotal=0;dmShow();}
+function dmShow(){
+  if(dmIdx>=dmQ.length){doneScreen('dm-card','dm-prog','dm-counter',dmScore,dmTotal,'dmInit');return;}
+  const q=dmQ[dmIdx];
+  document.getElementById('dm-prompt').textContent=q.prompt;
+  document.getElementById('dm-sub').textContent=q.q;
+  document.getElementById('dm-feedback').innerHTML='';
+  document.getElementById('dm-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]); const ci=opts.indexOf(q.answer);
+  buildOptions('dm-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct; dmTotal++;if(ok)dmScore++; makeMeta('dm',dmIdx,dmQ.length,dmScore,dmTotal);
+    lockOptions('dm-options',chosen,correct);
+    document.getElementById('dm-feedback').innerHTML=ok
+      ?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`
+      :`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('dm-next-row').style.display='flex'; dmIdx++;
+  },true);
+  makeMeta('dm',dmIdx,dmQ.length,dmScore,dmTotal);
+}
+function dmNext(){dmShow();}
+
+// ─── INIT ALL ───
+idInit(); nnInit(); plInit(); stInit(); faInit(); vtInit(); dmInit();
+</script>
+</body>
+</html>
