@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>1B Lesson 2 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="arcade.css">
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 18px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;border-radius:6px 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-arabic-sm{font-size:24px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.6;margin-bottom:0.4rem;}
+  .prompt-english{font-size:18px;font-family:'Playfair Display',serif;font-style:italic;text-align:center;color:var(--ink);margin-bottom:0.4rem;line-height:1.4;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+</head>
+<body>
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1B</div>
+  <h1>Lesson 2</h1>
+  <div class="arabic-subtitle">الدَّرْسُ الثَّانِي</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Definiteness</button>
+  <button class="tab-btn" onclick="switchTab('dua')">Du'ā' for Light</button>
+  <button class="tab-btn" onclick="switchTab('text')">Text Analysis</button>
+</div>
+
+<!-- ══ TAB 1: VOCAB ══ -->
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 2 vocabulary: colours (masculine & feminine forms), nouns (sea, pen, sign, book), and Qur'ānic vocabulary from Sūrat al-Falaq and al-Nās.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the correct meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 2: GRAMMAR (DEFINITENESS) ══ -->
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro"><strong>Principles 3 & 4 — Definiteness (مَعْرِفَة vs نَكِرَة):</strong> The مُضَاف is definite without ال. An ال and tanwīn can never coexist on the same word. The second part of إِضَافَة is always مَجْرُور.</div>
+  <div class="quiz-meta"><span id="g-counter">Q 1 of ?</span><span id="g-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-arabic-sm" id="g-prompt"></div>
+    <div class="prompt-sub" id="g-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none"><button class="btn btn-primary" onclick="gNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 3: DU'Ā' FOR LIGHT ══ -->
+<div id="tab-dua" class="tab-content">
+  <div class="section-intro"><strong>Du'ā' for Light</strong> — recited after waking for Fajr. It asks Allah to place light in every part of one's being. Vocabulary and translation quiz.</div>
+  <div class="quiz-meta"><span id="d-counter">Q 1 of ?</span><span id="d-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="d-prog" style="width:0%"></div></div>
+  <div class="question-card" id="d-card">
+    <div class="prompt-arabic-sm" id="d-prompt"></div>
+    <div class="prompt-sub" id="d-sub">choose the correct answer</div>
+    <div id="d-feedback"></div>
+    <div class="mc-options" id="d-options"></div>
+    <div class="btn-row" id="d-next-row" style="display:none"><button class="btn btn-primary" onclick="dNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 4: TEXT ANALYSIS ══ -->
+<div id="tab-text" class="tab-content">
+  <div class="section-intro"><strong>Chapter 2 — وَلَدُ آزَرَ (The Son of Āzar):</strong> Ibrāhīm ع grows up seeing the people worship idols and questions why.</div>
+  <div class="quiz-meta"><span id="t-counter">Q 1 of ?</span><span id="t-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="t-prog" style="width:0%"></div></div>
+  <div class="question-card" id="t-card">
+    <div class="prompt-arabic-sm" id="t-prompt"></div>
+    <div class="prompt-sub" id="t-sub">choose the correct answer</div>
+    <div id="t-feedback"></div>
+    <div class="mc-options" id="t-options"></div>
+    <div class="btn-row" id="t-next-row" style="display:none"><button class="btn btn-primary" onclick="tNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  ['vocab','grammar','dua','text'].forEach((n,i)=>{
+    document.querySelectorAll('.tab-btn')[i].classList.toggle('active',n===name);
+    document.getElementById('tab-'+n).classList.toggle('active',n===name);
+  });
+}
+function buildOpts(cId,opts,ci,onAnswer){
+  const c=document.getElementById(cId);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>onAnswer(i,ci);c.appendChild(b);});
+}
+function lockOpts(cId,chosen,correct){
+  document.querySelectorAll('#'+cId+' .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneSc(cardId,progId,counterId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(counterId).textContent='Done!';
+}
+function meta(p,idx,total,score,ans){
+  document.getElementById(p+'-score').textContent='Score: '+score+' / '+ans;
+  document.getElementById(p+'-counter').textContent='Q '+Math.min(idx+1,total)+' of '+total;
+  document.getElementById(p+'-prog').style.width=(idx/total*100).toFixed(0)+'%';
+}
+
+// ── VOCABULARY ──
+const vocabData=[
+  {ar:'أَحْمَر / حَمْرَاء',en:'red (m / f)',wrong:['blue (m / f)','green (m / f)','yellow (m / f)']},
+  {ar:'أَزْرَق / زَرْقَاء',en:'blue (m / f)',wrong:['red (m / f)','black (m / f)','white (m / f)']},
+  {ar:'أَخْضَر / خَضْرَاء',en:'green (m / f)',wrong:['yellow (m / f)','blue (m / f)','red (m / f)']},
+  {ar:'أَبْيَض / بَيْضَاء',en:'white (m / f)',wrong:['black (m / f)','blue (m / f)','green (m / f)']},
+  {ar:'أَسْوَد / سَوْدَاء',en:'black (m / f)',wrong:['white (m / f)','red (m / f)','yellow (m / f)']},
+  {ar:'أَصْفَر / صَفْرَاء',en:'yellow (m / f)',wrong:['red (m / f)','green (m / f)','white (m / f)']},
+  {ar:'بَحْر (ج: بِحَار)',en:'sea',wrong:['pen','sign','book']},
+  {ar:'قَلَم (ج: أَقْلَام)',en:'pen',wrong:['sea','book','sign']},
+  {ar:'آيَة (ج: آيَات)',en:'sign / verse',wrong:['pen','sea','book']},
+  {ar:'كِتَاب (ج: كُتُب)',en:'book',wrong:['sign','pen','sea']},
+  {ar:'فَلَق',en:'daybreak',wrong:['darkness','night','dawn prayer']},
+  {ar:'صَدْر (ج: صُدُور)',en:'chest',wrong:['heart','soul','sight']},
+  {ar:'إِلَه (ج: آلِهَة)',en:'god / deity',wrong:['king','lord','messenger']},
+  {ar:'عُقْدَة (ج: عُقَد)',en:'knot',wrong:['rope','fire','night']},
+  {ar:'نَفَثَ · يَنْفُث',en:'to spit / blow (as in blowing on knots)',wrong:['to whisper','to speak','to see']},
+  {ar:'رَأَى · يَرَى',en:'to see',wrong:['to know','to hear','to understand']},
+  {ar:'عَرَفَ · يَعْرِف',en:'to know / recognize',wrong:['to see','to hear','to play']},
+  {ar:'رَشِيد',en:'discerning / rightly guided',wrong:['famous','strong','heavy']},
+  {ar:'حَجَر (ج: حِجَارَة)',en:'stone',wrong:['idol','ax','rope']},
+];
+let vQ,vI,vSc,vTo;
+function vInit(){vQ=shuffle([...vocabData]);vI=0;vSc=0;vTo=0;vShow();}
+function vShow(){
+  if(vI>=vQ.length){doneSc('v-card','v-prog','v-counter',vSc,vTo,'vInit');return;}
+  const q=vQ[vI];document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';document.getElementById('v-next-row').style.display='none';
+  const opts=shuffle([q.en,...q.wrong]);const ci=opts.indexOf(q.en);
+  buildOpts('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;vTo++;if(ok)vSc++;meta('v',vI,vQ.length,vSc,vTo);
+    lockOpts('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vI++;
+  });meta('v',vI,vQ.length,vSc,vTo);
+}
+function vNext(){vShow();}
+
+// ── GRAMMAR: DEFINITENESS ──
+const grammarData=[
+  {prompt:'مَلِكِ النَّاسِ (Qur\'ān 114:2)',q:'Identify the مُضَاف and مُضَافٌ إِلَيْهِ:',answer:'مُضَاف = مَلِكِ · مُضَافٌ إِلَيْهِ = النَّاسِ',wrong:['مُضَاف = النَّاسِ · مُضَافٌ إِلَيْهِ = مَلِكِ','Both words are مُبْتَدَأ','There is no إِضَافَة here'],explain:'مَلِكِ = king of (مُضَاف — no tanwīn, definite without ال). النَّاسِ = the people (مُضَافٌ إِلَيْهِ — always مَجْرُور). Translation: the King of mankind.'},
+  {prompt:'الرَّجُلُ',q:'Is this word مَعْرِفَة (definite) or نَكِرَة (indefinite)?',answer:'مَعْرِفَة — definite (has ال)',wrong:['نَكِرَة — indefinite','It can be either','Cannot be determined'],explain:'الرَّجُلُ has ال → definite (مَعْرِفَة): "the man." Without ال: رَجُلٌ = "a man" (نَكِرَة, with tanwīn).'},
+  {prompt:'رَجُلٌ',q:'Is this word مَعْرِفَة or نَكِرَة?',answer:'نَكِرَة — indefinite (has tanwīn ـٌ)',wrong:['مَعْرِفَة — definite','It has ال so it is definite','Cannot be determined'],explain:'رَجُلٌ has tanwīn (ـٌ) → indefinite (نَكِرَة): "a man." Key rule: ال and tanwīn can never coexist on the same word.'},
+  {prompt:'Can a word have both ال and tanwīn at the same time?',q:'Choose:',answer:'No — ال and tanwīn can never coexist (Principle #4)',wrong:['Yes — in some cases','Yes — when the word is مُضَاف','Only in the Qur\'ān'],explain:'Principle #4: ال makes a word definite; tanwīn marks indefinite. They are mutually exclusive — a word is either definite (ال) or indefinite (tanwīn), never both.'},
+  {prompt:'رَبِّ الفَلَقِ (Qur\'ān 113:1)',q:'Is رَبِّ definite or indefinite here?',answer:'Definite — it is مُضَاف (definite without ال)',wrong:['Indefinite — it has no ال','Indefinite — it is a نَكِرَة','Cannot be determined without ال'],explain:'Key rule (Principle #3): The مُضَاف is definite even without ال. رَبِّ الفَلَقِ = "the Lord of the daybreak" — رَبِّ is definite because of the إِضَافَة structure.'},
+  {prompt:'لَيْلَةِ الْقَدْرِ (Qur\'ān 97:1)',q:'What case is الْقَدْرِ in, and why?',answer:'مَجْرُور — because it is the مُضَافٌ إِلَيْهِ',wrong:['مَرْفُوع — it is the subject','مَنْصُوب — it is the direct object','مَجْرُور — because it follows فِي'],explain:'The مُضَافٌ إِلَيْهِ is ALWAYS مَجْرُور. الْقَدْرِ (the decree) is مَجْرُور, not because of a preposition here, but because it is the second term of إِضَافَة.'},
+  {prompt:'شَرِّ النَّفَّاثَاتِ (Qur\'ān 113:4)',q:'Translate this إِضَافَة:',answer:'The evil of the blowers (those who blow on knots)',wrong:['The evil night','The evil deed of the people','The evil of the darkness'],explain:'شَرّ = evil (مُضَاف) + النَّفَّاثَات = the blowers/those who blow (مُضَافٌ إِلَيْهِ, fem. pl.). Refers to those who practice magic by blowing on knots.'},
+  {prompt:'أَهْلِ الْكِتَابِ (Qur\'ān 98:1)',q:'Identify both parts of this إِضَافَة:',answer:'مُضَاف = أَهْلِ · مُضَافٌ إِلَيْهِ = الْكِتَابِ',wrong:['مُضَاف = الْكِتَابِ · مُضَافٌ إِلَيْهِ = أَهْلِ','Both are مُضَافٌ إِلَيْهِ','There is no إِضَافَة'],explain:'أَهْلِ = people of (مُضَاف, no tanwīn) + الْكِتَابِ = the Book (مَجْرُور). Together: People of the Book. Famous Qur\'ānic term for Jews and Christians.'},
+  {prompt:'مَلِكٌ',q:'Translate this word:',answer:'a king (indefinite — tanwīn ـٌ)',wrong:['the king (definite — ال)','your king (with pronoun)','king of (مُضَاف)'],explain:'مَلِكٌ has tanwīn ضَمّ (ـٌ) → indefinite: "a king." Compare: الْمَلِكُ = "the king" (definite with ال).'},
+  {prompt:'دِينُكُم (Qur\'ān 109:6)',q:'Translate:',answer:'your religion (pronoun attached = definite)',wrong:['a religion','the religion','religion of the people'],explain:'دِين + كُم (attached pronoun "your") = your religion. An attached pronoun makes the noun definite — equivalent to an إِضَافَة with a pronoun as the مُضَافٌ إِلَيْهِ.'},
+  {prompt:'صَلَاتِهِمْ (Qur\'ān 107:5)',q:'Translate:',answer:'their prayer (his = ـهِمْ → their)',wrong:['a prayer','the prayer','your prayer'],explain:'صَلَاة + ـهِمْ (3rd person masc. plural pronoun) = their prayer. Note: when an attached pronoun follows a noun ending in تـ, the تـ appears as تِ (tā\' maftūḥa changes to tā\' marbūṭa form).'},
+];
+let gQ,gI,gSc,gTo;
+function gInit(){gQ=shuffle(grammarData.map(q=>({...q})));gI=0;gSc=0;gTo=0;gShow();}
+function gShow(){
+  if(gI>=gQ.length){doneSc('g-card','g-prog','g-counter',gSc,gTo,'gInit');return;}
+  const q=gQ[gI];document.getElementById('g-prompt').textContent=q.prompt;document.getElementById('g-sub').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';document.getElementById('g-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('g-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;gTo++;if(ok)gSc++;meta('g',gI,gQ.length,gSc,gTo);
+    lockOpts('g-options',chosen,correct);
+    document.getElementById('g-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('g-next-row').style.display='flex';gI++;
+  });meta('g',gI,gQ.length,gSc,gTo);
+}
+function gNext(){gShow();}
+
+// ── DU'Ā' FOR LIGHT ──
+const duaData=[
+  {prompt:'اللَّهُمَّ اجْعَلْ لِي فِي قَلْبِي نُورًا',q:'Translate:',answer:'O Allah, place light in my heart.',wrong:['O Allah, place light in my sight.','O Allah, place light in my hearing.','O Allah, place light in my soul.'],explain:'اجْعَلْ = place/make (command) · قَلْب = heart · نُور = light. The du\'ā\' systematically asks for light in each part of the body, beginning with the heart.'},
+  {prompt:'نُور',q:'What does نُور mean?',answer:'light',wrong:['soul','guidance','mercy'],explain:'نُور = light. It appears repeatedly in this du\'ā\' — Allah places نُور in the heart, tongue, hearing, sight, above, below, right, left, front, behind, and soul.'},
+  {prompt:'وَفِي سَمْعِي نُورًا وَفِي بَصَرِي نُورًا',q:'Translate:',answer:'light in my hearing and light in my sight',wrong:['light in my heart and light in my soul','light in my tongue and light in my hearing','light above me and light below me'],explain:'سَمْع = hearing · بَصَر = sight. The du\'ā\' asks for light in both our hearing and our vision — that what we hear and see be guided by divine light.'},
+  {prompt:'اللَّهُمَّ عَافِنِي فِي بَدَنِي',q:'Translate:',answer:'O Allah, grant me health in my body.',wrong:['O Allah, place light in my body.','O Allah, guide me in my body.','O Allah, forgive me for my body.'],explain:'عَافِنِي = grant me health/well-being (from عَافِيَة) · بَدَن = body. The du\'ā\' then asks for health (عَافِيَة) in the body, hearing, and sight.'},
+  {prompt:'لَا إِلَهَ إِلَّا أَنْتَ',q:'Translate:',answer:'There is no god except You.',wrong:['You are my God only.','There is no god but Allah.','I bear witness that You are God.'],explain:'This phrase appears twice in the du\'ā\' — after asking for health in the senses. إِلَه = god · إِلَّا = except · أَنْتَ = You. A declaration of tawḥīd embedded in the supplication.'},
+  {prompt:'اللَّهُمَّ إِنِّي أَعُوذُ بِكَ مِنَ الْكُفْرِ وَالْفَقْرِ',q:'Translate:',answer:'O Allah, I seek refuge in You from disbelief and poverty.',wrong:['O Allah, I seek refuge from punishment and fear.','O Allah, protect me from illness and envy.','O Allah, I seek Your forgiveness from disbelief.'],explain:'أَعُوذُ = I seek refuge · الْكُفْر = disbelief · الْفَقْر = poverty. The du\'ā\' seeks refuge from two spiritual and material dangers.'},
+  {prompt:'عَذَابِ الْقَبْرِ',q:'Translate this إِضَافَة:',answer:'The punishment of the grave',wrong:['The punishment of the fire','The torment of the Day','The fear of death'],explain:'عَذَاب = punishment/torment (مُضَاف) + الْقَبْر = the grave (مُضَافٌ إِلَيْهِ). The du\'ā\' seeks refuge from the grave\'s torment.'},
+  {prompt:'وَاجْعَلْ لِي نُورًا عَظِيمًا',q:'Translate:',answer:'And make light abundant / great for me.',wrong:['And make me a great light.','And place light in my soul.','And grant me a pure light.'],explain:'اجْعَلْ = make · نُورًا = light (مَنْصُوب) · عَظِيمًا = great/abundant. The du\'ā\' ends by asking Allah to make the light great and expansive.'},
+];
+let dQ,dI,dSc,dTo;
+function dInit(){dQ=shuffle([...duaData]);dI=0;dSc=0;dTo=0;dShow();}
+function dShow(){
+  if(dI>=dQ.length){doneSc('d-card','d-prog','d-counter',dSc,dTo,'dInit');return;}
+  const q=dQ[dI];document.getElementById('d-prompt').textContent=q.prompt;document.getElementById('d-sub').textContent=q.q;
+  document.getElementById('d-feedback').innerHTML='';document.getElementById('d-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('d-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;dTo++;if(ok)dSc++;meta('d',dI,dQ.length,dSc,dTo);
+    lockOpts('d-options',chosen,correct);
+    document.getElementById('d-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('d-next-row').style.display='flex';dI++;
+  });meta('d',dI,dQ.length,dSc,dTo);
+}
+function dNext(){dShow();}
+
+// ── TEXT ANALYSIS: CHAPTER 2 ──
+const textData=[
+  {prompt:'وَلَدٌ رَشِيدٌ جِدًّا',q:'Translate:',answer:'A very rightly-guided son',wrong:['A very famous man','A very strong boy','A very discerning scholar'],explain:'وَلَد = son/boy · رَشِيد = rightly guided / discerning · جِدًّا = very. Āzar had a son who was exceptionally rightly guided — that son was Ibrāhīm ع.'},
+  {prompt:'وَكَانَ اسْمُ هَذَا الْوَلَدِ إِبْرَاهِيمَ',q:'Translate:',answer:'The name of this boy was Ibrāhīm.',wrong:['This boy knew Ibrāhīm.','Ibrāhīm was the father of this boy.','This boy praised Ibrāhīm.'],explain:'اسْمُ هَذَا الْوَلَدِ = the name of this boy (إِضَافَة chain). إِبْرَاهِيمَ is مَنْصُوب as the خَبَر of كَانَ.'},
+  {prompt:'كَانَ يَرَى النَّاسَ يَسْجُدُونَ لِلأَصْنَامِ',q:'Translate:',answer:'He used to see the people prostrating to the idols.',wrong:['He told the people to prostrate.','He saw one person bow to an idol.','He forbade the people from idols.'],explain:'كَانَ يَرَى = used to see · النَّاس = the people (مَنْصُوب — object of يَرَى) · يَسْجُدُون = they prostrate · لِلأَصْنَامِ = to the idols.'},
+  {prompt:'وَيَرَى النَّاسَ يَعْبُدُونَ الأَصْنَامَ',q:'What is the difference between يَسْجُدُ and يَعْبُد?',answer:'يَسْجُد = to prostrate (physical act) · يَعْبُد = to worship (broader devotion)',wrong:['They mean the same thing','يَعْبُد = to prostrate · يَسْجُد = to worship','يَعْبُد = to see · يَسْجُد = to know'],explain:'The story uses both: يَسْجُدُ (prostrate — specific physical act) and يَعْبُد (worship — broader devotion). Ibrāhīm saw both.'},
+  {prompt:'كَانَ يَعْرِفُ أَنَّ الأَصْنَامَ لَا تَتَكَلَّمُ وَلَا تَسْمَع',q:'Translate:',answer:'He knew that the idols do not speak and do not hear.',wrong:['He knew the idols were not real gods.','He asked the idols to speak.','He told the people the idols could speak.'],explain:'يَعْرِف = he knows · أَنَّ = that · لَا تَتَكَلَّم = does not speak · لَا تَسْمَع = does not hear. Ibrāhīm ع understood the fundamental flaw in idol worship.'},
+  {prompt:'لِمَاذَا يَسْجُدُ النَّاسُ لِلأَصْنَامِ؟',q:'Translate this question Ibrāhīm asked himself:',answer:'Why do the people prostrate to the idols?',wrong:['Who are the people worshipping?','When did the people start worshipping idols?','Are the idols worthy of worship?'],explain:'لِمَاذَا = why · يَسْجُد = prostrate · النَّاس = the people (فَاعِل) · لِلأَصْنَامِ = to the idols. Ibrāhīm said this to himself (فِي نَفْسِهِ).'},
+  {prompt:'كَانَ إِبْرَاهِيمُ يَقُولُ فِي نَفْسِهِ',q:'What does فِي نَفْسِهِ mean?',answer:'to/within himself (privately, inwardly)',wrong:['to his father','to the people','out loud to everyone'],explain:'نَفْس = self/soul · ـهِ = his. فِي نَفْسِهِ = within himself. Ibrāhīm ع was quietly pondering these questions before confronting the people.'},
+  {prompt:'What two things did Ibrāhīm know about the idols? (Chapter 2)',q:'Choose:',answer:'They do not speak/hear AND they do not harm/benefit',wrong:['They are made of stone AND they are old','They are not beautiful AND they are heavy','They are not real AND they are small'],explain:'The text states: لَا تَتَكَلَّم وَلَا تَسْمَع (do not speak or hear) AND لَا تَضُرُّ وَلَا تَنْفَع (do not harm or benefit). These are Ibrāhīm\'s rational arguments against idol worship.'},
+];
+let tQ,tI,tSc,tTo;
+function tInit(){tQ=shuffle([...textData]);tI=0;tSc=0;tTo=0;tShow();}
+function tShow(){
+  if(tI>=tQ.length){doneSc('t-card','t-prog','t-counter',tSc,tTo,'tInit');return;}
+  const q=tQ[tI];document.getElementById('t-prompt').textContent=q.prompt;document.getElementById('t-sub').textContent=q.q;
+  document.getElementById('t-feedback').innerHTML='';document.getElementById('t-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('t-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;tTo++;if(ok)tSc++;meta('t',tI,tQ.length,tSc,tTo);
+    lockOpts('t-options',chosen,correct);
+    document.getElementById('t-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('t-next-row').style.display='flex';tI++;
+  });meta('t',tI,tQ.length,tSc,tTo);
+}
+function tNext(){tShow();}
+
+vInit();gInit();dInit();tInit();
+</script>
+<script src="theme.js"></script>
+</body>
+</html>

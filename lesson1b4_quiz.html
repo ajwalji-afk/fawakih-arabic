@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>1B Lesson 4 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="arcade.css">
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 18px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;border-radius:6px 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-arabic-sm{font-size:24px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.6;margin-bottom:0.4rem;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+</head>
+<body>
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1B</div>
+  <h1>Lesson 4</h1>
+  <div class="arabic-subtitle">الدَّرْسُ الرَّابِعُ</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('quran')">Sūrat al-Naṣr</button>
+  <button class="tab-btn" onclick="switchTab('dua')">Du'ā' Qunūt</button>
+  <button class="tab-btn" onclick="switchTab('review')">1B Review</button>
+</div>
+
+<!-- ══ TAB 1: VOCAB ══ -->
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 4 vocabulary: verbs of emotion and state, and key nouns including Divine attributes.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the correct meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 2: SŪRAT AL-NAṢR ══ -->
+<div id="tab-quran" class="tab-content">
+  <div class="section-intro"><strong>Sūrat al-Naṣr (110):</strong> Vocabulary from the Lesson 4 Qur'ān analysis — نَصْر، فَوْج، تَوَّاب، سَبَّحَ، غَفَرَ and the grammatical structures within the sūra.</div>
+  <div class="quiz-meta"><span id="q-counter">Q 1 of ?</span><span id="q-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="q-prog" style="width:0%"></div></div>
+  <div class="question-card" id="q-card">
+    <div class="prompt-arabic-sm" id="q-prompt"></div>
+    <div class="prompt-sub" id="q-sub">choose the correct answer</div>
+    <div id="q-feedback"></div>
+    <div class="mc-options" id="q-options"></div>
+    <div class="btn-row" id="q-next-row" style="display:none"><button class="btn btn-primary" onclick="qNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 3: DU'Ā' QUNŪT ══ -->
+<div id="tab-dua" class="tab-content">
+  <div class="section-intro"><strong>Du'ā' al-Qunūt</strong> — recited in Witr prayer. Expresses worship, reliance, praise, gratitude, and fear of Allah. A comprehensive supplication covering every dimension of the servant's relationship with Allah.</div>
+  <div class="quiz-meta"><span id="d-counter">Q 1 of ?</span><span id="d-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="d-prog" style="width:0%"></div></div>
+  <div class="question-card" id="d-card">
+    <div class="prompt-arabic-sm" id="d-prompt"></div>
+    <div class="prompt-sub" id="d-sub">choose the correct answer</div>
+    <div id="d-feedback"></div>
+    <div class="mc-options" id="d-options"></div>
+    <div class="btn-row" id="d-next-row" style="display:none"><button class="btn btn-primary" onclick="dNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 4: 1B REVIEW ══ -->
+<div id="tab-review" class="tab-content">
+  <div class="section-intro"><strong>Lessons 1B-1 through 1B-4 Review:</strong> Mixed questions covering all four lessons — vocabulary, grammar principles, du'ā' content, and story comprehension.</div>
+  <div class="quiz-meta"><span id="r-counter">Q 1 of ?</span><span id="r-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="r-prog" style="width:0%"></div></div>
+  <div class="question-card" id="r-card">
+    <div class="prompt-arabic-sm" id="r-prompt"></div>
+    <div class="prompt-sub" id="r-sub">choose the correct answer</div>
+    <div id="r-feedback"></div>
+    <div class="mc-options" id="r-options"></div>
+    <div class="btn-row" id="r-next-row" style="display:none"><button class="btn btn-primary" onclick="rNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  ['vocab','quran','dua','review'].forEach((n,i)=>{
+    document.querySelectorAll('.tab-btn')[i].classList.toggle('active',n===name);
+    document.getElementById('tab-'+n).classList.toggle('active',n===name);
+  });
+}
+function buildOpts(cId,opts,ci,onAnswer){
+  const c=document.getElementById(cId);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>onAnswer(i,ci);c.appendChild(b);});
+}
+function lockOpts(cId,chosen,correct){
+  document.querySelectorAll('#'+cId+' .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneSc(cardId,progId,counterId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(counterId).textContent='Done!';
+}
+function meta(p,idx,total,score,ans){
+  document.getElementById(p+'-score').textContent='Score: '+score+' / '+ans;
+  document.getElementById(p+'-counter').textContent='Q '+Math.min(idx+1,total)+' of '+total;
+  document.getElementById(p+'-prog').style.width=(idx/total*100).toFixed(0)+'%';
+}
+
+// ── VOCABULARY ──
+const vocabData=[
+  {ar:'أَتَى · يَأْتِي · إِتْيَان',en:'to come',wrong:['to go','to leave','to return']},
+  {ar:'ذَلَّ · يَذِلّ · ذُل',en:'to be lowly / debased',wrong:['to be mighty','to be happy','to be sad']},
+  {ar:'عَزَّ · يَعِزّ · عِز',en:'to be mighty / honoured',wrong:['to be lowly','to be patient','to be generous']},
+  {ar:'فَرِحَ · يَفْرَح · فَرَح',en:'to be happy',wrong:['to be sad','to be patient','to be sick']},
+  {ar:'حَزِنَ · يَحْزَن · حُزْن',en:'to be sad',wrong:['to be happy','to be patient','to be angry']},
+  {ar:'شَهِيد (ج: شُهَدَاء)',en:'witness / martyr',wrong:['messenger','prophet','trustworthy one']},
+  {ar:'عَافِيَة',en:'well-being / health',wrong:['mercy','forgiveness','guidance']},
+  {ar:'كَرِيم',en:'noble / generous',wrong:['trustworthy','sick','patient']},
+  {ar:'أَمِين',en:'trustworthy / faithful',wrong:['noble','sick','generous']},
+  {ar:'نَصْر',en:'aid / victory / support',wrong:['crowd','forgiveness','glorification']},
+  {ar:'فَوْج (ج: أَفْوَاج)',en:'crowd / group / throng',wrong:['aid','rope','meeting']},
+  {ar:'تَوَّاب',en:'constantly repenting / oft-returning (to Allah)',wrong:['constantly glorifying','ever-watchful','all-knowing']},
+  {ar:'سَبَّحَ · يُسَبِّح · تَسْبِيح',en:'to glorify (Allah)',wrong:['to praise','to forgive','to worship']},
+  {ar:'غَفَرَ · يَغْفِر · مَغْفِرَة',en:'to forgive',wrong:['to glorify','to guide','to give']},
+];
+let vQ,vI,vSc,vTo;
+function vInit(){vQ=shuffle([...vocabData]);vI=0;vSc=0;vTo=0;vShow();}
+function vShow(){
+  if(vI>=vQ.length){doneSc('v-card','v-prog','v-counter',vSc,vTo,'vInit');return;}
+  const q=vQ[vI];document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';document.getElementById('v-next-row').style.display='none';
+  const opts=shuffle([q.en,...q.wrong]);const ci=opts.indexOf(q.en);
+  buildOpts('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;vTo++;if(ok)vSc++;meta('v',vI,vQ.length,vSc,vTo);
+    lockOpts('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vI++;
+  });meta('v',vI,vQ.length,vSc,vTo);
+}
+function vNext(){vShow();}
+
+// ── SŪRAT AL-NAṢR ──
+const quranData=[
+  {prompt:'إِذَا جَاءَ نَصْرُ اللهِ وَالْفَتْحُ (110:1)',q:'Translate:',answer:'When the aid of Allah comes and the conquest.',wrong:['When Allah\'s victory is near and the people come.','When Allah\'s messengers come with the conquest.','When the conquest of Allah comes and victory.'],explain:'إِذَا = when · جَاءَ = came (past, used for certainty of future) · نَصْرُ اللهِ = the aid of Allah (إِضَافَة) · الْفَتْح = the conquest/opening. Refers to the conquest of Makkah.'},
+  {prompt:'وَرَأَيْتَ النَّاسَ يَدْخُلُونَ فِي دِينِ اللهِ أَفْوَاجًا (110:2)',q:'Translate:',answer:'And you see the people entering the religion of Allah in crowds.',wrong:['And the people saw you entering religion.','And you heard the people glorifying Allah.','And you saw the people leaving the religion.'],explain:'رَأَيْتَ = you saw · يَدْخُلُون = they enter · دِينِ اللهِ = the religion of Allah (إِضَافَة) · أَفْوَاجًا = in crowds (مَنْصُوب as ḥāl — circumstantial).'},
+  {prompt:'فَسَبِّحْ بِحَمْدِ رَبِّكَ (110:3)',q:'Translate:',answer:'So glorify with the praise of your Lord.',wrong:['So glorify your Lord greatly.','So pray to your Lord in gratitude.','So worship your Lord and praise Him.'],explain:'سَبِّحْ = glorify (command, Form II) · بِحَمْد = with the praise · رَبِّكَ = your Lord (إِضَافَة with pronoun). فَ at the start = "so/therefore" — a logical consequence of the conquest.'},
+  {prompt:'وَاسْتَغْفِرْهُ إِنَّهُ كَانَ تَوَّابًا (110:3)',q:'Translate:',answer:'And seek His forgiveness. Indeed He is ever-accepting of repentance.',wrong:['And seek His forgiveness. Indeed He is the Forgiving.','And praise Him. Indeed He is Ever-Merciful.','And glorify Him. Indeed He accepts repentance.'],explain:'اسْتَغْفِر = seek forgiveness (Form X command) · ـهُ = Him · إِنَّهُ = indeed He · تَوَّاب = one who constantly accepts repentance (intensive form of تَابَ — to repent/return).'},
+  {prompt:'نَصْرُ اللهِ',q:'What type of construction is نَصْرُ اللهِ?',answer:'إِضَافَة — the aid of Allah (نَصْر is مُضَاف, اللهِ is مُضَافٌ إِلَيْهِ)',wrong:['Nominal sentence — the aid is Allah','Adjectival phrase — the divine aid','مَفْعُول بِهِ — direct object of a verb'],explain:'نَصْر (aid) is مُضَاف (no tanwīn, definite) + اللهِ (genitive مُضَافٌ إِلَيْهِ). Together: "the aid of Allah." The إِضَافَة makes نَصْر definite.'},
+  {prompt:'تَوَّاب',q:'What does تَوَّاب mean, and what makes it special grammatically?',answer:'Constantly/often-repentance-accepting — a فَعَّال intensive pattern (very frequent)',wrong:['One who repented once — past tense form','A repenter — active participle','One who accepts repentance sometimes — فَعِيل pattern'],explain:'تَوَّاب is the فَعَّال pattern, indicating great frequency or intensity. It means Allah is CONSTANTLY and ABUNDANTLY accepting of repentance — not just occasionally.'},
+  {prompt:'سَبَّحَ · يُسَبِّح · تَسْبِيح',q:'What verb form (بَاب) is سَبَّح?',answer:'Form II (فَعَّلَ) — intensive/causative form',wrong:['Form I — basic verb','Form IV — أَفْعَلَ','Form X — استفعل'],explain:'سَبَّحَ is Form II (فَعَّلَ). The shaddah on the middle letter characterizes Form II. It intensifies the meaning of the root — to glorify extensively. The verbal noun is تَسْبِيح.'},
+  {prompt:'What is the key lesson/theme of Sūrat al-Naṣr?',q:'Choose:',answer:'After Allah\'s victory comes, respond with gratitude — glorify and seek forgiveness.',wrong:['Fight until victory comes, then rest.','The conquest of Makkah was the Prophet\'s greatest achievement.','After victory, announce your success to the people.'],explain:'The sūra instructs: when you see victory and crowds entering Islam → do NOT celebrate yourself, instead: سَبِّح (glorify Allah) and اسْتَغْفِر (seek forgiveness). Scholars say this was a sign of the Prophet\'s ﷺ approaching passing.'},
+];
+let qQ,qI,qSc,qTo;
+function qInit(){qQ=shuffle(quranData.map(q=>({...q})));qI=0;qSc=0;qTo=0;qShow();}
+function qShow(){
+  if(qI>=qQ.length){doneSc('q-card','q-prog','q-counter',qSc,qTo,'qInit');return;}
+  const q=qQ[qI];document.getElementById('q-prompt').textContent=q.prompt;document.getElementById('q-sub').textContent=q.q;
+  document.getElementById('q-feedback').innerHTML='';document.getElementById('q-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('q-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;qTo++;if(ok)qSc++;meta('q',qI,qQ.length,qSc,qTo);
+    lockOpts('q-options',chosen,correct);
+    document.getElementById('q-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('q-next-row').style.display='flex';qI++;
+  });meta('q',qI,qQ.length,qSc,qTo);
+}
+function qNext(){qShow();}
+
+// ── DU'Ā' QUNŪT ──
+const duaData=[
+  {prompt:'إِنَّا نَسْتَعِينُكَ وَنَسْتَغْفِرُكَ',q:'Translate:',answer:'Indeed we seek help from You and we seek Your forgiveness.',wrong:['Indeed we praise You and glorify You.','Indeed we worship You and trust in You.','Indeed we repent to You and believe in You.'],explain:'نَسْتَعِين = we seek help (Form X present) · نَسْتَغْفِر = we seek forgiveness (Form X present). The du\'ā\' uses the exclusive plural "we" — said in congregation. Both are Form X (seeking/requesting).'},
+  {prompt:'وَنَتُوبُ إِلَيْكَ وَنُؤْمِنُ بِكَ',q:'Translate:',answer:'And we repent to You and we believe in You.',wrong:['And we turn to You and we rely on You.','And we seek refuge in You and we praise You.','And we glorify You and we worship You.'],explain:'نَتُوب = we repent · إِلَيْكَ = to You · نُؤْمِن = we believe · بِكَ = in You. Two actions paired: repentance (turning back) and belief (affirming faith).'},
+  {prompt:'وَنَتَوَكَّلُ عَلَيْكَ وَنُثْنِي عَلَيْكَ الخَيْرَ كُلَّهُ',q:'Translate:',answer:'And we put our trust in You and we praise You for the good, all of it.',wrong:['And we rely on You and we thank You for some of the good.','And we worship You and we know You are good.','And we trust You and we fear Your punishment.'],explain:'نَتَوَكَّل = we put our trust (Form V) · نُثْنِي = we praise/laud · الْخَيْر = the good · كُلَّهُ = all of it. Comprehensive: trust AND gratitude for ALL good, not just some.'},
+  {prompt:'وَنَشْكُرُكَ وَلَا نَكْفُرُكَ',q:'Translate:',answer:'We thank You and we are not ungrateful to You.',wrong:['We glorify You and we do not disobey You.','We worship You and we do not associate partners.','We praise You and we do not forget You.'],explain:'نَشْكُر = we thank · لَا نَكْفُر = we are not ungrateful (كَفَرَ can mean to be ungrateful/disbelieve). Gratitude (شُكْر) is contrasted with ingratitude (كُفْر) — the opposite of thankfulness.'},
+  {prompt:'إِيَّاكَ نَعْبُدُ وَلَكَ نُصَلِّي وَنَسْجُدُ',q:'Translate:',answer:'You alone we worship, and to You we pray and prostrate.',wrong:['We worship You and we glorify and praise You.','We seek You alone and we pray and fast.','To You we belong and to You we return.'],explain:'إِيَّاكَ = You alone (object pronoun fronted for exclusivity) · نَعْبُد = we worship · نُصَلِّي = we pray · نَسْجُد = we prostrate. The fronting of إِيَّاكَ emphasises exclusive devotion to Allah.'},
+  {prompt:'وَنَرْجُو رَحْمَتَكَ وَنَخْشَى عَذَابَكَ',q:'Translate:',answer:'We hope for Your mercy and we fear Your punishment.',wrong:['We seek Your mercy and we trust Your judgment.','We praise Your mercy and we avoid Your punishment.','We ask for Your mercy and we repent from Your punishment.'],explain:'نَرْجُو = we hope (رَجَا root) · رَحْمَتَكَ = Your mercy (إِضَافَة with pronoun) · نَخْشَى = we fear (خَشِيَ root — a deep reverential fear) · عَذَابَكَ = Your punishment.'},
+  {prompt:'إِنَّ عَذَابَكَ الجِدَّ بِالكُفَّارِ مُلْحِق',q:'Translate:',answer:'Indeed Your severe punishment will overtake those who cover the truth.',wrong:['Indeed Your punishment is not for the believers.','Indeed the punishment of the disbelievers is severe.','Indeed Your punishment is feared by all people.'],explain:'الجِدّ = the serious/severe · بِالكُفَّار = will reach/overtake the disbelievers (كُفَّار = those who cover/deny the truth). مُلْحِق = one that catches up/overtakes. The du\'ā\' ends on a note of awe.'},
+  {prompt:'وَنَنَخْلَعُ وَنَتْرُكُ مَنْ يَفْجُرُكَ',q:'Translate:',answer:'And we forsake and leave whoever disobeys You.',wrong:['And we fear and avoid whoever harms You.','And we warn and advise whoever ignores You.','And we separate from those who forget You.'],explain:'نَنْخَلِع = we shed/forsake (like removing a garment) · نَتْرُك = we leave · مَنْ يَفْجُرُك = whoever disobeys/transgresses against You. The du\'ā\' expresses disavowal of those who disobey Allah.'},
+];
+let dQ,dI,dSc,dTo;
+function dInit(){dQ=shuffle([...duaData]);dI=0;dSc=0;dTo=0;dShow();}
+function dShow(){
+  if(dI>=dQ.length){doneSc('d-card','d-prog','d-counter',dSc,dTo,'dInit');return;}
+  const q=dQ[dI];document.getElementById('d-prompt').textContent=q.prompt;document.getElementById('d-sub').textContent=q.q;
+  document.getElementById('d-feedback').innerHTML='';document.getElementById('d-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('d-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;dTo++;if(ok)dSc++;meta('d',dI,dQ.length,dSc,dTo);
+    lockOpts('d-options',chosen,correct);
+    document.getElementById('d-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('d-next-row').style.display='flex';dI++;
+  });meta('d',dI,dQ.length,dSc,dTo);
+}
+function dNext(){dShow();}
+
+// ── 1B COMPREHENSIVE REVIEW ──
+const reviewData=[
+  {prompt:'Principle #1 — All Arabic words are divided into:',q:'Choose:',answer:'اِسْم · فِعْل · حَرْف',wrong:['مَرْفُوع · مَنْصُوب · مَجْرُور','مُبْتَدَأ · خَبَر · فِعْل','مُضَاف · مُضَافٌ إِلَيْهِ · صِفَة'],explain:'The 3 categories of Arabic words (Lesson 1): اِسْم (noun/pronoun/adjective), فِعْل (verb), حَرْف (particle). Everything in Arabic fits one of these three.'},
+  {prompt:'أَخْضَر / خَضْرَاء',q:'What does this word mean?',answer:'green (m / f)',wrong:['blue (m / f)','red (m / f)','yellow (m / f)'],explain:'أَخْضَر (m) / خَضْرَاء (f) = green. The colour adjectives in Arabic have the pattern أَفْعَل (m) / فَعْلَاء (f). All 6 colours in Lesson 2 follow this pattern.'},
+  {prompt:'Principle #4',q:'Which of the following is ALWAYS true?',answer:'ال and tanwīn can never coexist on the same word',wrong:['The مُضَاف always takes ال','The خَبَر must always be definite','A noun can be both مَرْفُوع and مَجْرُور'],explain:'Principle #4 (Lesson 2): A word is either definite (ال) or indefinite (tanwīn) — never both. This is one of the foundational rules of Arabic noun grammar.'},
+  {prompt:'رَبِّ الفَلَقِ',q:'Is رَبِّ definite or indefinite here, and why?',answer:'Definite — it is the مُضَاف, which is definite without ال',wrong:['Indefinite — it has no ال','Indefinite — it has kasra','Definite — because it refers to Allah'],explain:'Principle #3 (Lesson 2): The مُضَاف is definite without ال. رَبِّ الْفَلَقِ = the Lord of the Daybreak. Even without ال on رَبِّ, it is definite because of the إِضَافَة structure.'},
+  {prompt:'هُوَ اللهُ أَحَدٌ',q:'What type of sentence is this (Sūrat al-Ikhlāṣ)?',answer:'Nominal sentence — He (هُوَ) is the مُبْتَدَأ',wrong:['Verbal sentence — a past-tense verb','Adjectival phrase — both words match','إِضَافَة — a possessive construct'],explain:'Principle #5 (Lesson 3): Nominal sentence. هُوَ = مُبْتَدَأ (definite pronoun). اللهُ أَحَد = خَبَر. "He is Allah, the One." The مُبْتَدَأ is a definite pronoun; the خَبَر identifies who He is.'},
+  {prompt:'يَدَاهُ (Qur\'ān 78:40)',q:'Which rule does this demonstrate?',answer:'Sandwiched Nūn — يَدَانِ loses نون when مُضَاف',wrong:['Attached pronoun only — no rule broken','Broken plural — irregular form','Non-human plural rule — treated as feminine'],explain:'Lesson 3: يَدَانِ (two hands, dual) + ـهُ = يَدَاهُ. The نون of the dual is dropped because it is the مُضَاف in an إِضَافَة — sandwiched between the two parts.'},
+  {prompt:'كَانَ آزَرُ يَبِيعُ الأَصْنَامَ',q:'What tense does كَانَ + مُضَارِع indicate?',answer:'Habitual past — "used to sell" (repeated action in the past)',wrong:['Simple past — "sold (once)"','Future — "will sell"','Present progressive — "is selling"'],explain:'كَانَ + مُضَارِع is a key Arabic pattern meaning "used to" — habitual or repeated past action. The story uses this repeatedly: كَانَ يَبِيع (used to sell), كَانَ يَعْبُد (used to worship).'},
+  {prompt:'اللَّهُمَّ اجْعَلْ لِي فِي قَلْبِي نُورًا',q:'Which du\'ā\' does this come from?',answer:'Du\'ā\' for Light — recited after waking for Fajr',wrong:['Du\'ā\' al-Istiftāḥ — opening prayer du\'ā\'','Tahajjud du\'ā\'','Du\'ā\' Qunūt'],explain:'This is from the Du\'ā\' for Light (Lesson 2), asking Allah to place light in the heart, tongue, hearing, sight, and in every direction.'},
+  {prompt:'ظَلَمْتُ نَفْسِي وَاعْتَرَفْتُ بِذَنْبِي',q:'Which du\'ā\' does this come from?',answer:'Du\'ā\' al-Istiftāḥ — the Opening Du\'ā\' of Prayer',wrong:['Du\'ā\' for Light','Du\'ā\' Qunūt','Tahajjud du\'ā\''],explain:'This is from Du\'ā\' al-Istiftāḥ (Lesson 3) — "I have wronged my soul and I admitted my sin." It is the confession of wrongdoing recited quietly at the beginning of prayer.'},
+  {prompt:'نَرْجُو رَحْمَتَكَ وَنَخْشَى عَذَابَكَ',q:'Which du\'ā\' does this come from?',answer:'Du\'ā\' al-Qunūt — recited in Witr prayer',wrong:['Du\'ā\' for Light','Du\'ā\' al-Istiftāḥ','Tahajjud du\'ā\''],explain:'This is from Du\'ā\' al-Qunūt (Lesson 4) — "We hope for Your mercy and we fear Your punishment." Qunūt is recited in the Witr prayer (odd-numbered night prayer).'},
+  {prompt:'وَتَرَكَ إِبْرَاهِيمُ الصَّنَمَ الأَكْبَرَ',q:'Why did Ibrāhīm leave the biggest idol?',answer:'So he could later challenge the people to ask IT who broke the others — proving it cannot speak',wrong:['He could not break it because it was too heavy','He respected it as the most powerful','He ran out of time before the people returned'],explain:'Ibrāhīm\'s ع strategy: break all the idols except the biggest, then when questioned, say: ask the big one! (فَاسْأَلُوهُ). This forces the people to admit the idol cannot speak, undermining their worship.'},
+  {prompt:'فَسَبِّحْ بِحَمْدِ رَبِّكَ وَاسْتَغْفِرْهُ (110:3)',q:'What are the two commands in this verse?',answer:'سَبِّحْ (glorify) and اسْتَغْفِرْ (seek forgiveness)',wrong:['اُعْبُدْ (worship) and اشْكُرْ (thank)','صَلِّ (pray) and اسْجُدْ (prostrate)','اتَّبِعْ (follow) and اصْبِرْ (be patient)'],explain:'After victory, the two divine instructions are: سَبِّحْ بِحَمْدِهِ (glorify with His praise) and اسْتَغْفِرْ (seek forgiveness). Victory is not for self-congratulation but for increased worship and humility.'},
+];
+let rQ,rI,rSc,rTo;
+function rInit(){rQ=shuffle(reviewData.map(q=>({...q})));rI=0;rSc=0;rTo=0;rShow();}
+function rShow(){
+  if(rI>=rQ.length){doneSc('r-card','r-prog','r-counter',rSc,rTo,'rInit');return;}
+  const q=rQ[rI];document.getElementById('r-prompt').textContent=q.prompt;document.getElementById('r-sub').textContent=q.q;
+  document.getElementById('r-feedback').innerHTML='';document.getElementById('r-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('r-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;rTo++;if(ok)rSc++;meta('r',rI,rQ.length,rSc,rTo);
+    lockOpts('r-options',chosen,correct);
+    document.getElementById('r-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('r-next-row').style.display='flex';rI++;
+  });meta('r',rI,rQ.length,rSc,rTo);
+}
+function rNext(){rShow();}
+
+vInit();qInit();dInit();rInit();
+</script>
+<script src="theme.js"></script>
+</body>
+</html>

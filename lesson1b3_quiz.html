@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>1B Lesson 3 — Fawakih Arabic</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Source+Serif+4:wght@300;400;600&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="arcade.css">
+<style>
+  :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--gold:#b8860b;--gold-light:#d4a843;--rust:#8b3a2a;--sage:#4a6741;--border:#d4c9b0;--shadow:rgba(28,26,22,0.12);}
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Source Serif 4',Georgia,serif;background:var(--parchment);color:var(--ink);min-height:100vh;background-image:radial-gradient(ellipse at 20% 20%,rgba(184,134,11,0.06) 0%,transparent 60%),radial-gradient(ellipse at 80% 80%,rgba(74,103,65,0.05) 0%,transparent 60%);}
+  header{text-align:center;padding:2.5rem 1rem 1.5rem;border-bottom:1px solid var(--border);}
+  header::after{content:'';display:block;width:60px;height:2px;background:var(--gold);margin:1rem auto 0;}
+  .lesson-label{font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:var(--gold);font-weight:600;margin-bottom:0.5rem;}
+  h1{font-family:'Playfair Display',Georgia,serif;font-size:clamp(1.6rem,4vw,2.4rem);font-weight:600;}
+  .arabic-subtitle{font-size:1.5rem;font-family:serif;color:var(--gold);margin-top:0.3rem;direction:rtl;}
+  .tabs{display:flex;justify-content:center;padding:1.5rem 1rem 0;flex-wrap:wrap;}
+  .tab-btn{font-family:'Source Serif 4',serif;font-size:13px;font-weight:600;letter-spacing:0.06em;padding:10px 18px;border:1px solid var(--border);background:var(--cream);color:#7a7060;cursor:pointer;transition:all 0.2s;border-bottom:none;position:relative;top:1px;border-radius:6px 6px 0 0;}
+  .tab-btn.active{background:var(--parchment);color:var(--ink);border-bottom:1px solid var(--parchment);z-index:2;}
+  .tab-btn:hover:not(.active){background:#e8e2d6;color:var(--ink);}
+  .tab-content{border-top:1px solid var(--border);max-width:680px;margin:0 auto;padding:2rem 1.5rem 3rem;display:none;}
+  .tab-content.active{display:block;}
+  .quiz-meta{display:flex;justify-content:space-between;font-size:12px;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:10px;}
+  .progress-bar{height:2px;background:var(--border);border-radius:1px;margin-bottom:1.8rem;}
+  .progress-fill{height:2px;background:var(--gold);border-radius:1px;transition:width 0.4s ease;}
+  .question-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:2rem;box-shadow:0 2px 16px var(--shadow);}
+  .prompt-arabic{font-size:36px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.5;margin-bottom:0.4rem;}
+  .prompt-arabic-sm{font-size:24px;font-family:'Traditional Arabic','Scheherazade New',serif;text-align:center;direction:rtl;color:var(--ink);line-height:1.6;margin-bottom:0.4rem;}
+  .prompt-sub{font-size:11px;text-align:center;color:#b0a490;letter-spacing:0.1em;text-transform:uppercase;margin-bottom:1.5rem;font-family:'Courier New',monospace;}
+  .feedback-box{font-size:14px;text-align:center;padding:10px 14px;border-radius:6px;margin-bottom:14px;line-height:1.5;}
+  .feedback-correct{background:#eef5ee;color:#2e5c2e;border:1px solid #b8d4b8;}
+  .feedback-wrong{background:#fdf0ee;color:#7a2e20;border:1px solid #e0b8b0;}
+  .mc-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .mc-option{padding:12px 14px;border:1px solid var(--border);border-radius:6px;background:var(--parchment);font-size:14px;font-family:'Source Serif 4',serif;cursor:pointer;transition:all 0.15s;text-align:center;line-height:1.4;}
+  .mc-option:hover:not(.disabled){border-color:var(--gold-light);background:#fdf8ee;}
+  .mc-option.correct{background:#eef5ee;border-color:var(--sage);color:var(--sage);font-weight:600;}
+  .mc-option.wrong{background:#fdf0ee;border-color:var(--rust);color:var(--rust);}
+  .mc-option.disabled{cursor:default;}
+  .btn-row{display:flex;gap:10px;}
+  .btn{flex:1;padding:11px;border-radius:6px;font-size:13px;font-family:'Courier New',monospace;letter-spacing:0.06em;cursor:pointer;transition:all 0.15s;border:1px solid var(--border);background:transparent;color:var(--ink);}
+  .btn:hover{background:var(--cream);}
+  .btn-primary{border-color:var(--gold);color:var(--gold);}
+  .btn-primary:hover{background:#fdf8ee;}
+  .section-intro{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:1.2rem 1.5rem;margin-bottom:1.5rem;font-size:14px;line-height:1.6;color:#5a5040;}
+  .section-intro strong{color:var(--ink);}
+  .done-screen{text-align:center;padding:2rem 0;}
+  .done-screen .big-check{font-size:48px;margin-bottom:1rem;}
+  .done-screen p{font-family:'Playfair Display',serif;font-size:1.3rem;margin-bottom:0.4rem;}
+  .done-screen small{font-size:13px;color:#9a8e7a;font-family:'Courier New',monospace;}
+  .restart-btn{margin-top:1.5rem;padding:12px 30px;border:1px solid var(--gold);border-radius:6px;background:transparent;color:var(--gold);font-family:'Courier New',monospace;font-size:13px;letter-spacing:0.08em;cursor:pointer;}
+  .restart-btn:hover{background:#fdf8ee;}
+</style>
+</head>
+<body>
+<header>
+  <div class="lesson-label">Fawakih Arabic · Level 1B</div>
+  <h1>Lesson 3</h1>
+  <div class="arabic-subtitle">الدَّرْسُ الثَّالِثُ</div>
+</header>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('vocab')">Vocabulary</button>
+  <button class="tab-btn" onclick="switchTab('grammar')">Nominal Sentence</button>
+  <button class="tab-btn" onclick="switchTab('pronouns')">Pronouns</button>
+  <button class="tab-btn" onclick="switchTab('dua')">Du'ā' Istiftāḥ</button>
+  <button class="tab-btn" onclick="switchTab('text')">Story Ch. 3–4</button>
+</div>
+
+<!-- ══ TAB 1: VOCAB ══ -->
+<div id="tab-vocab" class="tab-content active">
+  <div class="section-intro">Lesson 3 vocabulary: verbs (patience, lying, announcing, sleeping), Sūrat al-Masad & al-Ikhlāṣ vocabulary, and story words.</div>
+  <div class="quiz-meta"><span id="v-counter">Q 1 of ?</span><span id="v-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="v-prog" style="width:0%"></div></div>
+  <div class="question-card" id="v-card">
+    <div class="prompt-arabic" id="v-prompt"></div>
+    <div class="prompt-sub">→ choose the correct meaning</div>
+    <div id="v-feedback"></div>
+    <div class="mc-options" id="v-options"></div>
+    <div class="btn-row" id="v-next-row" style="display:none"><button class="btn btn-primary" onclick="vNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 2: NOMINAL SENTENCE ══ -->
+<div id="tab-grammar" class="tab-content">
+  <div class="section-intro"><strong>Principles 5 & 6 — Nominal Sentence:</strong> The مُبْتَدَأ (subject) is typically مَرْفُوع and definite. The خَبَر (predicate) is typically مَرْفُوع and indefinite when a noun. Add "is/am/are" between them in English.</div>
+  <div class="quiz-meta"><span id="g-counter">Q 1 of ?</span><span id="g-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="g-prog" style="width:0%"></div></div>
+  <div class="question-card" id="g-card">
+    <div class="prompt-arabic-sm" id="g-prompt"></div>
+    <div class="prompt-sub" id="g-sub">choose the correct answer</div>
+    <div id="g-feedback"></div>
+    <div class="mc-options" id="g-options"></div>
+    <div class="btn-row" id="g-next-row" style="display:none"><button class="btn btn-primary" onclick="gNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 3: PRONOUNS ══ -->
+<div id="tab-pronouns" class="tab-content">
+  <div class="section-intro"><strong>Attached Pronouns & Sandwiched Nūn:</strong> Attached pronouns form إِضَافَة with nouns. When a dual or masculine sound plural is مُضَاف, its نون drops. e.g. يَدَانِ + ـهُ = يَدَاهُ.</div>
+  <div class="quiz-meta"><span id="p-counter">Q 1 of ?</span><span id="p-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="p-prog" style="width:0%"></div></div>
+  <div class="question-card" id="p-card">
+    <div class="prompt-arabic-sm" id="p-prompt"></div>
+    <div class="prompt-sub" id="p-sub">choose the correct answer</div>
+    <div id="p-feedback"></div>
+    <div class="mc-options" id="p-options"></div>
+    <div class="btn-row" id="p-next-row" style="display:none"><button class="btn btn-primary" onclick="pNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 4: DU'Ā' ISTIFTĀḤ ══ -->
+<div id="tab-dua" class="tab-content">
+  <div class="section-intro"><strong>Du'ā' al-Istiftāḥ</strong> — the Opening Du'ā' of Prayer, recited quietly after the opening takbīr. It covers: declaration of lordship, admission of sin, request for guidance to noble character, and glorification of Allah.</div>
+  <div class="quiz-meta"><span id="d-counter">Q 1 of ?</span><span id="d-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="d-prog" style="width:0%"></div></div>
+  <div class="question-card" id="d-card">
+    <div class="prompt-arabic-sm" id="d-prompt"></div>
+    <div class="prompt-sub" id="d-sub">choose the correct answer</div>
+    <div id="d-feedback"></div>
+    <div class="mc-options" id="d-options"></div>
+    <div class="btn-row" id="d-next-row" style="display:none"><button class="btn btn-primary" onclick="dNext()">Next →</button></div>
+  </div>
+</div>
+
+<!-- ══ TAB 5: STORY CH. 3-4 ══ -->
+<div id="tab-text" class="tab-content">
+  <div class="section-intro"><strong>Chapters 3 & 4:</strong> Ibrāhīm's Advice (نَصِيحَةُ إِبْرَاهِيمَ) and Ibrāhīm Breaks the Idols (إِبْرَاهِيمُ يَكْسِرُ الأَصْنَامَ).</div>
+  <div class="quiz-meta"><span id="t-counter">Q 1 of ?</span><span id="t-score">Score: 0 / 0</span></div>
+  <div class="progress-bar"><div class="progress-fill" id="t-prog" style="width:0%"></div></div>
+  <div class="question-card" id="t-card">
+    <div class="prompt-arabic-sm" id="t-prompt"></div>
+    <div class="prompt-sub" id="t-sub">choose the correct answer</div>
+    <div id="t-feedback"></div>
+    <div class="mc-options" id="t-options"></div>
+    <div class="btn-row" id="t-next-row" style="display:none"><button class="btn btn-primary" onclick="tNext()">Next →</button></div>
+  </div>
+</div>
+
+<script>
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function switchTab(name){
+  ['vocab','grammar','pronouns','dua','text'].forEach((n,i)=>{
+    document.querySelectorAll('.tab-btn')[i].classList.toggle('active',n===name);
+    document.getElementById('tab-'+n).classList.toggle('active',n===name);
+  });
+}
+function buildOpts(cId,opts,ci,onAnswer){
+  const c=document.getElementById(cId);c.innerHTML='';
+  opts.forEach((o,i)=>{const b=document.createElement('button');b.className='mc-option';b.textContent=o;b.onclick=()=>onAnswer(i,ci);c.appendChild(b);});
+}
+function lockOpts(cId,chosen,correct){
+  document.querySelectorAll('#'+cId+' .mc-option').forEach((b,i)=>{b.classList.add('disabled');if(i===correct)b.classList.add('correct');else if(i===chosen)b.classList.add('wrong');});
+}
+function doneSc(cardId,progId,counterId,score,total,fn){
+  document.getElementById(cardId).innerHTML=`<div class="done-screen"><div class="big-check">✓</div><p>Final score: ${score} / ${total}</p><small>${Math.round(score/total*100)}% correct</small><br><button class="restart-btn" onclick="${fn}()">Try again ↺</button></div>`;
+  document.getElementById(progId).style.width='100%';document.getElementById(counterId).textContent='Done!';
+}
+function meta(p,idx,total,score,ans){
+  document.getElementById(p+'-score').textContent='Score: '+score+' / '+ans;
+  document.getElementById(p+'-counter').textContent='Q '+Math.min(idx+1,total)+' of '+total;
+  document.getElementById(p+'-prog').style.width=(idx/total*100).toFixed(0)+'%';
+}
+
+// ── VOCABULARY ──
+const vocabData=[
+  {ar:'صَبَرَ · يَصْبِر · صَبْر',en:'to endure / be patient',wrong:['to lie','to announce','to sleep']},
+  {ar:'كَذَبَ · يَكْذِب · كَذِب',en:'to lie',wrong:['to be patient','to know','to envy']},
+  {ar:'أَعْلَنَ · يُعْلِن · إِعْلَان',en:'to announce / make public',wrong:['to hide','to sleep','to lie']},
+  {ar:'نَامَ · يَنَام · نَوْم',en:'to sleep',wrong:['to sit','to announce','to play']},
+  {ar:'طَعَام (ج: أَطْعِمَة)',en:'food',wrong:['goods/belongings','meeting','trust']},
+  {ar:'مَتَاع (ج: أَمْتِعَة)',en:'belongings / goods',wrong:['food','stone','rope']},
+  {ar:'قَيُّوم',en:'the Sustainer / Eternal Caretaker (Divine name)',wrong:['the Praiseworthy','the Glorious','the Merciful']},
+  {ar:'لَهَب',en:'flame / blaze',wrong:['rope','wealth','stone']},
+  {ar:'مَال (ج: أَمْوَال)',en:'wealth / money',wrong:['food','rope','stone']},
+  {ar:'حَبْل (ج: حِبَال)',en:'rope / cord',wrong:['flame','wealth','knot']},
+  {ar:'الصَّمَد',en:'The Eternal Refuge / The Absolute (Divine name)',wrong:['The All-Powerful','The Praiseworthy','The Sustainer']},
+  {ar:'كَسَبَ · يَكْسِب · كَسْب',en:'to earn / gain / acquire',wrong:['to spend','to sell','to give']},
+  {ar:'وَلَدَ · يَلِد · وِلَادَة',en:'to bear (a child) / beget',wrong:['to create','to make','to sell']},
+  {ar:'تَكَلَّمَ · يَتَكَلَّم',en:'to speak',wrong:['to hear','to see','to understand']},
+  {ar:'نَفَعَ · يَنْفَع · نَفْع',en:'to benefit',wrong:['to harm','to speak','to earn']},
+  {ar:'ضَرَّ · يَضُرّ · ضَر',en:'to harm',wrong:['to benefit','to speak','to earn']},
+  {ar:'عِيد (ج: أَعْيَاد)',en:'celebration / festival',wrong:['food','stone','idol']},
+  {ar:'سَقِيم',en:'sick / ill',wrong:['sad','angry','weak']},
+  {ar:'فَأْس (ج: فُؤُوس)',en:'ax / hatchet',wrong:['stone','rope','idol']},
+  {ar:'حِينَئِذٍ',en:'at that time / at that moment',wrong:['before that','after many days','in the city']},
+];
+let vQ,vI,vSc,vTo;
+function vInit(){vQ=shuffle([...vocabData]);vI=0;vSc=0;vTo=0;vShow();}
+function vShow(){
+  if(vI>=vQ.length){doneSc('v-card','v-prog','v-counter',vSc,vTo,'vInit');return;}
+  const q=vQ[vI];document.getElementById('v-prompt').textContent=q.ar;
+  document.getElementById('v-feedback').innerHTML='';document.getElementById('v-next-row').style.display='none';
+  const opts=shuffle([q.en,...q.wrong]);const ci=opts.indexOf(q.en);
+  buildOpts('v-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;vTo++;if(ok)vSc++;meta('v',vI,vQ.length,vSc,vTo);
+    lockOpts('v-options',chosen,correct);
+    document.getElementById('v-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct!</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.en}</strong></div>`;
+    document.getElementById('v-next-row').style.display='flex';vI++;
+  });meta('v',vI,vQ.length,vSc,vTo);
+}
+function vNext(){vShow();}
+
+// ── NOMINAL SENTENCE ──
+const grammarData=[
+  {prompt:'هُوَ رَجُلٌ',q:'Identify مُبْتَدَأ and خَبَر, then translate:',answer:'مُبْتَدَأ = هُوَ · خَبَر = رَجُلٌ → He is a man.',wrong:['مُبْتَدَأ = رَجُلٌ · خَبَر = هُوَ → A man, he.','Both words are مُبْتَدَأ','There is no nominal sentence here'],explain:'هُوَ (he) = definite pronoun → مُبْتَدَأ. رَجُلٌ (a man) = indefinite noun → خَبَر. Translation: He is a man. The implied "is" is added in English.'},
+  {prompt:'الجَنَّةُ كَبِيرَةٌ',q:'Translate:',answer:'The garden (Paradise) is large.',wrong:['The large garden','A large garden','The garden and the large one'],explain:'الجَنَّة = definite → مُبْتَدَأ. كَبِيرَة = indefinite (tanwīn) → خَبَر. Add "is" between them: The garden IS large. Not an adjectival phrase because they differ in definiteness.'},
+  {prompt:'الصَّبْرُ بَحْرٌ',q:'Translate this nominal sentence:',answer:'Patience is a sea (i.e. vast / deep).',wrong:['The patient sea','A patient sea','The sea of patience'],explain:'الصَّبْر (patience) = definite مُبْتَدَأ. بَحْر (a sea) = indefinite خَبَر. Arabic uses vivid metaphors in nominal sentences — here patience is likened to a vast sea.'},
+  {prompt:'اللهُ الصَّمَدُ',q:'Translate (from Sūrat al-Ikhlāṣ):',answer:'Allah is The Eternal Refuge / The Absolute.',wrong:['Allah and the Eternal Refuge','The Eternal Refuge of Allah','Allah is not the Eternal Refuge'],explain:'اللهُ = مُبْتَدَأ. الصَّمَد = خَبَر (here both are definite — this is a special case identifying Allah with this attribute). Translation: Allah IS The Eternal Refuge.'},
+  {prompt:'ذِكْرُ اللهِ طَعَامٌ',q:'Translate:',answer:'The remembrance of Allah is food.',wrong:['The food of Allah\'s remembrance','Remembering food for Allah','Allah\'s food is remembrance'],explain:'ذِكْرُ اللهِ (the remembrance of Allah) = إِضَافَة → مُبْتَدَأ. طَعَام (food) = indefinite → خَبَر. A beautiful metaphorical nominal sentence.'},
+  {prompt:'هَلِ الإِعْلَانُ كَذِبٌ؟',q:'Translate this question:',answer:'Is the announcement a lie?',wrong:['The announcement is a lie.','The lie is announced.','Is the lie announced?'],explain:'هَلْ turns a nominal sentence into a yes/no question. الإِعْلَان = the announcement (مُبْتَدَأ). كَذِب = a lie (خَبَر). "Is the announcement a lie?"'},
+  {prompt:'الق ل وب ضَعِيفَةٌ',q:'Translate:',answer:'The hearts are weak.',wrong:['The weak hearts','A weak heart','The hearts of the weak'],explain:'القُلُوب (hearts) = non-human plural → treated as feminine singular for adjective/predicate agreement. ضَعِيفَة = feminine singular خَبَر. The hearts ARE weak.'},
+  {prompt:'هُمْ آبَاءٌ',q:'Translate:',answer:'They are fathers.',wrong:['The fathers','Their fathers','They have fathers'],explain:'هُمْ = they (3+, m) = مُبْتَدَأ. آبَاء = fathers (indefinite broken plural) = خَبَر. "They are fathers." Nominal sentence with pronoun subject.'},
+  {prompt:'اللهُ قَيُّومُ السَّمَاوَاتِ',q:'Translate:',answer:'Allah is the Sustainer of the heavens.',wrong:['The heavens sustain Allah.','Allah\'s heavens are sustained.','The Sustainer of the heavens glorifies Allah.'],explain:'اللهُ = مُبْتَدَأ. قَيُّومُ السَّمَاوَاتِ = Sustainer of the heavens (إِضَافَة as خَبَر). Nominal sentence with an إِضَافَة as the predicate.'},
+  {prompt:'هُوَ اللهُ أَحَدٌ (Qur\'ān 112:1)',q:'Translate:',answer:'He is Allah, [the] One.',wrong:['He is one of Allah\'s servants.','Allah is one of the gods.','The One God is He.'],explain:'هُوَ = He (مُبْتَدَأ). اللهُ أَحَد = Allah, the One (two-part predicate or apposition). "Say: He is Allah, [the] One." A foundational declaration of divine oneness.'},
+];
+let gQ,gI,gSc,gTo;
+function gInit(){gQ=shuffle(grammarData.map(q=>({...q})));gI=0;gSc=0;gTo=0;gShow();}
+function gShow(){
+  if(gI>=gQ.length){doneSc('g-card','g-prog','g-counter',gSc,gTo,'gInit');return;}
+  const q=gQ[gI];document.getElementById('g-prompt').textContent=q.prompt;document.getElementById('g-sub').textContent=q.q;
+  document.getElementById('g-feedback').innerHTML='';document.getElementById('g-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('g-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;gTo++;if(ok)gSc++;meta('g',gI,gQ.length,gSc,gTo);
+    lockOpts('g-options',chosen,correct);
+    document.getElementById('g-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('g-next-row').style.display='flex';gI++;
+  });meta('g',gI,gQ.length,gSc,gTo);
+}
+function gNext(){gShow();}
+
+// ── PRONOUNS ──
+const pronounData=[
+  {prompt:'مَالُهُ',q:'Translate (with attached pronoun):',answer:'his wealth',wrong:['her wealth','their wealth','your wealth'],explain:'مَال = wealth + ـهُ (3rd person m. sg. pronoun) = his wealth. The attached pronoun ـهُ creates an إِضَافَة: "the wealth of him."'},
+  {prompt:'مَالُكُمْ',q:'Translate:',answer:'your (3+, m) wealth / your wealth (group)',wrong:['his wealth','their (f) wealth','our wealth'],explain:'مَال + ـكُمْ (2nd person m. plural pronoun) = your wealth (addressing a group of men, or mixed group).'},
+  {prompt:'مَالِي',q:'Translate:',answer:'my wealth',wrong:['his wealth','your wealth','our wealth'],explain:'مَال + ـي (1st person sg. pronoun) = my wealth. Note: the kasra before ي — مَالِي not مَالُي.'},
+  {prompt:'مَالُنَا',q:'Translate:',answer:'our wealth',wrong:['my wealth','your wealth','their wealth'],explain:'مَال + ـنَا (1st person plural pronoun) = our wealth. The "nā" is both the subject (we) and the possessive (our) depending on context.'},
+  {prompt:'يَدَاهُ (Qur\'ān 78:40)',q:'Translate — and which rule applies?',answer:'his two hands — sandwiched nūn dropped (يَدَانِ → يَدَا + ـهُ)',wrong:['his hand — singular form','his hands — broken plural','your two hands — 2nd person'],explain:'يَدَانِ = two hands (dual). When مُضَاف, the نون drops: يَدَانِ + ـهُ = يَدَاهُ (not يَدَانِهُ). This is the sandwiched nūn rule.'},
+  {prompt:'بَنُو إِسْرَائِيلَ (Qur\'ān 10:90)',q:'Translate — and which rule applies?',answer:'The children of Isrā\'īl — نون dropped (بَنُونَ → بَنُو + إِسْرَائِيلَ)',wrong:['The sons of Israel — no rule applies','The two sons of Israel — dual','The descendants of Israel — broken plural'],explain:'بَنُونَ = sons (masc. sound plural). As مُضَاف, نون drops: بَنُو إِسْرَائِيلَ. Famous Qur\'ānic term for the Children of Israel.'},
+  {prompt:'عَيْنَاهُ (Qur\'ān 12:84)',q:'Translate:',answer:'his two eyes',wrong:['his eye (singular)','their eyes','his eyesight'],explain:'عَيْنَانِ = two eyes (dual) + ـهُ = عَيْنَاهُ (نون drops as مُضَاف). "His two eyes" — referring to Ya\'qūb ع weeping for Yūsuf ع.'},
+  {prompt:'وَالِدَيَّ (Qur\'ān 27:19)',q:'Translate:',answer:'my two parents',wrong:['his two parents','your two parents','the two parents'],explain:'وَالِدَانِ = two parents (dual) + ـي (my) = وَالِدَيَّ (نون drops; يَ contracts). "My two parents." From Sulaymān\'s ع du\'ā\': رَبِّ أَوْزِعْنِي أَنْ أَشْكُرَ نِعْمَتَكَ عَلَى وَالِدَيَّ.'},
+  {prompt:'ـهَا (as in مَالُهَا)',q:'What does the attached pronoun ـهَا indicate?',answer:'her / its (3rd person feminine singular)',wrong:['his (3rd person masculine singular)','their (3rd person plural)','your (2nd person feminine)'],explain:'ـهَا = her or its (3rd person feminine singular). مَالُهَا = her wealth. Compare: ـهُ = his, ـهُمَا = their (dual), ـهُمْ = their (masc. pl.), ـهُنَّ = their (fem. pl.).'},
+  {prompt:'ـكُنَّ (as in مَالُكُنَّ)',q:'Who does ـكُنَّ refer to?',answer:'you (2nd person feminine plural, 3+)',wrong:['you (2nd person masculine plural)','you (2nd person dual)','you (2nd person feminine singular)'],explain:'ـكُنَّ = you (addressing a group of 3+ women). مَالُكُنَّ = your wealth (said to a group of women). Compare: ـكُمْ = you (m. pl.), ـكُمَا = you (dual).'},
+];
+let pQ,pI,pSc,pTo;
+function pInit(){pQ=shuffle([...pronounData]);pI=0;pSc=0;pTo=0;pShow();}
+function pShow(){
+  if(pI>=pQ.length){doneSc('p-card','p-prog','p-counter',pSc,pTo,'pInit');return;}
+  const q=pQ[pI];document.getElementById('p-prompt').textContent=q.prompt;document.getElementById('p-sub').textContent=q.q;
+  document.getElementById('p-feedback').innerHTML='';document.getElementById('p-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('p-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;pTo++;if(ok)pSc++;meta('p',pI,pQ.length,pSc,pTo);
+    lockOpts('p-options',chosen,correct);
+    document.getElementById('p-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('p-next-row').style.display='flex';pI++;
+  });meta('p',pI,pQ.length,pSc,pTo);
+}
+function pNext(){pShow();}
+
+// ── DU'Ā' AL-ISTIFTĀḤ ──
+const duaData=[
+  {prompt:'أَنْتَ الْمَلِكُ لَا إِلَهَ إِلَّا أَنْتَ',q:'Translate:',answer:'You are the King. There is no god except You.',wrong:['You are the Lord. I submit to You.','You are the Guide. There is no guide but You.','You are the Truth. No one knows except You.'],explain:'الْمَلِك = the King (Divine attribute). لَا إِلَهَ إِلَّا أَنْتَ = there is no god except You. The du\'ā\' opens by declaring Allah\'s sovereignty.'},
+  {prompt:'أَنَا عَبْدُكَ',q:'Translate:',answer:'I am Your servant.',wrong:['You are my Lord.','I am Your messenger.','I am submitted to You.'],explain:'أَنَا = I (مُبْتَدَأ) · عَبْدُكَ = your servant (إِضَافَة with pronoun = خَبَر). Nominal sentence: I AM your servant. A humbling declaration before Allah.'},
+  {prompt:'ظَلَمْتُ نَفْسِي وَاعْتَرَفْتُ بِذَنْبِي',q:'Translate:',answer:'I have wronged my soul and I admitted my sin.',wrong:['I seek refuge from my soul and its sins.','I have been patient with my sins.','I know my soul and its wrongs.'],explain:'ظَلَمْتُ = I wronged (past, 1st sg.) · نَفْسِي = my soul · اعْتَرَفْتُ = I admitted/confessed · ذَنْب = sin. A profound admission of self-wrongdoing.'},
+  {prompt:'فَاغْفِرْ لِي ذُنُوبِي جَمِيعًا',q:'Translate:',answer:'So forgive me all of my sins.',wrong:['So accept my repentance entirely.','So guide me away from my sins.','So purify me of all my sins.'],explain:'اغْفِرْ = forgive (command to Allah) · لِي = for me · ذُنُوبِي = my sins (plural) · جَمِيعًا = all of them. Then the du\'ā\' notes: only You forgive sins (إِنَّهُ لَا يَغْفِرُ الذُّنُوبَ إِلَّا أَنْتَ).'},
+  {prompt:'اهْدِنِي لِأَحْسَنِ الأَخْلَاقِ',q:'Translate:',answer:'Guide me to the best of character traits.',wrong:['Guide me to the best of deeds.','Keep me away from bad character.','Guide me on the straight path.'],explain:'اهْدِنِي = guide me (command) · أَحْسَن الأَخْلَاق = the best of character traits (إِضَافَة). Then: لَا يَهْدِي لِأَحْسَنِهَا إِلَّا أَنْتَ = only You guide to the best of them.'},
+  {prompt:'بَاعِدْ بَيْنِي وَبَيْنَ خَطَايَايَ',q:'Translate:',answer:'Separate me and my sins [from each other].',wrong:['Guide me between my sins.','Make my sins far from others.','Forgive me for my sins entirely.'],explain:'بَاعِدْ = separate / put distance between · بَيْنِي = between me · بَيْنَ خَطَايَايَ = and my sins. Then it says: just as You separated the east and the west (كَمَا بَاعَدْتَ بَيْنَ الْمَشْرِقِ وَالْمَغْرِبِ).'},
+  {prompt:'نَقِّنِي مِنْ خَطَايَايَ كَمَا يُنَقَّى الثَّوْبُ الأَبْيَضُ مِنَ الدَّنَسِ',q:'Translate:',answer:'Purify me of my sins as white clothing is purified from filth.',wrong:['Cleanse me of my sins with snow and water.','Wash my sins away like the sea washes the shore.','Remove my sins as a heavy burden is lifted.'],explain:'نَقِّنِي = purify me · الثَّوْب الأَبْيَض = the white garment (adjectival phrase) · الدَّنَس = filth. The image: white clothing purified from stains — a vivid metaphor for spiritual purification.'},
+  {prompt:'سُبْحَانَكَ اللَّهُمَّ وَبِحَمْدِكَ وَتَبَارَكَ اسْمُكَ',q:'Translate:',answer:'Glory and Praise are Yours, O Allah, and blessed is Your name.',wrong:['O Allah, praise and thanks belong to You and Your name.','Your name is exalted, O Allah, and Your praise is vast.','Glory to You, O Allah, and Your mercy is great.'],explain:'سُبْحَانَكَ = glory be to You · بِحَمْدِكَ = and with Your praise · تَبَارَكَ = blessed is · اسْمُكَ = Your name. Recited at the start of prayer as glorification of Allah.'},
+];
+let dQ,dI,dSc,dTo;
+function dInit(){dQ=shuffle([...duaData]);dI=0;dSc=0;dTo=0;dShow();}
+function dShow(){
+  if(dI>=dQ.length){doneSc('d-card','d-prog','d-counter',dSc,dTo,'dInit');return;}
+  const q=dQ[dI];document.getElementById('d-prompt').textContent=q.prompt;document.getElementById('d-sub').textContent=q.q;
+  document.getElementById('d-feedback').innerHTML='';document.getElementById('d-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('d-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;dTo++;if(ok)dSc++;meta('d',dI,dQ.length,dSc,dTo);
+    lockOpts('d-options',chosen,correct);
+    document.getElementById('d-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('d-next-row').style.display='flex';dI++;
+  });meta('d',dI,dQ.length,dSc,dTo);
+}
+function dNext(){dShow();}
+
+// ── STORY CHAPTERS 3 & 4 ──
+const textData=[
+  {prompt:'يَا أَبَتِ لِمَاذَا تَعْبُدُ هَذِهِ الأَصْنَامَ؟',q:'Translate what Ibrāhīm said to his father:',answer:'O my father, why do you worship these idols?',wrong:['O people, why do you worship idols?','O father, where do these idols come from?','O father, are these idols real?'],explain:'يَا أَبَتِ = O my father (the تِ is a special vocative ending on أَب). لِمَاذَا = why. تَعْبُد = you worship (2nd person sg. present). Ibrāhīm addressed his father directly with this challenging question.'},
+  {prompt:'إِنَّ هَذِهِ الأَصْنَامَ لَا تَتَكَلَّمُ وَلَا تَسْمَع وَلَا تَأْكُل وَلَا تَشْرَب',q:'What 4 things did Ibrāhīm say the idols cannot do?',answer:'Speak, hear, eat, drink',wrong:['Speak, see, walk, feel','Hear, harm, benefit, move','Speak, harm, see, feel'],explain:'The 4 arguments: لَا تَتَكَلَّم (does not speak) · لَا تَسْمَع (does not hear) · لَا تَأْكُل (does not eat) · لَا تَشْرَب (does not drink). Ibrāhīm\'s rational dismantling of idol worship.'},
+  {prompt:'كَانَ النَّاسُ يَغْضَبُونَ وَلَا يَفْهَمُونَ',q:'Translate:',answer:'The people became angry and did not understand.',wrong:['The people understood and became happy.','The people left and became angry.','The people argued and did not speak.'],explain:'يَغْضَبُون = they become angry · لَا يَفْهَمُون = they do not understand. Despite Ibrāhīm\'s clear arguments, the people reacted with anger rather than reflection.'},
+  {prompt:'أَنَا أَكْسِرُ الأَصْنَامَ إِذَا ذَهَبَ النَّاسُ',q:'Translate what Ibrāhīm planned:',answer:'I will break the idols when the people leave.',wrong:['I will speak to the idols after the people leave.','I will hide the idols when the people are away.','I broke the idols after the people left.'],explain:'أَنَا أَكْسِر = I will break (present used for near future). إِذَا ذَهَبَ = when (they) leave. This was Ibrāhīm\'s private plan — wait until everyone leaves during the festival.'},
+  {prompt:'جَاءَ يَوْمُ عِيدٍ فَفَرِحَ النَّاسُ',q:'Translate:',answer:'The day of a festival came, and the people were happy.',wrong:['The people celebrated many festivals.','The people left the festival happily.','A day of worship came and the people praised Allah.'],explain:'جَاءَ = came · يَوْم عِيد = a day of festival · فَفَرِح = so they were happy (فَ = so/then, indicating sequence). The festival was the perfect opportunity for Ibrāhīm\'s plan.'},
+  {prompt:'أَنَا سَقِيمٌ!',q:'What did Ibrāhīm say to avoid going to the festival?',answer:'I am sick!',wrong:['I am busy!','I am fasting!','I am praying!'],explain:'سَقِيم = sick/ill. Ibrāhīm ع used this excuse: أَنَا سَقِيم (I am sick) — a nominal sentence. This allowed him to stay behind while everyone left for the celebration.'},
+  {prompt:'وَجَاءَ إِبْرَاهِيمُ إِلَى الأَصْنَامِ وَقَالَ لِلأَصْنَامِ: أَلَا تَتَكَلَّمُونَ؟',q:'Translate:',answer:'Ibrāhīm came to the idols and said to the idols: Do you not speak?',wrong:['Ibrāhīm asked the people why they worship idols.','Ibrāhīm warned the idols before breaking them.','Ibrāhīm spoke to the people about the idols.'],explain:'Ibrāhīm spoke directly to the idols: أَلَا تَتَكَلَّمُون (do you not speak?) and أَلَا تَسْمَعُون (do you not hear?) — challenging them to respond, of course they could not.'},
+  {prompt:'وَضَرَبَ إِبْرَاهِيمُ الأَصْنَامَ بِالْفَأْسِ',q:'Translate:',answer:'Ibrāhīm struck the idols with the ax.',wrong:['Ibrāhīm burned the idols with fire.','Ibrāhīm threw the idols into the sea.','Ibrāhīm buried the idols in the ground.'],explain:'ضَرَبَ = struck/hit (past tense) · الأَصْنَامَ = the idols (مَنْصُوب — direct object) · بِالْفَأْس = with the ax (بِـ = with + الْفَأْس = the ax). The famous act of Ibrāhīm ع.'},
+  {prompt:'وَتَرَكَ إِبْرَاهِيمُ الصَّنَمَ الأَكْبَرَ',q:'What did Ibrāhīm leave untouched, and why?',answer:'The biggest idol — so the people would think it broke the others',wrong:['The smallest idol — he felt sorry for it','All the idols — he only warned them','The gold idol — it was too valuable'],explain:'وَتَرَكَ = and he left (past tense). الصَّنَمَ الأَكْبَر = the biggest idol (adjectival phrase). Ibrāhīm\'s strategy: leave the biggest so when questioned, he could challenge them to ask it — proving it cannot speak.'},
+];
+let tQ,tI,tSc,tTo;
+function tInit(){tQ=shuffle([...textData]);tI=0;tSc=0;tTo=0;tShow();}
+function tShow(){
+  if(tI>=tQ.length){doneSc('t-card','t-prog','t-counter',tSc,tTo,'tInit');return;}
+  const q=tQ[tI];document.getElementById('t-prompt').textContent=q.prompt;document.getElementById('t-sub').textContent=q.q;
+  document.getElementById('t-feedback').innerHTML='';document.getElementById('t-next-row').style.display='none';
+  const opts=shuffle([q.answer,...q.wrong]);const ci=opts.indexOf(q.answer);
+  buildOpts('t-options',opts,ci,(chosen,correct)=>{
+    const ok=chosen===correct;tTo++;if(ok)tSc++;meta('t',tI,tQ.length,tSc,tTo);
+    lockOpts('t-options',chosen,correct);
+    document.getElementById('t-feedback').innerHTML=ok?`<div class="feedback-box feedback-correct">Correct! ${q.explain}</div>`:`<div class="feedback-box feedback-wrong">The answer is <strong>${q.answer}</strong>. ${q.explain}</div>`;
+    document.getElementById('t-next-row').style.display='flex';tI++;
+  });meta('t',tI,tQ.length,tSc,tTo);
+}
+function tNext(){tShow();}
+
+vInit();gInit();pInit();dInit();tInit();
+</script>
+<script src="theme.js"></script>
+</body>
+</html>
