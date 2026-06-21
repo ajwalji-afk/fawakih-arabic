@@ -84,20 +84,22 @@
     } catch (e) {}
   }
 
-  // ── Sparkle burst animation on correct ──
+  // ── Floating orb burst on correct (like the tube ball in the game) ──
+  var orbColors = ['#e84040','#2196f3','#2ecc71','#f0a500','#9b59b6','#0ac8e0','#e84393','#f4d03f'];
   function spawnSparkle(x, y) {
     if (!document.body.classList.contains('arcade')) return;
-    var stars = ['✦', '✧', '⭐', '✨', '★'];
     for (var i = 0; i < 5; i++) {
       (function (i) {
-        var el = document.createElement('span');
-        el.className = 'sparkle-burst';
-        el.textContent = stars[i % stars.length];
-        el.style.left = (x + (Math.random() - 0.5) * 80) + 'px';
-        el.style.top  = (y + (Math.random() - 0.5) * 60) + 'px';
-        el.style.animationDelay = (i * 0.06) + 's';
-        document.body.appendChild(el);
-        setTimeout(function () { el.remove(); }, 800);
+        var orb = document.createElement('div');
+        orb.className = 'arcade-orb';
+        var color = orbColors[Math.floor(Math.random() * orbColors.length)];
+        orb.style.background = color;
+        orb.style.boxShadow = '0 0 10px 4px ' + color + '88';
+        orb.style.left = (x + (Math.random() - 0.5) * 60) + 'px';
+        orb.style.top  = (y + (Math.random() - 0.5) * 30) + 'px';
+        orb.style.animationDelay = (i * 0.07) + 's';
+        document.body.appendChild(orb);
+        setTimeout(function () { orb.remove(); }, 900);
       })(i);
     }
   }

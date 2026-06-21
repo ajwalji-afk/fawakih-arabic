@@ -1,68 +1,57 @@
 /* ═══════════════════════════════════════════════════
-   Magic Sort Arcade Theme — Fawakih Arabic
+   Arcade Theme — Fawakih Arabic
    Applied when <body> has class "arcade"
 ═══════════════════════════════════════════════════ */
 
 @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
 
-/* ── SPARKLE KEYFRAMES ── */
-@keyframes sparkle-pop {
-  0%   { transform: scale(1); }
-  40%  { transform: scale(1.08); }
-  100% { transform: scale(1); }
+/* ── KEYFRAMES ── */
+@keyframes orb-float {
+  0%   { opacity:1; transform: translateY(0) scale(1); }
+  60%  { opacity:1; transform: translateY(-60px) scale(1.15); }
+  100% { opacity:0; transform: translateY(-100px) scale(0.8); }
 }
-@keyframes star-burst {
-  0%   { opacity:1; transform: scale(0) rotate(0deg); }
-  60%  { opacity:1; transform: scale(1.4) rotate(180deg); }
-  100% { opacity:0; transform: scale(1.8) rotate(360deg); }
+@keyframes tube-pop {
+  0%   { transform: scaleY(1); }
+  35%  { transform: scaleY(1.06); }
+  100% { transform: scaleY(1); }
+}
+@keyframes wrong-shake {
+  0%,100% { transform: translateX(0); }
+  20%     { transform: translateX(-7px); }
+  40%     { transform: translateX(7px); }
+  60%     { transform: translateX(-4px); }
+  80%     { transform: translateX(4px); }
 }
 @keyframes shimmer {
   0%,100% { background-position: 0% 50%; }
   50%      { background-position: 100% 50%; }
 }
 @keyframes float-star {
-  0%,100% { transform: translateY(0) scale(1); opacity:.7; }
-  50%     { transform: translateY(-8px) scale(1.2); opacity:1; }
+  0%,100% { transform: translateY(0) scale(1); opacity:.8; }
+  50%     { transform: translateY(-10px) scale(1.2); opacity:1; }
 }
-@keyframes wrong-shake {
-  0%,100% { transform: translateX(0); }
-  20%     { transform: translateX(-6px); }
-  40%     { transform: translateX(6px); }
-  60%     { transform: translateX(-4px); }
-  80%     { transform: translateX(4px); }
+@keyframes challenge-pulse {
+  0%,100% { text-shadow: 0 0 8px rgba(255,200,50,0.6), 2px 2px 0 #8b3a00; }
+  50%     { text-shadow: 0 0 18px rgba(255,220,80,0.9), 2px 2px 0 #8b3a00; }
 }
 
-/* ── ROOT OVERRIDES ── */
+/* ── ROOT / BODY ── */
 body.arcade {
   font-family: 'Nunito', sans-serif !important;
-  background: linear-gradient(160deg, #1a0a3d 0%, #3d1278 45%, #6b2fa0 100%) !important;
-  background-image: none !important;
+  background: #0e0525 !important;
+  background-image:
+    radial-gradient(ellipse at 50% 0%, rgba(90,30,160,0.6) 0%, transparent 65%),
+    radial-gradient(ellipse at 80% 100%, rgba(30,10,80,0.8) 0%, transparent 60%) !important;
   color: #ffffff !important;
   min-height: 100vh;
   position: relative;
-  overflow-x: hidden;
-}
-
-/* Floating decorative stars in background */
-body.arcade::before {
-  content: '✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦ ✧ ✦';
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  font-size: 11px;
-  color: rgba(255,255,255,0.12);
-  letter-spacing: 18px;
-  text-align: center;
-  padding-top: 12px;
-  pointer-events: none;
-  z-index: 0;
 }
 
 /* ── HEADER ── */
 body.arcade header {
-  background: linear-gradient(180deg, rgba(255,200,50,0.15) 0%, transparent 100%);
-  border-bottom: 2px solid rgba(240,165,0,0.4) !important;
-  padding: 2rem 1rem 1.5rem;
-  position: relative;
+  background: linear-gradient(180deg, rgba(255,190,40,0.12) 0%, transparent 100%);
+  border-bottom: 2px solid rgba(240,165,0,0.35) !important;
 }
 body.arcade header::after {
   background: linear-gradient(90deg, #f0a500, #ffdd57, #f0a500) !important;
@@ -78,252 +67,277 @@ body.arcade .lesson-label {
 body.arcade h1 {
   font-family: 'Fredoka One', sans-serif !important;
   color: #ffffff !important;
-  text-shadow: 0 0 20px rgba(240,165,0,0.6), 0 2px 4px rgba(0,0,0,0.5);
+  text-shadow: 0 0 24px rgba(240,165,0,0.55), 2px 2px 0 rgba(0,0,0,0.5);
   font-size: clamp(1.8rem, 5vw, 2.8rem) !important;
 }
 body.arcade .arabic-subtitle {
   color: #ffdd57 !important;
-  text-shadow: 0 0 12px rgba(255,220,80,0.5);
+  text-shadow: 0 0 12px rgba(255,220,80,0.45);
 }
-body.arcade .header-sub {
-  color: rgba(255,255,255,0.7) !important;
-}
+body.arcade .header-sub { color: rgba(255,255,255,0.6) !important; }
 
 /* ── TABS ── */
 body.arcade .tabs {
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.25);
   padding: 1rem 1rem 0;
-  border-bottom: 2px solid rgba(240,165,0,0.3);
+  border-bottom: 2px solid rgba(240,165,0,0.25);
 }
 body.arcade .tab-btn {
   font-family: 'Nunito', sans-serif !important;
   font-weight: 700 !important;
-  background: rgba(255,255,255,0.08) !important;
-  color: rgba(255,255,255,0.6) !important;
-  border: 1px solid rgba(255,255,255,0.15) !important;
+  background: rgba(255,255,255,0.07) !important;
+  color: rgba(255,255,255,0.55) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
   border-bottom: none !important;
   border-radius: 10px 10px 0 0 !important;
-  transition: all 0.2s;
 }
 body.arcade .tab-btn:hover:not(.active) {
-  background: rgba(255,255,255,0.15) !important;
+  background: rgba(255,255,255,0.13) !important;
   color: #fff !important;
 }
 body.arcade .tab-btn.active {
-  background: rgba(240,165,0,0.25) !important;
+  background: rgba(240,165,0,0.2) !important;
   color: #ffdd57 !important;
-  border-color: rgba(240,165,0,0.5) !important;
+  border-color: rgba(240,165,0,0.45) !important;
   border-bottom: 1px solid transparent !important;
-  text-shadow: 0 0 8px rgba(255,220,80,0.6);
+  text-shadow: 0 0 8px rgba(255,220,80,0.55);
 }
 
-/* ── TAB CONTENT / SECTION INTRO ── */
+/* ── TAB CONTENT / INTRO ── */
 body.arcade .tab-content {
-  border-top: 2px solid rgba(240,165,0,0.3) !important;
+  border-top: 2px solid rgba(240,165,0,0.25) !important;
 }
 body.arcade .section-intro {
-  background: rgba(255,255,255,0.07) !important;
-  border: 1px solid rgba(255,255,255,0.15) !important;
-  color: rgba(255,255,255,0.85) !important;
-  border-radius: 14px !important;
-  backdrop-filter: blur(4px);
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.12) !important;
+  color: rgba(255,255,255,0.82) !important;
+  border-radius: 16px !important;
+  backdrop-filter: blur(6px);
 }
-body.arcade .section-intro strong {
-  color: #ffdd57 !important;
-}
+body.arcade .section-intro strong { color: #ffdd57 !important; }
 body.arcade .section-intro .rule {
   color: #ffdd57 !important;
-  text-shadow: 0 0 10px rgba(255,220,80,0.5);
+  text-shadow: 0 0 10px rgba(255,220,80,0.45);
 }
 
 /* ── PROGRESS BAR ── */
 body.arcade .progress-bar {
-  background: rgba(255,255,255,0.1) !important;
-  border-radius: 4px !important;
-  height: 6px !important;
+  background: rgba(255,255,255,0.08) !important;
+  border-radius: 6px !important;
+  height: 8px !important;
 }
 body.arcade .progress-fill {
-  background: linear-gradient(90deg, #f0a500, #ffdd57, #f4a830) !important;
+  background: linear-gradient(90deg, #e84393, #f0a500, #ffdd57) !important;
   background-size: 200% 100%;
-  animation: shimmer 1.5s ease infinite;
-  height: 6px !important;
-  border-radius: 4px !important;
-  box-shadow: 0 0 8px rgba(240,165,0,0.6);
+  animation: shimmer 2s ease infinite;
+  height: 8px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 0 10px rgba(240,165,0,0.55);
 }
 
 /* ── QUIZ META ── */
 body.arcade .quiz-meta {
-  color: rgba(255,255,255,0.55) !important;
+  color: rgba(255,255,255,0.45) !important;
   font-family: 'Nunito', sans-serif !important;
   font-weight: 700;
-  letter-spacing: 0.05em;
 }
 
 /* ── QUESTION CARD ── */
 body.arcade .question-card {
-  background: rgba(255,255,255,0.07) !important;
-  border: 1px solid rgba(255,255,255,0.18) !important;
-  border-radius: 20px !important;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.12) !important;
-  backdrop-filter: blur(8px);
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(255,255,255,0.14) !important;
+  border-radius: 22px !important;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.1) !important;
+  backdrop-filter: blur(10px);
   position: relative;
-  overflow: visible;
 }
 
 /* ── ARABIC PROMPTS ── */
 body.arcade .prompt-arabic,
 body.arcade .prompt-arabic-sm {
   color: #ffffff !important;
-  text-shadow: 0 0 16px rgba(255,255,255,0.3);
+  text-shadow: 0 0 18px rgba(255,255,255,0.25);
 }
-body.arcade .prompt-english {
-  color: rgba(255,255,255,0.9) !important;
-}
+body.arcade .prompt-english { color: rgba(255,255,255,0.88) !important; }
 body.arcade .prompt-sub {
-  color: rgba(255,255,255,0.45) !important;
+  color: rgba(255,255,255,0.38) !important;
   font-family: 'Nunito', sans-serif !important;
-  letter-spacing: 0.08em;
 }
 
-/* ── MCQ OPTIONS — jewel tones cycle ── */
+/* ══════════════════════════════════════════
+   MCQ OPTIONS — tube / vial style
+   Each option looks like a color segment
+   lifted out of a sorting tube.
+══════════════════════════════════════════ */
 body.arcade .mc-options {
-  gap: 12px !important;
+  gap: 10px !important;
 }
 
-/* Base option style */
 body.arcade .mc-option {
   font-family: 'Nunito', sans-serif !important;
-  font-weight: 700 !important;
-  font-size: 14px !important;
-  border-radius: 14px !important;
-  padding: 14px 12px !important;
-  border: 2px solid rgba(255,255,255,0.2) !important;
+  font-weight: 800 !important;
+  font-size: 13.5px !important;
+  border-radius: 40px !important;       /* pill / tube-segment shape */
+  padding: 16px 10px !important;
+  border: 2px solid rgba(255,255,255,0.0) !important;
   color: #ffffff !important;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.4);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
-  transition: all 0.15s ease;
+  text-shadow: 0 1px 4px rgba(0,0,0,0.5);
+  box-shadow:
+    0 5px 14px rgba(0,0,0,0.35),
+    inset 0 1px 0 rgba(255,255,255,0.28),  /* top glass highlight */
+    inset 3px 0 8px rgba(255,255,255,0.12); /* left-side tube sheen */
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
   position: relative;
   overflow: hidden;
+  cursor: pointer;
 }
-/* Glossy shine overlay */
-body.arcade .mc-option::before {
+
+/* Glass sheen line (like the tube highlight in the game) */
+body.arcade .mc-option::after {
   content: '';
   position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 45%;
-  background: rgba(255,255,255,0.12);
-  border-radius: 12px 12px 0 0;
+  top: 6px; left: 8px;
+  width: 6px;
+  bottom: 6px;
+  background: rgba(255,255,255,0.18);
+  border-radius: 4px;
   pointer-events: none;
 }
 
-/* Jewel color cycle for the 4 options */
-body.arcade .mc-option:nth-child(1) { background: linear-gradient(160deg, #c0392b, #e74c3c) !important; border-color: rgba(231,76,60,0.5) !important; }
-body.arcade .mc-option:nth-child(2) { background: linear-gradient(160deg, #1a6fa8, #2196f3) !important; border-color: rgba(33,150,243,0.5) !important; }
-body.arcade .mc-option:nth-child(3) { background: linear-gradient(160deg, #27ae60, #2ecc71) !important; border-color: rgba(46,204,113,0.5) !important; }
-body.arcade .mc-option:nth-child(4) { background: linear-gradient(160deg, #d35400, #f39c12) !important; border-color: rgba(243,156,18,0.5) !important; }
+/* 8-color tube palette — cycling through all the game's colors */
+body.arcade .mc-option:nth-child(1) {
+  background: linear-gradient(175deg, #c0392b 0%, #962d22 100%) !important;
+}
+body.arcade .mc-option:nth-child(2) {
+  background: linear-gradient(175deg, #1a6fa8 0%, #155a8a 100%) !important;
+}
+body.arcade .mc-option:nth-child(3) {
+  background: linear-gradient(175deg, #1d9c58 0%, #157a43 100%) !important;
+}
+body.arcade .mc-option:nth-child(4) {
+  background: linear-gradient(175deg, #b8560a 0%, #913f00 100%) !important;
+}
+/* If a quiz ever renders more than 4 options */
+body.arcade .mc-option:nth-child(5) {
+  background: linear-gradient(175deg, #7b3fa0 0%, #5c2d80 100%) !important;
+}
+body.arcade .mc-option:nth-child(6) {
+  background: linear-gradient(175deg, #0a8fa8 0%, #066d82 100%) !important;
+}
 
 body.arcade .mc-option:hover:not(.disabled) {
-  transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.25) !important;
+  transform: translateY(-3px) scale(1.02) !important;
+  box-shadow:
+    0 10px 22px rgba(0,0,0,0.45),
+    inset 0 1px 0 rgba(255,255,255,0.35),
+    inset 3px 0 10px rgba(255,255,255,0.18) !important;
 }
 
-/* Correct — green burst */
+/* CORRECT — bright lime green + tube-pop animation */
 body.arcade .mc-option.correct {
-  background: linear-gradient(160deg, #27ae60, #2ecc71) !important;
-  border-color: #2ecc71 !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 20px rgba(46,204,113,0.7), 0 4px 12px rgba(0,0,0,0.3) !important;
-  animation: sparkle-pop 0.35s ease;
+  background: linear-gradient(175deg, #2ecc71 0%, #1da85a 100%) !important;
+  border-color: rgba(46,204,113,0.6) !important;
+  box-shadow:
+    0 0 24px rgba(46,204,113,0.65),
+    0 6px 14px rgba(0,0,0,0.3),
+    inset 0 1px 0 rgba(255,255,255,0.35) !important;
+  animation: tube-pop 0.35s ease;
 }
-/* Wrong — red shake */
+
+/* WRONG — shake + dark red */
 body.arcade .mc-option.wrong {
-  background: linear-gradient(160deg, #8b0000, #c0392b) !important;
-  border-color: #e74c3c !important;
-  color: #ffffff !important;
-  box-shadow: 0 0 16px rgba(192,57,43,0.6) !important;
+  background: linear-gradient(175deg, #922020 0%, #6b1010 100%) !important;
+  border-color: rgba(200,50,50,0.5) !important;
+  box-shadow: 0 0 18px rgba(180,30,30,0.5) !important;
   animation: wrong-shake 0.4s ease;
 }
 
 /* ── FEEDBACK BOXES ── */
 body.arcade .feedback-box {
   font-family: 'Nunito', sans-serif !important;
-  font-weight: 700 !important;
-  border-radius: 12px !important;
+  font-weight: 800 !important;
+  border-radius: 14px !important;
   font-size: 13.5px !important;
 }
 body.arcade .feedback-correct {
-  background: rgba(46,204,113,0.2) !important;
-  border: 1px solid rgba(46,204,113,0.5) !important;
-  color: #a8ffcb !important;
+  background: rgba(46,204,113,0.18) !important;
+  border: 1px solid rgba(46,204,113,0.45) !important;
+  color: #a0ffc8 !important;
+  /* "CHALLENGE YOURSELF!" inspired bold style */
+  text-shadow: 0 0 8px rgba(46,204,113,0.4);
+  animation: challenge-pulse 2s ease infinite;
 }
 body.arcade .feedback-wrong {
-  background: rgba(192,57,43,0.2) !important;
-  border: 1px solid rgba(192,57,43,0.5) !important;
+  background: rgba(192,57,43,0.18) !important;
+  border: 1px solid rgba(192,57,43,0.45) !important;
   color: #ffb3a7 !important;
 }
 
-/* ── BUTTONS ── */
+/* ── NEXT / ACTION BUTTONS ── */
 body.arcade .btn {
   font-family: 'Nunito', sans-serif !important;
   font-weight: 800 !important;
-  border-radius: 12px !important;
-  letter-spacing: 0.04em;
-  border: 2px solid rgba(255,255,255,0.2) !important;
-  color: rgba(255,255,255,0.8) !important;
-  background: rgba(255,255,255,0.08) !important;
+  border-radius: 40px !important;
+  border: 2px solid rgba(255,255,255,0.15) !important;
+  color: rgba(255,255,255,0.75) !important;
+  background: rgba(255,255,255,0.07) !important;
 }
 body.arcade .btn:hover {
-  background: rgba(255,255,255,0.15) !important;
+  background: rgba(255,255,255,0.13) !important;
   color: #fff !important;
 }
 body.arcade .btn-primary {
-  background: linear-gradient(135deg, #f0a500, #ffdd57) !important;
-  border-color: #f0a500 !important;
-  color: #1a0a3d !important;
+  background: linear-gradient(135deg, #e8850a, #ffb700) !important;
+  border-color: transparent !important;
+  color: #1a0a00 !important;
   font-weight: 800 !important;
-  box-shadow: 0 4px 14px rgba(240,165,0,0.4);
+  box-shadow: 0 4px 16px rgba(240,140,0,0.45);
+  /* "CHALLENGE YOURSELF!" text treatment */
+  text-shadow: none;
+  letter-spacing: 0.05em;
 }
 body.arcade .btn-primary:hover {
-  background: linear-gradient(135deg, #ffb700, #ffe770) !important;
-  transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(240,165,0,0.55);
+  background: linear-gradient(135deg, #f09a1a, #ffc820) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 22px rgba(240,140,0,0.6);
 }
 
 /* ── DONE SCREEN ── */
 body.arcade .done-screen .big-check {
-  font-size: 56px;
-  filter: drop-shadow(0 0 12px rgba(240,165,0,0.8));
-  animation: float-star 1.5s ease infinite;
+  font-size: 60px;
+  filter: drop-shadow(0 0 14px rgba(240,165,0,0.8));
+  animation: float-star 1.6s ease infinite;
 }
 body.arcade .done-screen p {
   font-family: 'Fredoka One', sans-serif !important;
   color: #ffdd57 !important;
-  text-shadow: 0 0 12px rgba(255,220,80,0.5);
-  font-size: 1.5rem !important;
+  font-size: 1.6rem !important;
+  text-shadow: 2px 2px 0 #7a4800, 0 0 16px rgba(255,220,80,0.5);
 }
 body.arcade .done-screen small {
-  color: rgba(255,255,255,0.6) !important;
+  color: rgba(255,255,255,0.55) !important;
   font-family: 'Nunito', sans-serif !important;
 }
 body.arcade .restart-btn {
   font-family: 'Nunito', sans-serif !important;
   font-weight: 800 !important;
-  border-radius: 14px !important;
-  background: linear-gradient(135deg, #f0a500, #ffdd57) !important;
-  border-color: #f0a500 !important;
-  color: #1a0a3d !important;
-  box-shadow: 0 4px 14px rgba(240,165,0,0.4);
+  border-radius: 40px !important;
+  background: linear-gradient(135deg, #e8850a, #ffb700) !important;
+  border-color: transparent !important;
+  color: #1a0a00 !important;
+  box-shadow: 0 4px 16px rgba(240,140,0,0.45);
+  letter-spacing: 0.05em;
 }
 body.arcade .restart-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(240,165,0,0.55);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(240,140,0,0.6);
 }
 
-/* ── AUTH BAR (lesson files) ── */
+/* ── AUTH BAR ── */
 body.arcade #auth-bar {
-  background: rgba(0,0,0,0.35) !important;
-  border-bottom: 1px solid rgba(240,165,0,0.3) !important;
-  color: rgba(255,255,255,0.7) !important;
+  background: rgba(0,0,0,0.4) !important;
+  border-bottom: 1px solid rgba(240,165,0,0.25) !important;
+  color: rgba(255,255,255,0.65) !important;
 }
 body.arcade #auth-bar a,
 body.arcade #auth-bar button {
@@ -331,32 +345,32 @@ body.arcade #auth-bar button {
   font-family: 'Nunito', sans-serif !important;
 }
 
-/* ── FLOATING THEME TOGGLE ── */
+/* ── FLOATING THEME TOGGLE PILL ── */
 #theme-toggle-btn {
   position: fixed;
   bottom: 20px;
   right: 20px;
   z-index: 9999;
-  padding: 10px 16px;
+  padding: 10px 18px;
   border-radius: 50px;
-  border: 2px solid rgba(255,255,255,0.3);
   font-family: 'Nunito', sans-serif;
   font-weight: 800;
   font-size: 13px;
   cursor: pointer;
   transition: all 0.2s ease;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 18px rgba(0,0,0,0.35);
   letter-spacing: 0.04em;
+  border: 2px solid transparent;
 }
 body:not(.arcade) #theme-toggle-btn {
-  background: linear-gradient(135deg, #3d1278, #6b2fa0);
+  background: linear-gradient(135deg, #2a0d5e, #5a2090);
   color: #ffdd57;
-  border-color: rgba(240,165,0,0.4);
+  border-color: rgba(240,165,0,0.3);
 }
 body:not(.arcade) #theme-toggle-btn:hover {
-  background: linear-gradient(135deg, #4a1d8a, #7a3ab8);
+  background: linear-gradient(135deg, #3a1a78, #6e2eaa);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(107,47,160,0.5);
+  box-shadow: 0 6px 22px rgba(90,32,144,0.55);
 }
 body.arcade #theme-toggle-btn {
   background: linear-gradient(135deg, #efe9dc, #f7f3ec);
@@ -366,14 +380,17 @@ body.arcade #theme-toggle-btn {
 body.arcade #theme-toggle-btn:hover {
   background: #fdf8ee;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(184,134,11,0.3);
+  box-shadow: 0 6px 22px rgba(184,134,11,0.3);
 }
 
-/* ── SPARKLE BURST on correct (injected element) ── */
-.sparkle-burst {
+/* ── FLOATING ORB (correct answer particle) ── */
+.arcade-orb {
   position: fixed;
   pointer-events: none;
-  font-size: 28px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
   z-index: 9998;
-  animation: star-burst 0.7s ease forwards;
+  box-shadow: 0 0 10px 4px rgba(255,255,255,0.3);
+  animation: orb-float 0.7s ease forwards;
 }
