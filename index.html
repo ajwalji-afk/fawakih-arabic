@@ -5,9 +5,13 @@
 <title>Fawakih Arabic</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="arcade.css">
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
 :root{--ink:#1c1a16;--parchment:#f7f3ec;--cream:#efe9dc;--rust:#8b3a2a;--border:#d4c9b0;}
-body{font-family:Georgia,serif;background:var(--parchment);color:var(--ink);margin:0;padding:30px;}
+
+/* ── PARCHMENT BASE ── */
+body{font-family:Georgia,serif;background:var(--parchment);color:var(--ink);margin:0;padding:30px;min-height:100vh;transition:background 0.4s,color 0.4s;}
 .card{max-width:620px;margin:30px auto;background:white;border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:0 2px 16px rgba(28,26,22,.12);}
 input{width:100%;padding:11px;margin:7px 0;font-size:16px;box-sizing:border-box;border:1px solid var(--border);border-radius:6px;}
 button,a.lesson-link{display:inline-block;margin:6px 6px 6px 0;padding:10px 14px;cursor:pointer;border:1px solid var(--border);border-radius:6px;background:var(--cream);color:var(--ink);text-decoration:none;font-family:Georgia,serif;font-size:15px;}
@@ -15,9 +19,52 @@ button:hover,a.lesson-link:hover{background:#fdf8ee;}
 #status{color:var(--rust);margin-top:12px;white-space:pre-wrap;}
 #app{display:none;}
 .lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:18px;}
+
+/* ── THEME PICKER ── */
+.theme-picker{max-width:620px;margin:0 auto 0;display:flex;gap:14px;justify-content:center;padding:0 0 24px;}
+.theme-btn{flex:1;max-width:280px;padding:0;border-radius:16px;border:3px solid transparent;cursor:pointer;overflow:hidden;text-align:center;transition:all 0.2s;font-family:Georgia,serif;background:none;}
+.theme-btn:hover{transform:translateY(-3px);}
+.theme-btn.selected{border-color:#b8860b;box-shadow:0 0 0 2px rgba(184,134,11,0.3);}
+.theme-preview{height:90px;display:flex;align-items:center;justify-content:center;font-size:28px;gap:8px;}
+.theme-preview.parchment-preview{background:#f7f3ec;border-bottom:1px solid #d4c9b0;}
+.theme-preview.arcade-preview{background:linear-gradient(135deg,#1a0a3d,#6b2fa0);position:relative;overflow:hidden;}
+.theme-preview.arcade-preview::after{content:'✦ ✧ ✨';position:absolute;top:8px;right:10px;font-size:14px;opacity:0.6;}
+.theme-label{padding:10px 14px;font-size:14px;font-weight:600;background:white;color:var(--ink);}
+.theme-btn.selected .theme-label{background:#fffbf0;}
+.theme-picker-title{text-align:center;font-size:13px;letter-spacing:0.12em;text-transform:uppercase;color:#9a8e7a;font-family:'Courier New',monospace;margin-bottom:14px;max-width:620px;margin-left:auto;margin-right:auto;}
+
+/* ── ARCADE OVERRIDES for index ── */
+body.arcade .card{background:rgba(255,255,255,0.07)!important;border:1px solid rgba(255,255,255,0.18)!important;border-radius:20px!important;color:#fff!important;backdrop-filter:blur(8px);}
+body.arcade h2{font-family:'Fredoka One',sans-serif!important;color:#ffdd57!important;text-shadow:0 0 16px rgba(255,220,80,0.5);}
+body.arcade p{color:rgba(255,255,255,0.8)!important;}
+body.arcade input{background:rgba(255,255,255,0.1)!important;border-color:rgba(255,255,255,0.2)!important;color:#fff!important;border-radius:10px!important;}
+body.arcade input::placeholder{color:rgba(255,255,255,0.4)!important;}
+body.arcade button,body.arcade a.lesson-link{background:rgba(255,255,255,0.1)!important;border-color:rgba(255,255,255,0.2)!important;color:#fff!important;font-family:'Nunito',sans-serif!important;font-weight:700!important;border-radius:10px!important;}
+body.arcade button:hover,body.arcade a.lesson-link:hover{background:rgba(255,255,255,0.2)!important;}
+body.arcade a.lesson-link[href="lesson_weakpoints2.html"]{background:linear-gradient(135deg,#f0a500,#ffdd57)!important;border-color:#f0a500!important;color:#1a0a3d!important;}
+body.arcade #status{color:#ff9f9f!important;}
+body.arcade hr{border-color:rgba(255,255,255,0.15)!important;}
+body.arcade .theme-picker-title{color:rgba(255,255,255,0.5)!important;}
+body.arcade .theme-btn .theme-label{background:rgba(255,255,255,0.08)!important;color:#fff!important;}
+body.arcade .theme-btn.selected{border-color:#ffdd57!important;box-shadow:0 0 0 2px rgba(255,221,87,0.3)!important;}
+body.arcade .theme-btn.selected .theme-label{background:rgba(240,165,0,0.2)!important;}
 </style>
 </head>
 <body>
+
+<!-- THEME PICKER -->
+<p class="theme-picker-title">Choose your style</p>
+<div class="theme-picker">
+  <button class="theme-btn" id="btn-parchment" onclick="setTheme('parchment')">
+    <div class="theme-preview parchment-preview">📜 🖋️</div>
+    <div class="theme-label">📜 Parchment — Classic</div>
+  </button>
+  <button class="theme-btn" id="btn-arcade" onclick="setTheme('arcade')">
+    <div class="theme-preview arcade-preview">✨ 🎮</div>
+    <div class="theme-label">✨ Arcade — Magic Sort</div>
+  </button>
+</div>
+
 <div id="login" class="card">
   <h2>Fawakih Arabic</h2>
   <p>Login or create an account.</p>
@@ -28,25 +75,56 @@ button:hover,a.lesson-link:hover{background:#fdf8ee;}
   <button onclick="testConnection()">Test connection</button>
   <div id="status"></div>
 </div>
+
 <div id="app" class="card">
   <h2>Select Lesson</h2>
   <p>You are logged in. Open a lesson below.</p>
   <div class="lesson-grid">
-    <a class="lesson-link" href="lesson1.html">Lesson 1</a><a class="lesson-link" href="lesson2.html">Lesson 2</a><a class="lesson-link" href="lesson3.html">Lesson 3</a><a class="lesson-link" href="lesson4.html">Lesson 4</a><a class="lesson-link" href="lesson5.html">Lesson 5</a><a class="lesson-link" href="lesson6.html">Lesson 6</a><a class="lesson-link" href="lesson7.html">Lesson 7</a><a class="lesson-link" href="lesson8.html">Lesson 8</a><a class="lesson-link" href="lesson9.html">Lesson 9</a><a class="lesson-link" href="lesson10.html">Lesson 10</a><a class="lesson-link" href="lesson11.html">Lesson 11</a><a class="lesson-link" href="lesson12.html">Lesson 12</a><a class="lesson-link" href="lesson_weakpoints2.html" style="border-color:#b8860b;color:#b8860b;">Weak Points ★</a>
+    <a class="lesson-link" href="lesson1.html">Lesson 1</a>
+    <a class="lesson-link" href="lesson2.html">Lesson 2</a>
+    <a class="lesson-link" href="lesson3.html">Lesson 3</a>
+    <a class="lesson-link" href="lesson4.html">Lesson 4</a>
+    <a class="lesson-link" href="lesson5.html">Lesson 5</a>
+    <a class="lesson-link" href="lesson6.html">Lesson 6</a>
+    <a class="lesson-link" href="lesson7.html">Lesson 7</a>
+    <a class="lesson-link" href="lesson8.html">Lesson 8</a>
+    <a class="lesson-link" href="lesson9.html">Lesson 9</a>
+    <a class="lesson-link" href="lesson10.html">Lesson 10</a>
+    <a class="lesson-link" href="lesson11.html">Lesson 11</a>
+    <a class="lesson-link" href="lesson12.html">Lesson 12</a>
+    <a class="lesson-link" href="lesson_weakpoints2.html" style="border-color:#b8860b;color:#b8860b;">Weak Points ★</a>
   </div>
   <hr style="margin:22px 0;">
   <button onclick="logout()">Log out</button>
 </div>
+
+<script src="theme.js"></script>
 <script>
 const client = window.supabase.createClient("https://ighwjwnkwfbhsgtqdkui.supabase.co","sb_publishable_slSC2iUullagRc3h_FKKbQ_7OisDAVg");
 function setStatus(msg){document.getElementById("status").textContent=msg;}
 function showApp(){document.getElementById("login").style.display="none";document.getElementById("app").style.display="block";}
 function showLogin(){document.getElementById("login").style.display="block";document.getElementById("app").style.display="none";}
 async function testConnection(){setStatus("Testing Supabase connection...");try{const {error}=await client.auth.getSession();if(error){setStatus("Connection error: "+error.message);return;}setStatus("Connection OK.");}catch(err){setStatus("JavaScript/network error: "+err.message);}}
-async function signup(){const email=document.getElementById("email").value.trim();const password=document.getElementById("password").value;if(!email||!password){setStatus("Enter email and password first.");return;}setStatus("Creating account...");try{const {error}=await client.auth.signUp({email,password});if(error){setStatus("Sign-up error: "+error.message);return;}setStatus("Account created. Now click Login. If it says email not confirmed, turn off email confirmation in Supabase for testing.");}catch(err){setStatus("JavaScript/network error: "+err.message);}}
+async function signup(){const email=document.getElementById("email").value.trim();const password=document.getElementById("password").value;if(!email||!password){setStatus("Enter email and password first.");return;}setStatus("Creating account...");try{const {error}=await client.auth.signUp({email,password});if(error){setStatus("Sign-up error: "+error.message);return;}setStatus("Account created. Now click Login.");}catch(err){setStatus("JavaScript/network error: "+err.message);}}
 async function login(){const email=document.getElementById("email").value.trim();const password=document.getElementById("password").value;if(!email||!password){setStatus("Enter email and password first.");return;}setStatus("Logging in...");try{const {error}=await client.auth.signInWithPassword({email,password});if(error){setStatus("Login error: "+error.message);return;}setStatus("");showApp();}catch(err){setStatus("JavaScript/network error: "+err.message);}}
 async function logout(){await client.auth.signOut();showLogin();}
 async function checkSession(){try{const {data}=await client.auth.getSession();if(data&&data.session){showApp();}}catch(err){setStatus("Session check error: "+err.message);}}
+
+function setTheme(theme) {
+  localStorage.setItem('fawakih-theme', theme);
+  document.body.classList.toggle('arcade', theme === 'arcade');
+  document.getElementById('btn-parchment').classList.toggle('selected', theme === 'parchment');
+  document.getElementById('btn-arcade').classList.toggle('selected', theme === 'arcade');
+  var toggleBtn = document.getElementById('theme-toggle-btn');
+  if (toggleBtn) toggleBtn.remove(); // index handles its own theme UI
+}
+
+// Init picker selection
+(function(){
+  var t = localStorage.getItem('fawakih-theme') || 'parchment';
+  document.getElementById('btn-' + t).classList.add('selected');
+})();
+
 checkSession();
 </script>
 </body>
